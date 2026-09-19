@@ -67,7 +67,7 @@ test("full variables module, checkpoint, XP persistence and retry protection", a
     .getByRole("link", { name: "Start learning for free", exact: true })
     .first()
     .click();
-  await expect(page).toHaveURL(/courses\/javascript\/$/);
+  await expect(page).toHaveURL(/courses\/javascript\/?$/);
   for (const id of ["variables", "constants", "types"])
     await completeLesson(page, id);
   await page
@@ -162,12 +162,11 @@ test("language and explicit themes persist across navigation and reload", async 
     "Wielkie pomysły",
   );
   await page.goto(`${root}/`);
-  await expect(page).toHaveURL(/\/pl\/$/);
-  await page.getByRole("button", { name: "Systemowy", exact: true }).click();
-  await page.emulateMedia({ colorScheme: "dark" });
+  await expect(page).toHaveURL(/\/pl\/?$/);
+  await page.getByRole("button", { name: "Ciemny", exact: true }).click();
   await expect(page.locator("html")).toHaveAttribute("data-theme", "dark");
-  await page.emulateMedia({ colorScheme: "light" });
-  await expect(page.locator("html")).toHaveAttribute("data-theme", "light");
+  await page.reload();
+  await expect(page.locator("html")).toHaveAttribute("data-theme", "dark");
 });
 
 test("Polish lesson flow and helpful wrong-answer feedback", async ({

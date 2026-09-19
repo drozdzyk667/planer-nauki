@@ -293,6 +293,7 @@ for (const width of [375, 430, 768, 1024, 1440])
       "/en/",
       "/pl/courses/",
       "/pl/courses/javascript/",
+      "/pl/courses/javascript/knowledge/",
       "/en/learn/variables/",
       "/pl/dashboard/",
       "/pl/review/",
@@ -373,6 +374,26 @@ for (const theme of ["dark", "light"])
       fullPage: true,
     });
   });
+
+test("knowledge glossary popovers use exact terms and dismiss after details", async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 1100, height: 900 });
+  await page.goto(`${root}/pl/courses/it-foundations/knowledge/`);
+
+  const trigger = page.locator(".glossary-inline-trigger").first();
+  await expect(trigger).toBeVisible();
+  await trigger.hover();
+
+  const expand = page.locator(".glossary-inline.is-visible .glossary-tooltip-expand").first();
+  await expect(expand).toBeVisible();
+  await expand.click();
+
+  await expect(page.getByRole("dialog")).toBeVisible();
+  await page.getByRole("button", { name: "Zamknij okno" }).click();
+  await expect(page.getByRole("dialog")).not.toBeVisible();
+  await expect(page.locator(".glossary-inline.is-visible")).toHaveCount(0);
+});
 
 test("celebration bursts can stop and replay, and respect reduced motion", async ({
   page,

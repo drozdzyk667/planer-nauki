@@ -64,6 +64,13 @@ describe("study content quality", () => {
     for (const [course, config] of Object.entries(configs)) {
       for (const section of courseStudyContent[course].knowledge) {
         if (!section.code) continue;
+        if (section.id === "ts-compiler") {
+          expect(
+            () => JSON.parse(section.code!.value),
+            `${course}/${section.id} JSON snippet`,
+          ).not.toThrow();
+          continue;
+        }
         const result = ts.transpileModule(section.code.value, {
           fileName: config.fileName,
           reportDiagnostics: true,
@@ -87,29 +94,36 @@ describe("study content quality", () => {
 
   it("keeps lesson starters and check expressions syntactically valid", () => {
     for (const lesson of courseRepository.lessons()) {
-      const extension =
-        lesson.exercise.language === "tsx"
-          ? "tsx"
-          : lesson.exercise.language === "typescript"
-            ? "ts"
-            : "js";
-      const result = ts.transpileModule(lesson.exercise.starter, {
-        fileName: `exercise.${extension}`,
-        reportDiagnostics: true,
-        compilerOptions: {
-          target: ts.ScriptTarget.ES2022,
-          module: ts.ModuleKind.ESNext,
-          jsx: ts.JsxEmit.ReactJSX,
-          allowJs: extension === "js",
-        },
-      });
-      const errors = (result.diagnostics ?? []).filter(
-        (diagnostic) => diagnostic.category === ts.DiagnosticCategory.Error,
-      );
-      expect(
-        errors.map((diagnostic) => ts.flattenDiagnosticMessageText(diagnostic.messageText, "\n")),
-        `${lesson.id} starter`,
-      ).toEqual([]);
+      if (lesson.exercise.fileName?.endsWith(".json")) {
+        expect(
+          () => JSON.parse(lesson.exercise.starter),
+          `${lesson.id} JSON starter`,
+        ).not.toThrow();
+      } else {
+        const extension =
+          lesson.exercise.language === "tsx"
+            ? "tsx"
+            : lesson.exercise.language === "typescript"
+              ? "ts"
+              : "js";
+        const result = ts.transpileModule(lesson.exercise.starter, {
+          fileName: `exercise.${extension}`,
+          reportDiagnostics: true,
+          compilerOptions: {
+            target: ts.ScriptTarget.ES2022,
+            module: ts.ModuleKind.ESNext,
+            jsx: ts.JsxEmit.ReactJSX,
+            allowJs: extension === "js",
+          },
+        });
+        const errors = (result.diagnostics ?? []).filter(
+          (diagnostic) => diagnostic.category === ts.DiagnosticCategory.Error,
+        );
+        expect(
+          errors.map((diagnostic) => ts.flattenDiagnosticMessageText(diagnostic.messageText, "\n")),
+          `${lesson.id} starter`,
+        ).toEqual([]);
+      }
 
       for (const check of lesson.exercise.tests) {
         expect(() => new Function(`return Boolean(${check.expression});`), `${lesson.id}: ${check.expression}`).not.toThrow();

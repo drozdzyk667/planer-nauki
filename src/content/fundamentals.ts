@@ -45,8 +45,8 @@ export const fundamentalsDomains: FundamentalsDomainDefinition[] = [
       pl: "Requesty, protokoły i elementy łączące przeglądarkę z usługą.",
     },
     termIds: [
-      "http","https","http2","http3","url","uri","headers","status-code","cookie",
-      "rest","graphql","rpc","websocket","sse","cdn","api","endpoint","webhook","polling",
+      "http","https","http2","http3","url","uri","headers","status-code","cookie","origin",
+      "rest","graphql","rpc","websocket","sse","cdn","cache","api","endpoint","webhook","polling",
     ],
   },
   {
@@ -58,7 +58,7 @@ export const fundamentalsDomains: FundamentalsDomainDefinition[] = [
     },
     termIds: [
       "dom","bom","event-loop","microtask","reflow","repaint","localstorage",
-      "sessionstorage","indexeddb","cors","hydration",
+      "sessionstorage","indexeddb","origin","same-origin","cors","preflight","cache","hydration",
     ],
   },
   {
@@ -69,8 +69,8 @@ export const fundamentalsDomains: FundamentalsDomainDefinition[] = [
       pl: "Tożsamość, uprawnienia, ataki webowe, szyfrowanie i granice zaufania.",
     },
     termIds: [
-      "tls","sso","oauth","oidc","jwt","csp","csrf","xss","hashing","encryption","mfa",
-      "iam","kms","secret",
+      "tls","certificate","sso","oauth","oidc","jwt","session","access-token","refresh-token",
+      "pkce","csp","csrf","xss","hashing","encryption","mfa","iam","kms","secret",
     ],
   },
   {
@@ -209,8 +209,12 @@ export function fundamentalsLevel(term: GlossaryTerm): FundamentalsLevel {
   return "fundamentals";
 }
 
+export function fundamentalsDomainsFor(termId: string): FundamentalsDomainDefinition[] {
+  return fundamentalsDomains.filter((domain) => domain.termIds.includes(termId));
+}
+
 export function fundamentalsDomainFor(termId: string): FundamentalsDomainDefinition | undefined {
-  return fundamentalsDomains.find((domain) => domain.termIds.includes(termId));
+  return fundamentalsDomainsFor(termId)[0];
 }
 
 export const fundamentalsExamples: Record<string, { en: string; pl: string }> = {

@@ -1,6 +1,7 @@
 import { test, expect, type Page } from "@playwright/test";
 import AxeBuilder from "@axe-core/playwright";
 import { courseRepository } from "../../src/services/courses";
+import type { Question } from "../../src/domain/models";
 import {
   selectCheckpointQuestions,
   shuffleQuestionOptions,
@@ -34,9 +35,7 @@ const solutions: Record<string, string> = {
 };
 async function answerQuestion(
   page: Page,
-  question: ReturnType<typeof courseRepository.lesson> extends infer _T
-    ? { answer: string; options: { id: string; text: { en: string; pl: string } }[] }
-    : never,
+  question: Question,
   locale: "en" | "pl",
   correct = true,
 ) {

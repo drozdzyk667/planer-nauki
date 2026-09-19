@@ -131,9 +131,22 @@ describe("course content integrity", () => {
       expect(course.status).toBe("available");
       expect(course.modules.length).toBeGreaterThanOrEqual(12);
       expect(course.modules.filter((m) => m.access === "free")).toHaveLength(3);
+      const lessons = courseRepository
+        .lessons()
+        .filter((lesson) => lesson.courseId === id);
+      const freeModuleIds = new Set(
+        course.modules
+          .filter((module) => module.access === "free")
+          .map((module) => module.id),
+      );
       expect(
-        courseRepository.lessons().filter((lesson) => lesson.courseId === id),
+        lessons.filter((lesson) => freeModuleIds.has(lesson.moduleId)),
       ).toHaveLength(6);
+      expect(
+        course.modules
+          .filter((module) => module.access === "premium")
+          .every((module) => module.lessonIds.length > 0),
+      ).toBe(true);
     }
   });
   it("never advertises remaining coming-soon courses as playable", () => {

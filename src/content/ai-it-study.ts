@@ -23,12 +23,18 @@ const S = (
   paragraphs: [
     ...paragraphs.map((item) => T(...item)),
     T(
-      `Why it matters: ${rule[0]}`,
-      `Dlaczego to ważne: ${rule[1]}`,
+      `In practice, connect this topic with these checks: ${bullets
+        .slice(0, 3)
+        .map((item) => item[0])
+        .join(" ")} The core rule is: ${rule[0]}`,
+      `W praktyce połącz ten temat z tymi kontrolami: ${bullets
+        .slice(0, 3)
+        .map((item) => item[1])
+        .join(" ")} Najważniejsza reguła brzmi: ${rule[1]}`,
     ),
     T(
-      `Typical pitfall: ${pitfall[0]}`,
-      `Typowa pułapka: ${pitfall[1]}`,
+      `When you debug or review code using this concept, verify the assumptions at the real boundary instead of trusting the happy path. The failure worth remembering is: ${pitfall[0]}`,
+      `Gdy debugujesz albo robisz review kodu używającego tego pojęcia, sprawdzaj założenia na prawdziwej granicy systemu zamiast ufać happy path. Błąd, o którym warto pamiętać: ${pitfall[1]}`,
     ),
   ],
   bullets: bullets.map((item) => T(...item)),

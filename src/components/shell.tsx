@@ -8,14 +8,20 @@ import {
   Globe2,
   Menu,
   Moon,
+  Star,
   Sun,
   X,
+  Zap,
 } from "lucide-react";
-import { useLocale } from "./providers";
+import { useLocale, useProgress } from "./providers";
+import { level, levelProgress } from "@/domain/learning";
 import { Dialog, Logo } from "./ui";
 export function Header() {
   const { locale, t, href, theme, setTheme } = useLocale();
   const path = usePathname();
+  const progress = useProgress();
+  const currentLevel = level(progress.xp);
+  const currentLevelProgress = levelProgress(progress.xp);
   const [menu, setMenu] = useState(false);
   const languagePath = path.replace(
     /^\/(en|pl)(?=\/|$)/,
@@ -57,6 +63,27 @@ export function Header() {
             </Link>
           </nav>
           <div className="header-actions">
+            <Link
+              className="learning-hud"
+              href={href("/dashboard")}
+              aria-label={
+                locale === "en"
+                  ? `Level ${currentLevel}, ${progress.xp} XP`
+                  : `Poziom ${currentLevel}, ${progress.xp} XP`
+              }
+            >
+              <span className="learning-hud-level">
+                <Star size={15} fill="currentColor" />
+                <b>LV {currentLevel}</b>
+              </span>
+              <span className="learning-hud-xp">
+                <Zap size={14} />
+                {progress.xp} XP
+              </span>
+              <i aria-hidden="true">
+                <span style={{ width: `${currentLevelProgress}%` }} />
+              </i>
+            </Link>
             <Link
               className="language-switch"
               href={

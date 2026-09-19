@@ -130,6 +130,7 @@ export const progressSchema = z.object({
   concepts: z.record(z.string(), conceptSchema),
   learningDays: z.array(z.string()),
   reviewRewards: z.array(z.string()),
+  favoriteFlashcards: z.array(z.string()).default([]),
   answers: z.array(
     z.object({
       questionId: z.string(),
@@ -149,5 +150,6 @@ export const emptyProgress = (): Progress => ({
   concepts: {},
   learningDays: [],
   reviewRewards: [],
+  favoriteFlashcards: [],
   answers: [],
 });

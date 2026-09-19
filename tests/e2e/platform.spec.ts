@@ -386,7 +386,9 @@ test("IT Fundamentals searches concepts and opens a connected term", async ({
 
   const search = page.getByRole("textbox", { name: "Szukaj pojęć IT" });
   await search.fill("HTTP/2");
-  const card = page.locator(".fundamentals-card").filter({ hasText: "HTTP/2" });
+  const card = page
+    .getByRole("heading", { name: "HTTP/2", exact: true })
+    .locator("..");
   await expect(card).toBeVisible();
   await card.getByRole("button", { name: "Otwórz pojęcie" }).click();
 

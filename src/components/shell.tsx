@@ -76,8 +76,8 @@ export function Header() {
             <div className="theme-switch" role="group" aria-label={t.theme}>
               {(
                 [
-                  { value: "dark", label: t.dark, Icon: Moon },
                   { value: "light", label: t.light, Icon: Sun },
+                  { value: "dark", label: t.dark, Icon: Moon },
                 ] as const
               ).map(({ value, label, Icon }) => (
                 <button

@@ -9649,3 +9649,19 @@
     }
   }
 }
+
+
+@layer knowledge-reader-fixes {
+  .knowledge-reader-page {
+    overflow: visible;
+  }
+
+  .knowledge-example-column .glossary-tooltip {
+    left: auto;
+    right: 0;
+  }
+
+  .knowledge-deep-dive {
+    display: none !important;
+  }
+}

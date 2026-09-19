@@ -1,63 +1,73 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { Lightbulb, Search } from "lucide-react";
+import { ArrowRight, Lightbulb, Search } from "lucide-react";
 import { useLocale } from "@/components/providers";
-import { glossaryFor, type GlossaryTerm } from "@/content/glossary";
-
-const normalize = (value: string) => value.toLocaleLowerCase();
+import { Dialog } from "@/components/ui";
+import {
+  glossaryFor,
+  glossaryMatches,
+  type GlossaryMatch,
+  type GlossaryTerm,
+} from "@/content/glossary";
 
 type GlossarySegment = {
   text: string;
   term?: GlossaryTerm;
 };
 
-function glossarySegments(
+function buildSegments(
   text: string,
-  pattern: RegExp,
-  aliasMap: Map<string, GlossaryTerm>,
+  matches: GlossaryMatch[],
+  allowedTermIds: string[] | undefined,
   maxTerms: number,
 ): GlossarySegment[] {
+  const allowed = allowedTermIds ? new Set(allowedTermIds) : null;
   const used = new Set<string>();
+  const segments: GlossarySegment[] = [];
+  let cursor = 0;
   let highlighted = 0;
 
-  return text.split(pattern).map((part) => {
-    const term = aliasMap.get(normalize(part));
-    if (!term || used.has(term.id) || highlighted >= maxTerms) return { text: part };
-    used.add(term.id);
+  for (const match of matches) {
+    if (match.start < cursor) continue;
+    if (used.has(match.term.id)) continue;
+    if (allowed && !allowed.has(match.term.id)) continue;
+    if (highlighted >= maxTerms) continue;
+
+    if (match.start > cursor) {
+      segments.push({ text: text.slice(cursor, match.start) });
+    }
+    segments.push({ text: match.text, term: match.term });
+    cursor = match.end;
+    used.add(match.term.id);
     highlighted += 1;
-    return { text: part, term };
-  });
+  }
+
+  if (cursor < text.length) segments.push({ text: text.slice(cursor) });
+  return segments.length ? segments : [{ text }];
 }
 
 export function GlossaryText({
   courseSlug,
   text,
+  allowedTermIds,
   maxTerms = 3,
+  onExpand,
 }: {
   courseSlug: string;
   text: string;
+  allowedTermIds?: string[];
   maxTerms?: number;
+  onExpand: (term: GlossaryTerm) => void;
 }) {
   const { locale } = useLocale();
-  const terms = useMemo(() => glossaryFor(courseSlug), [courseSlug]);
-  const aliasMap = useMemo(() => {
-    const map = new Map<string, GlossaryTerm>();
-    for (const term of terms) {
-      for (const alias of term.aliases) map.set(normalize(alias), term);
-    }
-    return map;
-  }, [terms]);
-  const pattern = useMemo(() => {
-    const aliases = [...aliasMap.keys()]
-      .sort((a, b) => b.length - a.length)
-      .map((value) => value.replace(/[.*+?^\$\{\}()|[\]\\]/g, "\\$&"));
-    return aliases.length ? new RegExp(`(${aliases.join("|")})`, "gi") : null;
-  }, [aliasMap]);
-
+  const matches = useMemo(
+    () => glossaryMatches(courseSlug, text),
+    [courseSlug, text],
+  );
   const segments = useMemo(
-    () => (pattern ? glossarySegments(text, pattern, aliasMap, maxTerms) : [{ text }]),
-    [aliasMap, maxTerms, pattern, text],
+    () => buildSegments(text, matches, allowedTermIds, maxTerms),
+    [allowedTermIds, matches, maxTerms, text],
   );
 
   return (
@@ -74,7 +84,11 @@ export function GlossaryText({
 
         return (
           <span className="glossary-inline" key={index}>
-            <button type="button" aria-label={accessible}>
+            <button
+              type="button"
+              aria-label={accessible}
+              onClick={() => onExpand(term)}
+            >
               {segment.text}
               <sup aria-hidden="true">↗</sup>
             </button>
@@ -82,6 +96,10 @@ export function GlossaryText({
               <strong>{term.term}</strong>
               {expanded && <small>{expanded}</small>}
               <span>{definition}</span>
+              <span className="glossary-tooltip-more">
+                {locale === "en" ? "Click to learn more" : "Kliknij, aby rozwinąć"}{" "}
+                <ArrowRight size={11} />
+              </span>
             </span>
           </span>
         );
@@ -90,18 +108,25 @@ export function GlossaryText({
   );
 }
 
-export function GlossaryPanel({ courseSlug }: { courseSlug: string }) {
+export function GlossaryPanel({
+  courseSlug,
+  onExpand,
+}: {
+  courseSlug: string;
+  onExpand: (term: GlossaryTerm) => void;
+}) {
   const { locale } = useLocale();
   const [query, setQuery] = useState("");
   const terms = useMemo(() => glossaryFor(courseSlug), [courseSlug]);
   const filtered = useMemo(() => {
-    const needle = normalize(query.trim());
+    const needle = query.trim().toLocaleLowerCase();
     if (!needle) return terms;
     return terms.filter((term) => {
       const haystack = [
         term.term,
         term.expanded?.[locale] ?? "",
         term.definition[locale],
+        term.details[locale],
         ...term.aliases,
       ]
         .join(" ")
@@ -123,8 +148,8 @@ export function GlossaryPanel({ courseSlug }: { courseSlug: string }) {
           <h2>{en ? "Terms worth knowing." : "Pojęcia, które warto znać."}</h2>
           <p>
             {en
-              ? "Short definitions only. The knowledge library explains the important topics in depth."
-              : "Tylko krótkie definicje. Najważniejsze tematy biblioteka wiedzy wyjaśnia osobno i dokładniej."}
+              ? "Each card gives you the short version. Open it when you want the longer explanation and practical context."
+              : "Każda karta pokazuje krótką wersję. Otwórz ją, gdy chcesz dłuższe wyjaśnienie i praktyczny kontekst."}
           </p>
         </div>
         <label className="glossary-search">
@@ -147,6 +172,14 @@ export function GlossaryPanel({ courseSlug }: { courseSlug: string }) {
             </div>
             {term.expanded && <h3>{term.expanded[locale]}</h3>}
             <p>{term.definition[locale]}</p>
+            <button
+              type="button"
+              className="glossary-card-expand"
+              onClick={() => onExpand(term)}
+            >
+              {en ? "Learn more" : "Rozwiń"}
+              <ArrowRight size={13} />
+            </button>
           </article>
         ))}
       </div>
@@ -157,5 +190,43 @@ export function GlossaryPanel({ courseSlug }: { courseSlug: string }) {
         </p>
       )}
     </section>
+  );
+}
+
+export function GlossaryDetailDialog({
+  term,
+  onClose,
+}: {
+  term: GlossaryTerm | null;
+  onClose: () => void;
+}) {
+  const { locale } = useLocale();
+  const en = locale === "en";
+
+  return (
+    <Dialog
+      open={Boolean(term)}
+      onClose={onClose}
+      title={term?.term ?? (en ? "Glossary" : "Słownik")}
+    >
+      {term && (
+        <div className="glossary-detail">
+          <div className="glossary-detail-meta">
+            <span>{term.category}</span>
+            {term.expanded && <strong>{term.expanded[locale]}</strong>}
+          </div>
+
+          <div className="glossary-detail-short">
+            <span>{en ? "In short" : "W skrócie"}</span>
+            <p>{term.definition[locale]}</p>
+          </div>
+
+          <div className="glossary-detail-long">
+            <span>{en ? "In depth" : "Szerzej"}</span>
+            <p>{term.details[locale]}</p>
+          </div>
+        </div>
+      )}
+    </Dialog>
   );
 }

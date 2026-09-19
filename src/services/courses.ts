@@ -31,7 +31,10 @@ const allCourses = foundationCourses.map(
 );
 const allLessons = [...foundationLessons, ...modernLessons];
 const allQuizzes = [...foundationQuizzes, ...modernQuizzes];
-const allConceptNames = { ...foundationConceptNames, ...modernConceptNames };
+const allConceptNames: Record<string, { en: string; pl: string }> = {
+  ...foundationConceptNames,
+  ...modernConceptNames,
+};
 
 class StaticCourseRepository implements CourseRepository {
   private courses = allCourses.map((c) => courseSchema.parse(c));

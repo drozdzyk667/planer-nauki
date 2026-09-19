@@ -1,7 +1,7 @@
 "use client";
 import Link from "next/link";
 import { Celebration } from "@/components/celebration";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import {
   ArrowLeft,
   ArrowRight,
@@ -17,6 +17,22 @@ import { courseRepository, conceptLabel } from "@/services/courses";
 import { progressStore } from "@/services/progress";
 import { moduleProgress, scoreQuiz } from "@/domain/learning";
 import { QuestionCard } from "./question";
+
+function hash(value: string) {
+  let result = 2166136261;
+  for (let i = 0; i < value.length; i += 1) {
+    result ^= value.charCodeAt(i);
+    result = Math.imul(result, 16777619);
+  }
+  return result >>> 0;
+}
+
+function shuffled<T extends { id: string }>(items: T[], seed: string) {
+  return [...items].sort(
+    (a, b) => hash(`${seed}:${a.id}`) - hash(`${seed}:${b.id}`),
+  );
+}
+
 export function Checkpoint({ moduleId }: { moduleId: string }) {
   const { t, l, href } = useLocale();
   const progress = useProgress();
@@ -30,7 +46,15 @@ export function Checkpoint({ moduleId }: { moduleId: string }) {
     score: number;
     reward: number;
   } | null>(null);
-  const [attempt, setAttempt] = useState(0);
+  const previousAttempts = progress.quizAttempts[quiz.id] ?? 0;
+  const [attempt, setAttempt] = useState(previousAttempts);
+  const questions = useMemo(() => {
+    const pool =
+      attempt === 0
+        ? quiz.questions
+        : shuffled(quiz.questions, `${moduleId}:${attempt}`);
+    return pool.slice(0, Math.min(8, pool.length));
+  }, [attempt, moduleId, quiz.questions]);
   if (moduleProgress(courseModule, progress) < 100)
     return (
       <div className="container page-space">
@@ -42,17 +66,17 @@ export function Checkpoint({ moduleId }: { moduleId: string }) {
         />
       </div>
     );
-  const question = quiz.questions[index];
+  const question = questions[index];
   const mistakes = Array.from(
     new Set(
-      quiz.questions
+      questions
         .filter((q) => answers[q.id] !== q.answer)
         .map((q) => q.concept),
     ),
   );
   function next() {
-    if (index === quiz.questions.length - 1) {
-      const score = scoreQuiz(quiz.questions, answers);
+    if (index === questions.length - 1) {
+      const score = scoreQuiz(questions, answers);
       const reward = progressStore.completeQuiz(quiz.id, score);
       setResult({ score, reward });
     } else setIndex((i) => i + 1);
@@ -138,10 +162,10 @@ export function Checkpoint({ moduleId }: { moduleId: string }) {
           <h1>{t.checkpoint}</h1>
           <p>{t.checkpointIntro}</p>
           <div className="quiz-count">
-            {t.question} {index + 1} {t.of} {quiz.questions.length}
+            {t.question} {index + 1} {t.of} {questions.length}
           </div>
           <ProgressBar
-            value={(index / quiz.questions.length) * 100}
+            value={((index + 1) / questions.length) * 100}
             label={t.progress}
           />
           <QuestionCard
@@ -158,7 +182,7 @@ export function Checkpoint({ moduleId }: { moduleId: string }) {
               disabled={answers[question.id] === undefined}
               onClick={next}
             >
-              {index === quiz.questions.length - 1 ? t.finish : t.next}
+              {index === questions.length - 1 ? t.finish : t.next}
               <ArrowRight size={18} />
             </button>
           </div>

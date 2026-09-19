@@ -212,34 +212,41 @@ export type GlossaryMatch = {
 };
 
 export function glossaryMatches(courseSlug: string, text: string): GlossaryMatch[] {
-  const terms = glossaryFor(courseSlug);
-  const aliasMap = new Map<string, GlossaryTerm>();
-  for (const term of terms) {
-    for (const alias of term.aliases) aliasMap.set(normalizeGlossary(alias), term);
+  const matches: GlossaryMatch[] = [];
+
+  for (const term of glossaryFor(courseSlug)) {
+    for (const alias of term.aliases) {
+      const caseSensitive = /[A-Z]/.test(alias);
+      const pattern = new RegExp(
+        "(?<![\\p{L}\\p{N}_])(" +
+          escapeGlossary(alias) +
+          ")(?![\\p{L}\\p{N}_])",
+        caseSensitive ? "gu" : "giu",
+      );
+
+      for (const match of text.matchAll(pattern)) {
+        if (match.index === undefined) continue;
+        matches.push({
+          start: match.index,
+          end: match.index + match[0].length,
+          text: match[0],
+          term,
+        });
+      }
+    }
   }
 
-  const aliases = [...aliasMap.keys()].sort((a, b) => b.length - a.length);
-  if (!aliases.length) return [];
-
-  const pattern = new RegExp(
-    "(?<![\\p{L}\\p{N}_])(" +
-      aliases.map(escapeGlossary).join("|") +
-      ")(?![\\p{L}\\p{N}_])",
-    "giu",
-  );
-
-  return [...text.matchAll(pattern)].flatMap((match) => {
-    if (match.index === undefined) return [];
-    const matchedText = match[0];
-    const term = aliasMap.get(normalizeGlossary(matchedText));
-    if (!term) return [];
-    return [{
-      start: match.index,
-      end: match.index + matchedText.length,
-      text: matchedText,
-      term,
-    }];
-  });
+  return matches
+    .sort((a, b) => a.start - b.start || b.text.length - a.text.length)
+    .filter(
+      (match, index, all) =>
+        !all.some(
+          (other, otherIndex) =>
+            otherIndex < index &&
+            other.start <= match.start &&
+            other.end >= match.end,
+        ),
+    );
 }
 
 export type GlossaryHighlightEntry = {

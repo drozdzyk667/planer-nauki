@@ -5,7 +5,7 @@ export default defineConfig({
   workers: 1,
   timeout: 60000,
   use: {
-    baseURL: "http://127.0.0.1:3000/planer-nauki",
+    baseURL: "http://127.0.0.1:3000",
     trace: "retain-on-failure",
     launchOptions: process.env.CHROME_EXECUTABLE_PATH
       ? {
@@ -17,7 +17,7 @@ export default defineConfig({
   projects: [{ name: "chromium", use: { ...devices["Desktop Chrome"] } }],
   webServer: {
     command: "npm run preview",
-    url: "http://127.0.0.1:3000/planer-nauki/en/",
+    url: "http://127.0.0.1:3000/en/",
     reuseExistingServer: !process.env.CI,
     timeout: 30000,
   },

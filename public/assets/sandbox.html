@@ -11,11 +11,16 @@
   <body>
     <script>
       "use strict";
+      parent.postMessage({ type: "sandbox-ready" }, "*");
       let worker;
       let timer;
       addEventListener("message", (event) => {
-        if (event.source !== parent || !event.data || event.data.type !== "run")
+        if (event.source !== parent || !event.data) return;
+        if (event.data.type === "ping") {
+          parent.postMessage({ type: "sandbox-ready" }, "*");
           return;
+        }
+        if (event.data.type !== "run") return;
         const { id, code, tests } = event.data;
         if (
           typeof code !== "string" ||

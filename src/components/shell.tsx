@@ -9,7 +9,6 @@ import {
   Menu,
   Moon,
   Sun,
-  Monitor,
   X,
 } from "lucide-react";
 import { useLocale } from "./providers";
@@ -79,7 +78,6 @@ export function Header() {
                 [
                   { value: "light", label: t.light, Icon: Sun },
                   { value: "dark", label: t.dark, Icon: Moon },
-                  { value: "system", label: t.system, Icon: Monitor },
                 ] as const
               ).map(({ value, label, Icon }) => (
                 <button
@@ -92,7 +90,6 @@ export function Header() {
                   onClick={() => setTheme(value)}
                 >
                   <Icon size={18} />
-                  <span>{label}</span>
                 </button>
               ))}
             </div>

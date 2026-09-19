@@ -1,6 +1,6 @@
 import { test, expect, type Page } from "@playwright/test";
 import AxeBuilder from "@axe-core/playwright";
-const root = "/planer-nauki";
+const root = "";
 async function expectAccessible(page: Page, label = "Learning state") {
   const results = await new AxeBuilder({ page })
     .withTags(["wcag2a", "wcag2aa", "wcag21aa", "wcag22aa"])
@@ -67,17 +67,17 @@ test("full variables module, checkpoint, XP persistence and retry protection", a
     .getByRole("link", { name: "Start learning for free", exact: true })
     .first()
     .click();
-  await expect(page).toHaveURL(/courses\/javascript\/$/);
+  await expect(page).toHaveURL(/courses\/javascript\/?$/);
   for (const id of ["variables", "constants", "types"])
     await completeLesson(page, id);
   await page
     .getByRole("link", { name: "Continue to checkpoint", exact: true })
     .click();
-  for (const [i, choice] of [1, 1, 1, 1, 1, 2].entries()) {
+  for (const [i, choice] of [1, 1, 1, 1, 1, 2, 2, 0].entries()) {
     await answer(page, choice);
     await page
       .getByRole("button", {
-        name: i === 5 ? "See my results" : "Next",
+        name: i === 7 ? "See my results" : "Next",
         exact: true,
       })
       .click();
@@ -148,7 +148,7 @@ test("runtime errors, infinite loop timeout, DOM isolation and recovery", async 
   ).toBeVisible();
 });
 
-test("language, themes and system preference persist across navigation and reload", async ({
+test("language and explicit themes persist across navigation and reload", async ({
   page,
 }) => {
   await page.goto(`${root}/en/courses/`);
@@ -162,12 +162,11 @@ test("language, themes and system preference persist across navigation and reloa
     "Wielkie pomysły",
   );
   await page.goto(`${root}/`);
-  await expect(page).toHaveURL(/\/pl\/$/);
-  await page.getByRole("button", { name: "Systemowy", exact: true }).click();
-  await page.emulateMedia({ colorScheme: "dark" });
+  await expect(page).toHaveURL(/\/pl\/?$/);
+  await page.getByRole("button", { name: "Ciemny", exact: true }).click();
   await expect(page.locator("html")).toHaveAttribute("data-theme", "dark");
-  await page.emulateMedia({ colorScheme: "light" });
-  await expect(page.locator("html")).toHaveAttribute("data-theme", "light");
+  await page.reload();
+  await expect(page.locator("html")).toHaveAttribute("data-theme", "dark");
 });
 
 test("Polish lesson flow and helpful wrong-answer feedback", async ({

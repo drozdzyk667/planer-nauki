@@ -51,12 +51,12 @@ export function Exercise({
     result.results.every(Boolean);
   useEffect(() => {
     const listener = (event: MessageEvent) => {
-      if (
-        event.source !== frame.current?.contentWindow ||
-        !request.current ||
-        event.data?.id !== request.current
-      )
+      if (event.source !== frame.current?.contentWindow) return;
+      if (event.data?.type === "sandbox-ready") {
+        setReady(true);
         return;
+      }
+      if (!request.current || event.data?.id !== request.current) return;
       const parsed = resultSchema.safeParse(event.data);
       if (!parsed.success) return;
       const data = parsed.data;
@@ -77,6 +77,7 @@ export function Exercise({
     };
   }, [exercise.tests.length, onPassed]);
   function run() {
+    if (!ready || !frame.current?.contentWindow) return;
     const id = crypto.randomUUID();
     request.current = id;
     setRunning(true);
@@ -95,7 +96,7 @@ export function Exercise({
       request.current = "";
       setRunning(false);
       setResult({ id, status: "timeout", logs: [] });
-    }, 3000);
+    }, 3500);
   }
   function edit(value: string) {
     request.current = "";
@@ -143,7 +144,9 @@ export function Exercise({
         src={asset("sandbox.html")}
         sandbox="allow-scripts"
         hidden
-        onLoad={() => setReady(true)}
+        onLoad={() =>
+          frame.current?.contentWindow?.postMessage({ type: "ping" }, "*")
+        }
       />
       <button
         className="text-link hint-button"

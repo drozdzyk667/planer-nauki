@@ -622,6 +622,139 @@ export const lessons: Lesson[] = [
   },
 ];
 
+
+const checkpointExtras: Record<string, Question[]> = {
+  introduction: [
+    question(
+      "intro-bonus-order",
+      "execution",
+      T("What prints second?", "Co wyświetli się jako drugie?"),
+      [T("2", "2"), T("5", "5"), T("Nothing", "Nic")],
+      1,
+      T(
+        "The first log prints 2. After total changes, the second log prints 5.",
+        "Pierwszy log wyświetla 2. Po zmianie total drugi log wyświetla 5.",
+      ),
+      "let total = 2;\nconsole.log(total);\ntotal = 5;\nconsole.log(total);",
+    ),
+    question(
+      "intro-bonus-comment",
+      "execution",
+      T("Which line actually runs?", "Która linia faktycznie się wykona?"),
+      [T("Only A", "Tylko A"), T("Only B", "Tylko B"), T("Both", "Obie")],
+      1,
+      T(
+        "The A line is a comment, so JavaScript ignores it.",
+        "Linia A jest komentarzem, więc JavaScript ją pomija.",
+      ),
+      '// console.log("A");\nconsole.log("B");',
+    ),
+  ],
+  "variables-types": [
+    question(
+      "variables-bonus-current-value",
+      "variables",
+      T("What is count at the end?", "Ile wynosi count na końcu?"),
+      [T("1", "1"), T("2", "2"), T("3", "3")],
+      2,
+      T(
+        "The current value 1 is read, 2 is added, and 3 is stored.",
+        "Odczytujemy obecną wartość 1, dodajemy 2 i zapisujemy 3.",
+      ),
+      "let count = 1;\ncount = count + 2;",
+    ),
+    question(
+      "variables-bonus-plus-equals",
+      "variables",
+      T("What does score += 5 mean?", "Co oznacza score += 5?"),
+      [
+        T("Add 5 to score", "Dodaj 5 do score"),
+        T("Set score to 5", "Ustaw score na 5"),
+        T("Compare score with 5", "Porównaj score z 5"),
+      ],
+      0,
+      T(
+        "+= uses the current value and stores the result back in the same variable.",
+        "+= używa obecnej wartości i zapisuje wynik z powrotem do tej samej zmiennej.",
+      ),
+    ),
+    question(
+      "types-bonus-undefined",
+      "types",
+      T("What does typeof undefined return?", "Co zwróci typeof undefined?"),
+      [T("undefined", "undefined"), T("object", "object"), T("null", "null")],
+      0,
+      T(
+        'It returns the string "undefined".',
+        'Zwraca tekst "undefined".',
+      ),
+      "console.log(typeof undefined);",
+    ),
+    question(
+      "types-bonus-dynamic",
+      "types",
+      T("What is typeof value at the end?", "Jaki jest typeof value na końcu?"),
+      [T("number", "number"), T("string", "string"), T("boolean", "boolean")],
+      1,
+      T(
+        "let can later point at a value of another type. The final value is a string.",
+        "let może później przechowywać wartość innego typu. Na końcu jest to string.",
+      ),
+      'let value = 10;\nvalue = "10";',
+    ),
+  ],
+  operators: [
+    question(
+      "operators-bonus-precedence",
+      "operators",
+      T("What is 2 + 3 * 4?", "Ile wynosi 2 + 3 * 4?"),
+      [T("20", "20"), T("14", "14"), T("24", "24")],
+      1,
+      T(
+        "Multiplication runs before addition.",
+        "Mnożenie wykonuje się przed dodawaniem.",
+      ),
+      "console.log(2 + 3 * 4);",
+    ),
+    question(
+      "operators-bonus-conversion",
+      "operators",
+      T('What does Number("7") === 7 return?', 'Co zwróci Number("7") === 7?'),
+      [T("true", "true"), T("false", "false")],
+      0,
+      T(
+        'Number("7") converts the string to the number 7.',
+        'Number("7") zamienia tekst na liczbę 7.',
+      ),
+    ),
+  ],
+  conditions: [
+    question(
+      "conditions-bonus-boundary",
+      "conditions",
+      T("Which branch runs for score = 59?", "Która gałąź wykona się dla score = 59?"),
+      [T("if", "if"), T("else", "else"), T("both", "obie")],
+      1,
+      T(
+        "59 is below 60, so the else branch runs.",
+        "59 jest mniejsze od 60, więc wykona się gałąź else.",
+      ),
+    ),
+    question(
+      "conditions-bonus-boolean",
+      "conditions",
+      T("What will be printed?", "Co zostanie wyświetlone?"),
+      [T("Go", "Go"), T("Wait", "Wait"), T("Nothing", "Nic")],
+      1,
+      T(
+        "ready is false, so JavaScript follows the else branch.",
+        "ready ma wartość false, więc JavaScript wybiera gałąź else.",
+      ),
+      'const ready = false;\nif (ready) console.log("Go");\nelse console.log("Wait");',
+    ),
+  ],
+};
+
 const roadmap: [string, string, string][] = [
   ["introduction", "Introduction", "Wprowadzenie"],
   ["variables-types", "Variables & types", "Zmienne i typy"],
@@ -768,9 +901,12 @@ export const quizzes: Quiz[] = modules
   .map((m) => ({
     id: `checkpoint-${m.id}`,
     moduleId: m.id,
-    questions: lessons
-      .filter((l) => l.moduleId === m.id)
-      .flatMap((l) => [l.prediction, l.recall]),
+    questions: [
+      ...lessons
+        .filter((l) => l.moduleId === m.id)
+        .flatMap((l) => [l.prediction, l.recall]),
+      ...(checkpointExtras[m.id] ?? []),
+    ],
   }));
 export const conceptNames: Record<string, ReturnType<typeof T>> = {
   execution: T("Program execution", "Wykonywanie programu"),

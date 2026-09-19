@@ -33,33 +33,33 @@ export function Landing() {
           <div className="hero-kicker">
             <span className="live-dot" />
             {en
-              ? "LESS SCROLLING. MORE BUILDING."
-              : "MNIEJ PRZEWIJANIA. WIĘCEJ TWORZENIA."}
+              ? "FIRST COURSE · JAVASCRIPT"
+              : "PIERWSZY KURS · JAVASCRIPT"}
             <ArrowUpRight size={14} />
           </div>
           <h1>
             {en ? (
               <>
-                Don’t just
+                JavaScript.
                 <br />
-                learn code.
+                <span className="gradient-text">From first line</span>
                 <br />
-                <span className="gradient-text">Make it click.</span>
+                to real confidence.
               </>
             ) : (
               <>
-                Nie tylko
+                JavaScript.
                 <br />
-                poznawaj kod.
+                <span className="gradient-text">Od pierwszej linii</span>
                 <br />
-                <span className="gradient-text">Zrozum go.</span>
+                do pewnego kodu.
               </>
             )}
           </h1>
           <p>
             {en
-              ? "Learn JavaScript step by step. Explore animated examples, write real code, and check what you know. Six lessons to get you started — for free."
-              : "Ucz się JavaScript krok po kroku. Oglądaj animowane przykłady, pisz kod i sprawdzaj swoją wiedzę. Sześć lekcji na start — za darmo."}
+              ? "Short visual lessons, real code, checkpoints and smart review. Learn by doing — then prove to yourself that the idea actually stuck."
+              : "Krótkie wizualne lekcje, prawdziwy kod, checkpointy i mądre powtórki. Uczysz się przez działanie — a potem sprawdzasz, czy temat naprawdę został w głowie."}
           </p>
           <div className="hero-buttons">
             <Link className="button primary" href={href("/courses/javascript")}>
@@ -134,6 +134,22 @@ export function Landing() {
               </span>
             </div>
             <CheckCircle2 size={19} />
+          </div>
+          <div className="hero-course-card">
+            <span>{en ? "JAVASCRIPT PATH" : "ŚCIEŻKA JAVASCRIPT"}</span>
+            <div>
+              <strong>6</strong>
+              <small>{en ? "FREE LESSONS" : "DARMOWYCH LEKCJI"}</small>
+            </div>
+            <p>
+              {en
+                ? "Start with the foundations. No account required."
+                : "Zacznij od podstaw. Bez zakładania konta."}
+            </p>
+            <Link href={href("/courses/javascript")}>
+              {en ? "Start free" : "Zacznij za darmo"}
+              <ArrowUpRight size={16} />
+            </Link>
           </div>
           <div className="core-caption">
             <span>{en ? "01 — KNOWLEDGE CORE" : "01 — RDZEŃ WIEDZY"}</span>

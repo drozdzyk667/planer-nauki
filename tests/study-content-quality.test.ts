@@ -2,7 +2,12 @@ import { describe, expect, it } from "vitest";
 import * as ts from "typescript";
 import { courseStudyContent } from "../src/content/study-content";
 import { courseRepository } from "../src/services/courses";
-import { glossaryFor, glossaryTerms } from "../src/content/glossary";
+import {
+  glossaryFor,
+  glossaryHighlightPlan,
+  glossaryMatches,
+  glossaryTerms,
+} from "../src/content/glossary";
 import type { Localized } from "../src/domain/models";
 
 function expectLocalized(value: Localized, label: string) {
@@ -140,6 +145,9 @@ describe("study content quality", () => {
       ids.add(term.id);
       expect(term.term.trim()).not.toBe("");
       expectLocalized(term.definition, `glossary/${term.id}/definition`);
+      expectLocalized(term.details, `glossary/${term.id}/details`);
+      expect(term.details.en.length).toBeGreaterThan(term.definition.en.length + 30);
+      expect(term.details.pl.length).toBeGreaterThan(term.definition.pl.length + 30);
       if (term.expanded) expectLocalized(term.expanded, `glossary/${term.id}/expanded`);
       expect(term.aliases.length).toBeGreaterThan(0);
     }
@@ -152,6 +160,40 @@ describe("study content quality", () => {
     expect(glossaryFor("ai").some((term) => term.id === "rag")).toBe(true);
     expect(glossaryFor("it-foundations").some((term) => term.id === "http2")).toBe(true);
     expect(glossaryFor("it-foundations").some((term) => term.id === "kubernetes")).toBe(true);
+  });
+
+  it("matches glossary terms as whole concepts, not substrings", () => {
+    const paintMatches = glossaryMatches(
+      "it-foundations",
+      "CSS controls style, layout and paint in the browser.",
+    );
+    expect(paintMatches.some((match) => match.term.id === "ai")).toBe(false);
+
+    const exactMatches = glossaryMatches(
+      "it-foundations",
+      "AI can call an API over HTTP/2.",
+    ).map((match) => match.term.id);
+    expect(exactMatches).toContain("ai");
+    expect(exactMatches).toContain("api");
+    expect(exactMatches).toContain("http2");
+  });
+
+  it("highlights a glossary concept only on its first useful occurrence per page", () => {
+    const entries = [
+      { key: "lead", text: "DNS resolves a hostname before the request starts." },
+      { key: "body", text: "DNS answers can be cached. DNS uses records." },
+    ];
+    const plan = glossaryHighlightPlan("it-foundations", entries);
+    expect(plan.lead).toContain("dns");
+    expect(plan.body).not.toContain("dns");
+
+    const explainedOnPage = glossaryHighlightPlan(
+      "it-foundations",
+      entries,
+      ["dns"],
+    );
+    expect(explainedOnPage.lead).not.toContain("dns");
+    expect(explainedOnPage.body).not.toContain("dns");
   });
 
   it("publishes AI and production IT as available reference courses", () => {

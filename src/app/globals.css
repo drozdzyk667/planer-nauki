@@ -9721,9 +9721,9 @@
     padding: 5px 8px;
     border: 1px solid var(--border);
     border-radius: 999px;
-    color: var(--quiet);
+    color: var(--muted);
     background: var(--subtle);
-    font: 700 9px "JetBrains Mono", monospace;
+    font: 700 10px "JetBrains Mono", monospace;
   }
 
   .fundamentals-page {

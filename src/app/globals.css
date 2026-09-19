@@ -5601,3 +5601,716 @@
     color: #17643f;
   }
 }
+
+
+/* Premium dark refinement: restore the original dark canvas and keep colour local. */
+@layer premium-dark-refinement {
+  :root {
+    --bg: #0a0d12;
+    --fg: #f7f7f3;
+    --surface: #11161d;
+    --elevated: #171e27;
+    --subtle: #0e1319;
+    --border: #2b3541;
+    --control-border: #667486;
+    --muted: #c2c7cf;
+    --quiet: #929ba8;
+    --accent: #ffd23f;
+    --accent-strong: #ffad1f;
+    --accent-bg: #2b240b;
+    --primary: #ffd23f;
+    --on-primary: #201907;
+    --success: #7de3b7;
+    --success-bg: #10271f;
+    --danger: #ffb2b7;
+    --danger-bg: #311b22;
+    --warning: #f4d786;
+    --code-bg: #0c1219;
+    --code-fg: #edf2f8;
+    --focus: #ffe88a;
+    --shadow:
+      0 24px 70px #00000066,
+      0 0 45px #00000022;
+    --hero-blend: #090c11;
+    --blue: #79b8ff;
+    --cyan: #82dff3;
+    --green: #7fd8a4;
+    --orange: #f0b582;
+    --purple: #b09aff;
+  }
+
+  html[data-theme="light"] {
+    --bg: #ecebe7;
+    --fg: #181a1e;
+    --surface: #f8f7f2;
+    --elevated: #e1e3e5;
+    --subtle: #e7e6e1;
+    --border: #c7c7c2;
+    --control-border: #667182;
+    --muted: #464d57;
+    --quiet: #626a75;
+    --accent: #755600;
+    --accent-strong: #9c6800;
+    --accent-bg: #f7e8a8;
+    --primary: #efc52a;
+    --on-primary: #211a05;
+    --success: #176044;
+    --success-bg: #dff1e8;
+    --danger: #9e2e45;
+    --danger-bg: #f7e1e7;
+    --warning: #75520f;
+    --code-bg: #e1e4e9;
+    --code-fg: #202733;
+    --focus: #755600;
+    --shadow:
+      0 22px 62px #53606d1f,
+      0 0 35px #7c6d4c0f;
+    --hero-blend: #ecebe7;
+    --blue: #0a5a9f;
+    --cyan: #0b6c7d;
+    --green: #176845;
+    --orange: #8a4d1d;
+    --purple: #6847ad;
+  }
+
+  body {
+    background:
+      radial-gradient(
+        circle at 78% 8%,
+        color-mix(in srgb, var(--purple), transparent 93%),
+        transparent 24rem
+      ),
+      radial-gradient(
+        circle at 12% 24%,
+        color-mix(in srgb, var(--primary), transparent 96%),
+        transparent 22rem
+      ),
+      radial-gradient(
+        circle at 70% 72%,
+        color-mix(in srgb, var(--blue), transparent 96%),
+        transparent 28rem
+      ),
+      linear-gradient(180deg, #0c1016 0%, var(--bg) 40%, #090c10 100%);
+    background-attachment: fixed;
+  }
+
+  html[data-theme="light"] body {
+    background:
+      radial-gradient(circle at 82% 8%, #ded8f1 0, transparent 26rem),
+      radial-gradient(circle at 10% 23%, #f3e8b7 0, transparent 24rem),
+      radial-gradient(circle at 72% 76%, #dce8f3 0, transparent 29rem),
+      linear-gradient(180deg, #f1f0eb 0%, var(--bg) 48%, #e6e7e8 100%);
+    background-attachment: fixed;
+  }
+
+  .header {
+    background: color-mix(in srgb, var(--bg), transparent 10%);
+    border-bottom-color: color-mix(in srgb, var(--border), transparent 8%);
+    backdrop-filter: blur(18px) saturate(125%);
+  }
+
+  .hero {
+    isolation: isolate;
+    padding-top: clamp(46px, 4.3vw, 66px);
+    padding-bottom: clamp(48px, 4vw, 64px);
+    gap: clamp(18px, 2vw, 34px);
+  }
+
+  .hero::before,
+  .hero::after {
+    content: "";
+    position: absolute;
+    pointer-events: none;
+    z-index: -1;
+    border-radius: 999px;
+    filter: blur(18px);
+  }
+
+  .hero::before {
+    width: min(42vw, 620px);
+    height: min(42vw, 620px);
+    right: -6%;
+    top: 4%;
+    background: radial-gradient(
+      circle,
+      color-mix(in srgb, var(--purple), transparent 83%),
+      color-mix(in srgb, var(--blue), transparent 94%) 42%,
+      transparent 72%
+    );
+    opacity: 0.72;
+  }
+
+  .hero::after {
+    width: min(28vw, 420px);
+    height: min(28vw, 420px);
+    left: -12%;
+    bottom: 4%;
+    background: radial-gradient(
+      circle,
+      color-mix(in srgb, var(--primary), transparent 92%),
+      transparent 70%
+    );
+    opacity: 0.52;
+  }
+
+  .hero-copy {
+    padding-block: 8px;
+  }
+
+  .hero-copy > p {
+    max-width: 510px;
+    color: color-mix(in srgb, var(--muted), var(--fg) 7%);
+  }
+
+  .hero-kicker {
+    background: color-mix(in srgb, var(--surface), transparent 20%);
+    border-color: color-mix(in srgb, var(--primary), var(--border) 72%);
+    box-shadow:
+      inset 0 1px 0 #ffffff0b,
+      0 12px 36px #00000024;
+    backdrop-filter: blur(12px);
+  }
+
+  .hero-art {
+    height: clamp(500px, 41vw, 570px);
+    margin-inline: 0;
+    isolation: isolate;
+    border-radius: 34px;
+  }
+
+  .hero-art::before,
+  .hero-art::after {
+    content: "";
+    position: absolute;
+    pointer-events: none;
+    z-index: -1;
+    border-radius: 50%;
+  }
+
+  .hero-art::before {
+    width: 76%;
+    aspect-ratio: 1;
+    left: 12%;
+    top: 8%;
+    background: radial-gradient(
+      circle,
+      color-mix(in srgb, #7e5cff, transparent 76%),
+      color-mix(in srgb, #3579ff, transparent 91%) 46%,
+      transparent 72%
+    );
+    filter: blur(28px);
+    opacity: 0.62;
+  }
+
+  .hero-art::after {
+    inset: 7% 4% 8%;
+    border: 1px solid color-mix(in srgb, var(--purple), transparent 91%);
+    border-radius: 36px;
+    box-shadow:
+      inset 0 1px 0 #ffffff08,
+      0 28px 90px #00000038,
+      0 0 80px color-mix(in srgb, var(--purple), transparent 94%);
+  }
+
+  .core-image {
+    inset: 0;
+    background: transparent;
+    overflow: visible;
+  }
+
+  .core-image > picture > img {
+    object-fit: contain;
+    object-position: center;
+    filter:
+      saturate(1.03)
+      contrast(1.08)
+      brightness(0.98);
+    mask-image: radial-gradient(
+      ellipse 78% 72% at 50% 50%,
+      black 54%,
+      rgba(0, 0, 0, 0.92) 68%,
+      transparent 100%
+    );
+  }
+
+  .core-vignette {
+    inset: 2%;
+    border-radius: 34px;
+    background:
+      radial-gradient(
+        ellipse 70% 62% at 50% 48%,
+        transparent 46%,
+        color-mix(in srgb, var(--hero-blend), transparent 45%) 75%,
+        var(--hero-blend) 100%
+      ),
+      linear-gradient(180deg, transparent 72%, color-mix(in srgb, var(--hero-blend), transparent 10%));
+    opacity: 0.72;
+  }
+
+  html[data-theme="light"] .core-image {
+    background: transparent;
+  }
+
+  html[data-theme="light"] .core-image > picture > img {
+    filter: saturate(0.94) contrast(1.03) brightness(1.02);
+    mask-image: radial-gradient(
+      ellipse 76% 70% at 50% 50%,
+      black 52%,
+      rgba(0, 0, 0, 0.9) 67%,
+      transparent 100%
+    );
+  }
+
+  html[data-theme="light"] .core-vignette {
+    background:
+      radial-gradient(
+        ellipse 72% 64% at 50% 48%,
+        transparent 48%,
+        color-mix(in srgb, var(--hero-blend), transparent 54%) 77%,
+        var(--hero-blend) 100%
+      );
+    opacity: 0.72;
+  }
+
+  .orbit-label,
+  .hero-reward,
+  .hero-code-fragment {
+    background:
+      linear-gradient(
+        145deg,
+        color-mix(in srgb, var(--elevated), transparent 5%),
+        color-mix(in srgb, var(--surface), transparent 2%)
+      );
+    border-color: color-mix(in srgb, var(--border), var(--primary) 12%);
+    box-shadow:
+      0 18px 48px #00000058,
+      0 0 22px color-mix(in srgb, var(--purple), transparent 94%),
+      inset 0 1px 0 #ffffff0b;
+    backdrop-filter: blur(14px) saturate(130%);
+  }
+
+  .hero-course-card {
+    box-shadow:
+      0 24px 60px #00000052,
+      0 0 34px color-mix(in srgb, var(--primary), transparent 82%);
+  }
+
+  .skills-strip {
+    border-block-color: color-mix(in srgb, var(--primary), #000 35%);
+    box-shadow:
+      0 14px 40px #0000002e,
+      inset 0 1px 0 #ffffff45;
+  }
+
+  .section {
+    position: relative;
+  }
+
+  .how-section,
+  .challenge-section,
+  .last-cta {
+    isolation: isolate;
+  }
+
+  .how-section {
+    margin-top: 48px;
+    background:
+      radial-gradient(
+        circle at 8% 10%,
+        color-mix(in srgb, var(--primary), transparent 90%),
+        transparent 28%
+      ),
+      radial-gradient(
+        circle at 88% 18%,
+        color-mix(in srgb, var(--blue), transparent 94%),
+        transparent 26%
+      ),
+      linear-gradient(
+        145deg,
+        color-mix(in srgb, var(--surface), transparent 2%),
+        color-mix(in srgb, var(--subtle), transparent 1%)
+      );
+    border-color: color-mix(in srgb, var(--border), var(--primary) 8%);
+    box-shadow:
+      0 26px 80px #00000034,
+      inset 0 1px 0 #ffffff0b;
+  }
+
+  .method {
+    background:
+      radial-gradient(
+        circle at 86% 8%,
+        color-mix(in srgb, var(--method-accent), transparent 90%),
+        transparent 34%
+      ),
+      linear-gradient(
+        155deg,
+        color-mix(in srgb, var(--surface), var(--method-accent) 2.5%),
+        var(--surface)
+      );
+    border-color: color-mix(in srgb, var(--border), var(--method-accent) 16%);
+    box-shadow:
+      0 18px 48px #00000028,
+      inset 0 1px 0 #ffffff0a;
+  }
+
+  .method:hover {
+    transform: translateY(-5px);
+    box-shadow:
+      0 26px 68px #0000003e,
+      0 0 34px color-mix(in srgb, var(--method-accent), transparent 91%),
+      inset 0 1px 0 #ffffff10;
+  }
+
+  .course-card,
+  .path-summary,
+  .question-card,
+  .exercise,
+  .visual-explainer,
+  .review-card,
+  .skill-map {
+    background:
+      radial-gradient(
+        circle at 100% 0%,
+        color-mix(in srgb, var(--blue), transparent 97%),
+        transparent 38%
+      ),
+      linear-gradient(
+        150deg,
+        color-mix(in srgb, var(--surface), #fff 1.5%),
+        var(--surface)
+      );
+    border-color: color-mix(in srgb, var(--border), transparent 2%);
+    box-shadow:
+      0 18px 52px #00000028,
+      inset 0 1px 0 #ffffff09;
+  }
+
+  .lesson-page {
+    padding-block: 30px 82px;
+  }
+
+  .learning-layout {
+    grid-template-columns: 230px minmax(0, 1fr);
+    gap: clamp(36px, 4.5vw, 58px);
+    margin-top: 38px;
+    align-items: start;
+  }
+
+  .lesson-steps {
+    position: sticky;
+    top: 112px;
+    padding: 20px 18px 18px;
+    border: 1px solid color-mix(in srgb, var(--border), transparent 2%);
+    border-radius: 18px;
+    background:
+      radial-gradient(
+        circle at 12% 5%,
+        color-mix(in srgb, var(--primary), transparent 94%),
+        transparent 36%
+      ),
+      color-mix(in srgb, var(--surface), transparent 3%);
+    box-shadow:
+      0 18px 48px #0000002b,
+      inset 0 1px 0 #ffffff08;
+    backdrop-filter: blur(12px);
+  }
+
+  .lesson-steps ol {
+    margin: 24px 0 18px;
+  }
+
+  .lesson-sidebar-note {
+    padding: 18px 2px 2px;
+  }
+
+  .learning-content {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    max-width: 760px;
+    padding: clamp(26px, 3vw, 38px);
+    border: 1px solid color-mix(in srgb, var(--border), transparent 1%);
+    border-radius: 22px;
+    background:
+      radial-gradient(
+        circle at 100% 0%,
+        color-mix(in srgb, var(--blue), transparent 95%),
+        transparent 34%
+      ),
+      radial-gradient(
+        circle at 8% 88%,
+        color-mix(in srgb, var(--purple), transparent 97%),
+        transparent 34%
+      ),
+      linear-gradient(150deg, #121820, var(--surface));
+    box-shadow:
+      0 28px 86px #00000048,
+      0 0 48px color-mix(in srgb, var(--blue), transparent 97%),
+      inset 0 1px 0 #ffffff0b;
+  }
+
+  .learning-content::before {
+    content: "";
+    position: absolute;
+    width: 330px;
+    height: 330px;
+    right: -190px;
+    top: -185px;
+    border-radius: 50%;
+    background: radial-gradient(
+      circle,
+      color-mix(in srgb, var(--blue), transparent 82%),
+      transparent 68%
+    );
+    filter: blur(4px);
+    opacity: 0.42;
+    z-index: -1;
+    pointer-events: none;
+  }
+
+  html[data-theme="light"] .learning-content {
+    background:
+      radial-gradient(circle at 100% 0%, #dae8f5 0, transparent 35%),
+      radial-gradient(circle at 7% 92%, #e9e1f7 0, transparent 34%),
+      linear-gradient(150deg, #faf9f5, var(--surface));
+    box-shadow:
+      0 24px 68px #5968781f,
+      inset 0 1px 0 #ffffffde;
+  }
+
+  .lesson-heading {
+    margin-top: 14px;
+    font-size: clamp(32px, 3.1vw, 39px);
+    line-height: 1.08;
+  }
+
+  .lesson-subtitle {
+    margin-top: 15px;
+    font-size: 17px;
+    line-height: 1.65;
+  }
+
+  .lesson-text {
+    margin-top: 34px;
+    padding-top: 30px;
+    border-top: 1px solid color-mix(in srgb, var(--border), transparent 18%);
+  }
+
+  .lesson-text h2 {
+    margin-bottom: 14px;
+  }
+
+  .lesson-text p {
+    line-height: 1.82;
+  }
+
+  .lesson-code {
+    margin-top: 26px;
+  }
+
+  .code-block {
+    border-radius: 13px;
+    border-color: color-mix(in srgb, var(--border), var(--blue) 10%);
+    box-shadow:
+      inset 0 1px 0 #ffffff08,
+      0 14px 34px #0000002e;
+  }
+
+  .lesson-code figcaption {
+    margin-top: 12px;
+    padding-inline: 2px;
+  }
+
+  .fact-card,
+  .riddle-card {
+    margin-top: 22px;
+    margin-bottom: 0;
+    border-radius: 16px;
+    background:
+      linear-gradient(
+        145deg,
+        color-mix(in srgb, var(--elevated), transparent 2%),
+        color-mix(in srgb, var(--surface), transparent 1%)
+      );
+    box-shadow:
+      0 16px 42px #0000002e,
+      inset 0 1px 0 #ffffff08;
+  }
+
+  .fact-card {
+    border-color: color-mix(in srgb, var(--blue), var(--border) 68%);
+  }
+
+  .riddle-card {
+    border-color: color-mix(in srgb, var(--purple), var(--border) 70%);
+  }
+
+  .lesson-navigation {
+    margin-top: 38px;
+    padding-top: 26px;
+  }
+
+  .question-card,
+  .exercise {
+    margin-top: 28px;
+  }
+
+  .demo-card,
+  .challenge-intro {
+    position: relative;
+  }
+
+  .demo-card {
+    box-shadow:
+      0 30px 86px #0000003e,
+      0 0 50px color-mix(in srgb, var(--purple), transparent 95%),
+      inset 0 1px 0 #ffffff0b;
+  }
+
+  @supports (animation-timeline: view()) {
+    @media (prefers-reduced-motion: no-preference) {
+      .hero::before {
+        animation: ambient-hero-scroll linear both;
+        animation-timeline: view();
+        animation-range: entry 0% exit 100%;
+      }
+
+      .hero-art::before {
+        animation: ambient-core-scroll linear both;
+        animation-timeline: view();
+        animation-range: entry 0% exit 92%;
+      }
+
+      .learning-content::before {
+        animation: ambient-learning-scroll linear both;
+        animation-timeline: view();
+        animation-range: entry 0% exit 100%;
+      }
+    }
+  }
+
+  @keyframes ambient-hero-scroll {
+    0% {
+      translate: 6% -3%;
+      scale: 0.92;
+      opacity: 0.45;
+    }
+    50% {
+      translate: -2% 5%;
+      scale: 1.04;
+      opacity: 0.76;
+    }
+    100% {
+      translate: -9% 13%;
+      scale: 1.1;
+      opacity: 0.38;
+    }
+  }
+
+  @keyframes ambient-core-scroll {
+    0% {
+      translate: 0 -3%;
+      scale: 0.94;
+      opacity: 0.48;
+    }
+    55% {
+      translate: -3% 4%;
+      scale: 1.05;
+      opacity: 0.7;
+    }
+    100% {
+      translate: 3% 9%;
+      scale: 1.1;
+      opacity: 0.42;
+    }
+  }
+
+  @keyframes ambient-learning-scroll {
+    0% {
+      translate: 0 -12%;
+      scale: 0.92;
+      opacity: 0.26;
+    }
+    55% {
+      translate: -9% 8%;
+      scale: 1.08;
+      opacity: 0.46;
+    }
+    100% {
+      translate: -17% 19%;
+      scale: 1.16;
+      opacity: 0.2;
+    }
+  }
+
+  @media (max-width: 1024px) {
+    .hero {
+      gap: 18px;
+    }
+
+    .hero-art {
+      height: clamp(460px, 52vw, 530px);
+    }
+
+    .learning-layout {
+      gap: 30px;
+      grid-template-columns: 210px minmax(0, 1fr);
+    }
+  }
+
+  @media (max-width: 767px) {
+    .hero {
+      padding-top: 32px;
+      padding-bottom: 42px;
+    }
+
+    .hero-art {
+      min-height: 430px;
+      height: min(112vw, 500px);
+      border-radius: 26px;
+    }
+
+    .hero-art::after {
+      inset: 4% 0 5%;
+      border-radius: 28px;
+    }
+
+    .learning-layout {
+      display: block;
+      margin-top: 28px;
+    }
+
+    .lesson-steps {
+      position: static;
+      margin-bottom: 18px;
+      padding: 16px;
+      border-radius: 16px;
+    }
+
+    .learning-content {
+      max-width: none;
+      padding: 23px 18px 26px;
+      border-radius: 18px;
+    }
+
+    .lesson-heading {
+      font-size: clamp(29px, 8vw, 35px);
+    }
+
+    .lesson-text {
+      margin-top: 28px;
+      padding-top: 24px;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .hero::before,
+    .hero-art::before,
+    .learning-content::before {
+      animation: none !important;
+      translate: none !important;
+      scale: none !important;
+    }
+  }
+}

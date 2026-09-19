@@ -33,7 +33,7 @@ describe("study content quality", () => {
         globalSectionIds.add(section.id);
         expectLocalized(section.title, `${course}/${section.id}/title`);
         expectLocalized(section.lead, `${course}/${section.id}/lead`);
-        expect(section.paragraphs.length).toBeGreaterThanOrEqual(2);
+        expect(section.paragraphs.length).toBeGreaterThanOrEqual(4);
         expect(section.bullets.length).toBeGreaterThanOrEqual(3);
         section.paragraphs.forEach((item, index) =>
           expectLocalized(item, `${course}/${section.id}/paragraph-${index}`),

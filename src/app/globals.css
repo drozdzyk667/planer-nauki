@@ -9198,3 +9198,120 @@
     }
   }
 }
+
+
+@layer glossary-detail {
+  .glossary-tooltip-more {
+    display: inline-flex !important;
+    align-items: center;
+    gap: 4px;
+    margin-top: 9px;
+    color: var(--accent) !important;
+    font-size: 10px !important;
+    font-weight: 700;
+  }
+
+  .glossary-card {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .glossary-card-expand {
+    width: fit-content;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    margin-top: auto;
+    padding: 11px 0 0;
+    border: 0;
+    background: transparent;
+    color: var(--accent);
+    font: inherit;
+    font-size: 11px;
+    font-weight: 750;
+    cursor: pointer;
+  }
+
+  .glossary-card-expand:hover {
+    color: var(--fg);
+  }
+
+  .glossary-detail {
+    display: grid;
+    gap: 18px;
+    max-width: 680px;
+    padding-top: 4px;
+  }
+
+  .glossary-detail-meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px 12px;
+  }
+
+  .glossary-detail-meta > span {
+    padding: 4px 8px;
+    border-radius: 999px;
+    background: var(--accent-bg);
+    color: var(--accent);
+    font: 750 9px "JetBrains Mono", monospace;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .glossary-detail-meta > strong {
+    color: var(--muted);
+    font-size: 12px;
+  }
+
+  .glossary-detail-short,
+  .glossary-detail-long {
+    padding: 16px 17px;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    background: var(--surface);
+  }
+
+  .glossary-detail-short > span,
+  .glossary-detail-long > span {
+    display: block;
+    margin-bottom: 7px;
+    color: var(--quiet);
+    font: 750 9px "JetBrains Mono", monospace;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+  }
+
+  .glossary-detail-short p {
+    color: var(--fg);
+    font-size: 14px;
+    line-height: 1.65;
+  }
+
+  .glossary-detail-long {
+    background:
+      radial-gradient(circle at 100% 0%, color-mix(in srgb, var(--accent), transparent 92%), transparent 42%),
+      var(--elevated);
+  }
+
+  .glossary-detail-long p {
+    color: var(--muted);
+    font-size: 14px;
+    line-height: 1.78;
+  }
+
+  @media (max-width: 640px) {
+    .glossary-tooltip {
+      display: none;
+    }
+
+    .glossary-inline > button {
+      cursor: pointer;
+    }
+
+    .glossary-detail {
+      gap: 12px;
+    }
+  }
+}

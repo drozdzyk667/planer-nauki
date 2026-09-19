@@ -144,6 +144,9 @@ export function Exercise({
         src={asset("sandbox.html")}
         sandbox="allow-scripts"
         hidden
+        onLoad={() =>
+          frame.current?.contentWindow?.postMessage({ type: "ping" }, "*")
+        }
       />
       <button
         className="text-link hint-button"

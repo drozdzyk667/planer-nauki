@@ -589,7 +589,7 @@ const premiumLessons: Lesson[] = [
     task:["Read page from search params with fallback 1.","Odczytaj page z search params z fallbackiem 1."],
     starter:'const page = 1;',
     hint:['Use params.get("page") ?? "1".','Użyj params.get("page") ?? "1".'],
-    tests:[{label:["reads page","czyta page"],expression:'__source.includes("params.get") && __source.includes('"page"')'},{label:["has fallback","ma fallback"],expression:'__source.includes("??")'}],
+    tests:[{label:["reads page","czyta page"],expression:'__source.includes("params.get") && __source.includes("\\"page\\")'},{label:["has fallback","ma fallback"],expression:'__source.includes("??")'}],
     language:"tsx",fileName:"Routing.ts",
   }),
   makePremiumLesson({

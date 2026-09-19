@@ -11,6 +11,7 @@
   <body>
     <script>
       "use strict";
+      parent.postMessage({ type: "sandbox-ready" }, "*");
       let worker;
       let timer;
       addEventListener("message", (event) => {

@@ -10300,3 +10300,32 @@
     }
   }
 }
+
+
+@layer glossary-global-link {
+  .glossary-header-actions {
+    display: grid;
+    gap: 8px;
+  }
+
+  .glossary-global-link {
+    width: fit-content;
+    justify-self: end;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    color: var(--accent);
+    font-size: 10px;
+    font-weight: 750;
+  }
+
+  .glossary-global-link:hover {
+    color: var(--fg);
+  }
+
+  @media (max-width: 640px) {
+    .glossary-global-link {
+      justify-self: start;
+    }
+  }
+}

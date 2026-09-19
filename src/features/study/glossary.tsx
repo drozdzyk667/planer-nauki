@@ -7,6 +7,29 @@ import { glossaryFor, type GlossaryTerm } from "@/content/glossary";
 
 const normalize = (value: string) => value.toLocaleLowerCase();
 
+type GlossarySegment = {
+  text: string;
+  term?: GlossaryTerm;
+};
+
+function glossarySegments(
+  text: string,
+  pattern: RegExp,
+  aliasMap: Map<string, GlossaryTerm>,
+  maxTerms: number,
+): GlossarySegment[] {
+  const used = new Set<string>();
+  let highlighted = 0;
+
+  return text.split(pattern).map((part) => {
+    const term = aliasMap.get(normalize(part));
+    if (!term || used.has(term.id) || highlighted >= maxTerms) return { text: part };
+    used.add(term.id);
+    highlighted += 1;
+    return { text: part, term };
+  });
+}
+
 export function GlossaryText({
   courseSlug,
   text,
@@ -32,19 +55,17 @@ export function GlossaryText({
     return aliases.length ? new RegExp(`(${aliases.join("|")})`, "gi") : null;
   }, [aliasMap]);
 
-  if (!pattern) return <>{text}</>;
+  const segments = useMemo(
+    () => (pattern ? glossarySegments(text, pattern, aliasMap, maxTerms) : [{ text }]),
+    [aliasMap, maxTerms, pattern, text],
+  );
 
-  const used = new Set<string>();
-  let highlighted = 0;
   return (
     <>
-      {text.split(pattern).map((part, index) => {
-        const term = aliasMap.get(normalize(part));
-        if (!term || used.has(term.id) || highlighted >= maxTerms)
-          return <span key={index}>{part}</span>;
+      {segments.map((segment, index) => {
+        const term = segment.term;
+        if (!term) return <span key={index}>{segment.text}</span>;
 
-        used.add(term.id);
-        highlighted += 1;
         const expanded = term.expanded?.[locale];
         const definition = term.definition[locale];
         const accessible = expanded
@@ -54,7 +75,7 @@ export function GlossaryText({
         return (
           <span className="glossary-inline" key={index}>
             <button type="button" aria-label={accessible}>
-              {part}
+              {segment.text}
               <sup aria-hidden="true">↗</sup>
             </button>
             <span className="glossary-tooltip" role="tooltip" aria-hidden="true">

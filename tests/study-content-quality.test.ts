@@ -176,6 +176,18 @@ describe("study content quality", () => {
     expect(exactMatches).toContain("ai");
     expect(exactMatches).toContain("api");
     expect(exactMatches).toContain("http2");
+
+    const polishPreposition = glossaryMatches(
+      "it-foundations",
+      "Cache'owanie prywatnych danych pod współdzielonym kluczem może wyciekać.",
+    );
+    expect(polishPreposition.some((match) => match.term.id === "pod")).toBe(false);
+
+    const kubernetesPod = glossaryMatches(
+      "it-foundations",
+      "Pod receives traffic only when it is ready.",
+    );
+    expect(kubernetesPod.some((match) => match.term.id === "pod")).toBe(true);
   });
 
   it("highlights a glossary concept only on its first useful occurrence per page", () => {

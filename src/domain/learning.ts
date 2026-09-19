@@ -79,4 +79,33 @@ export function streak(days: string[], now = new Date()) {
   }
   return count;
 }
-export const level = (xp: number) => Math.floor(xp / 400) + 1;
+export const XP_PER_LEVEL = 400;
+export const level = (xp: number) => Math.floor(xp / XP_PER_LEVEL) + 1;
+export const levelProgress = (xp: number) =>
+  Math.round(((xp % XP_PER_LEVEL) / XP_PER_LEVEL) * 100);
+export const xpIntoLevel = (xp: number) => xp % XP_PER_LEVEL;
+export const xpToNextLevel = (xp: number) =>
+  XP_PER_LEVEL - (xp % XP_PER_LEVEL || XP_PER_LEVEL);
+
+export function moduleXp(module: CourseModule, progress: Progress) {
+  const lessonXp =
+    module.lessonIds.filter((id) => progress.completed[id]).length * 80;
+  const checkpointXp = progress.quizBest[`checkpoint-${module.id}`] ?? 0;
+  return lessonXp + checkpointXp;
+}
+
+export function moduleMaxXp(module: CourseModule) {
+  return module.lessonIds.length * 80 + 100;
+}
+
+export function moduleStars(module: CourseModule, progress: Progress) {
+  const completedLessons = module.lessonIds.filter(
+    (id) => progress.completed[id],
+  ).length;
+  const checkpoint = progress.quizBest[`checkpoint-${module.id}`] ?? 0;
+  if (checkpoint >= 80 && completedLessons === module.lessonIds.length) return 3;
+  if (completedLessons === module.lessonIds.length && completedLessons > 0)
+    return 2;
+  if (completedLessons > 0) return 1;
+  return 0;
+}

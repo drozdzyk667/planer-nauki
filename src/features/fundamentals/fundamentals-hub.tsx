@@ -12,6 +12,7 @@ import {
 } from "lucide-react";
 import { useLocale } from "@/components/providers";
 import { Breadcrumb } from "@/components/shell";
+import { CourseModeDock } from "@/features/study/course-mode-dock";
 import { Dialog } from "@/components/ui";
 import { glossaryTerms, type GlossaryTerm } from "@/content/glossary";
 import {
@@ -124,7 +125,14 @@ export function FundamentalsHub() {
 
   return (
     <div className="container page-space fundamentals-page">
-      <Breadcrumb current={en ? "IT Fundamentals" : "IT Fundamentals"} />
+      <CourseModeDock courseSlug="it-foundations" active="fundamentals" />
+      <Breadcrumb
+        current={
+          en
+            ? "IT Fundamentals & Production Applications"
+            : "IT fundamenty i aplikacje produkcyjne"
+        }
+      />
 
       <header className="fundamentals-hero">
         <div>

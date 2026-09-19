@@ -186,7 +186,7 @@ export function Dashboard() {
                     ) : (
                       <>
                         <i className="free-access-dot" aria-hidden="true" />
-                        {t.free} · {t.notStarted}
+                        {t.free}
                       </>
                     )}
                   </small>

@@ -1,11 +1,22 @@
 "use client";
 
 import Link from "next/link";
-import { BookOpenText, Code2, FlaskConical, Sparkles } from "lucide-react";
+import {
+  BookMarked,
+  BookOpenText,
+  Code2,
+  FlaskConical,
+  Sparkles,
+} from "lucide-react";
 import { useLocale } from "@/components/providers";
 import { courseRepository } from "@/services/courses";
 
-type StudyMode = "knowledge" | "flashcards" | "coding" | "practice";
+type StudyMode =
+  | "knowledge"
+  | "flashcards"
+  | "fundamentals"
+  | "coding"
+  | "practice";
 
 export function CourseModeDock({
   courseSlug,
@@ -37,6 +48,16 @@ export function CourseModeDock({
       full: en ? "Flashcards" : "Fiszki",
       Icon: Sparkles,
       visible: true,
+    },
+    {
+      id: "fundamentals" as const,
+      href: href("/courses/it-foundations/fundamentals"),
+      label: en ? "Fundamentals" : "Fundamenty",
+      full: en
+        ? "IT Fundamentals glossary"
+        : "Fundamenty IT i słownik pojęć",
+      Icon: BookMarked,
+      visible: courseSlug === "it-foundations",
     },
     {
       id: "coding" as const,

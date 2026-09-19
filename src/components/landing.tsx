@@ -15,8 +15,6 @@ import {
   Sparkles,
   Terminal,
   Zap,
-  BookMarked,
-  Network,
 } from "lucide-react";
 import { useLocale } from "./providers";
 import { Reveal } from "./ui";
@@ -184,37 +182,6 @@ export function Landing() {
           </nav>
         </div>
       </div>
-
-      <section className="container fundamentals-promo">
-        <div className="fundamentals-promo-icon">
-          <BookMarked size={26} />
-        </div>
-        <div className="fundamentals-promo-copy">
-          <span className="eyebrow">
-            <Network size={15} />
-            IT FUNDAMENTALS
-          </span>
-          <h2>
-            {en
-              ? "HTTP? TCP/IP? JWT? Kubernetes? Know what people mean."
-              : "HTTP? TCP/IP? JWT? Kubernetes? Wiedz, o czym ludzie mówią."}
-          </h2>
-          <p>
-            {en
-              ? "A separate searchable reference with short definitions, expanded explanations, levels and related concepts — from bits and browsers to cloud, security and AI."
-              : "Osobny przeszukiwalny moduł z krótkimi definicjami, rozwinięciami, poziomami i powiązaniami — od bitów i przeglądarki po cloud, security i AI."}
-          </p>
-          <div className="fundamentals-promo-terms" aria-hidden="true">
-            {["HTTP/2", "CORS", "OAuth", "Docker", "K8s", "Terraform", "RAG", "MCP"].map(
-              (term) => <span key={term}>{term}</span>,
-            )}
-          </div>
-        </div>
-        <Link className="button primary fundamentals-promo-cta" href={href("/fundamentals")}>
-          {en ? "Open IT Fundamentals" : "Otwórz Fundamenty IT"}
-          <ArrowUpRight size={17} />
-        </Link>
-      </section>
 
       <section id="how-it-works" className="container section how-section">
         <Reveal className="section-heading">

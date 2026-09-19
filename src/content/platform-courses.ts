@@ -137,7 +137,10 @@ export const platformCourses: Course[] = [
   {
     id: "it-foundations",
     slug: "it-foundations",
-    title: T("IT & Production Foundations", "IT i aplikacje produkcyjne"),
+    title: T(
+      "IT Fundamentals & Production Applications",
+      "IT fundamenty i aplikacje produkcyjne",
+    ),
     short: "IT",
     description: T(
       "See the whole system: browser, network, backend, auth, cloud, containers, Kubernetes, Terraform, CI/CD and operations.",

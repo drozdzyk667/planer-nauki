@@ -208,7 +208,7 @@ export function GlossaryPanel({
           </p>
         </div>
         <div className="glossary-header-actions">
-          <Link className="glossary-global-link" href={href("/fundamentals")}>
+          <Link className="glossary-global-link" href={href("/courses/it-foundations/fundamentals")}>
             <BookMarked size={15} />
             {en ? "IT Fundamentals" : "Pełny słownik IT"}
             <ArrowRight size={13} />

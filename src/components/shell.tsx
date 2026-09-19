@@ -49,13 +49,6 @@ export function Header() {
               {t.courses}
             </Link>
             <Link
-              className={path.includes("/fundamentals") ? "active" : ""}
-              href={href("/fundamentals")}
-              onClick={() => setMenu(false)}
-            >
-              {locale === "en" ? "Fundamentals" : "Fundamenty IT"}
-            </Link>
-            <Link
               href={`${href()}#how-it-works`}
               onClick={() => setMenu(false)}
             >
@@ -154,7 +147,7 @@ export function Header() {
   );
 }
 export function Footer() {
-  const { t, href, locale } = useLocale();
+  const { t, href } = useLocale();
   const [privacy, setPrivacy] = useState(false);
   return (
     <>
@@ -167,9 +160,6 @@ export function Footer() {
         </div>
         <div className="footer-links">
           <Link href={href("/courses")}>{t.courses}</Link>
-          <Link href={href("/fundamentals")}>
-            {locale === "en" ? "IT Fundamentals" : "Fundamenty IT"}
-          </Link>
           <Link href={href("/dashboard")}>{t.dashboard}</Link>
           <button className="text-button" onClick={() => setPrivacy(true)}>
             {t.privacy}

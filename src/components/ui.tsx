@@ -143,11 +143,7 @@ export function UpgradeDialog({
       </div>
       <p>{t.upgradeCopy}</p>
       <ul className="check-list">
-        {[
-          "Functions & closures",
-          "Async JavaScript",
-          "Projects & assessments",
-        ].map((v, i) => (
+        {["advanced", "practice", "project"].map((v, i) => (
           <li key={v}>
             <Check size={17} />
             {premiumList[i]}
@@ -165,8 +161,16 @@ export function UpgradeDialog({
 function usePremiumList() {
   const { locale } = useLocale();
   return locale === "en"
-    ? ["Functions & closures", "Async JavaScript", "Projects & assessments"]
-    : ["Funkcje i domknięcia", "Asynchroniczny JavaScript", "Projekty i testy"];
+    ? [
+        "Advanced modules and developer-level details",
+        "Full practice, flashcards and knowledge library",
+        "Projects, checkpoints and assessments",
+      ]
+    : [
+        "Zaawansowane moduły i smaczki developerskie",
+        "Pełna praktyka, fiszki i biblioteka wiedzy",
+        "Projekty, checkpointy i testy",
+      ];
 }
 export function EmptyState({
   title,

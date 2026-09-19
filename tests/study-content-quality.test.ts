@@ -8,6 +8,11 @@ import {
   glossaryMatches,
   glossaryTerms,
 } from "../src/content/glossary";
+import {
+  fundamentalsDomains,
+  fundamentalsDomainFor,
+  fundamentalsLevel,
+} from "../src/content/fundamentals";
 import type { Localized } from "../src/domain/models";
 
 function expectLocalized(value: Localized, label: string) {
@@ -206,6 +211,30 @@ describe("study content quality", () => {
     );
     expect(explainedOnPage.lead).not.toContain("dns");
     expect(explainedOnPage.body).not.toContain("dns");
+  });
+
+  it("keeps IT Fundamentals broad, categorized and levelled", () => {
+    const fundamentals = glossaryTerms.filter((term) =>
+      term.courses.includes("it-foundations"),
+    );
+    expect(fundamentals.length).toBeGreaterThanOrEqual(120);
+    expect(fundamentalsDomains.length).toBeGreaterThanOrEqual(12);
+
+    for (const domain of fundamentalsDomains) {
+      const available = domain.termIds.filter((id) =>
+        fundamentals.some((term) => term.id === id),
+      );
+      expect(available.length, domain.id).toBeGreaterThanOrEqual(5);
+    }
+
+    for (const term of fundamentals) {
+      expect(["fundamentals", "junior", "mid", "advanced"]).toContain(
+        fundamentalsLevel(term),
+      );
+      if (fundamentalsDomainFor(term.id)) {
+        expect(fundamentalsDomainFor(term.id)?.termIds).toContain(term.id);
+      }
+    }
   });
 
   it("publishes AI and production IT as available reference courses", () => {

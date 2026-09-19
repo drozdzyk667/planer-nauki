@@ -570,10 +570,71 @@ const react: CourseStudyContent = {
   ],
 };
 
+const knowledgeFlashcards = (
+  coursePrefix: string,
+  sections: KnowledgeSection[],
+): Flashcard[] =>
+  sections.flatMap((section) => [
+    {
+      id: `${coursePrefix}-knowledge-${section.id}-rule`,
+      level: section.level,
+      tag: section.title,
+      front: T(
+        `What is the main rule for: ${section.title.en}?`,
+        `Jaka jest najważniejsza zasada dla: ${section.title.pl}?`,
+      ),
+      back: section.rule,
+      code: section.code?.value,
+      why: section.paragraphs[0],
+    },
+    {
+      id: `${coursePrefix}-knowledge-${section.id}-trap`,
+      level: section.level,
+      tag: section.title,
+      front: T(
+        `What should you watch out for with: ${section.title.en}?`,
+        `Na co uważać przy temacie: ${section.title.pl}?`,
+      ),
+      back: section.pitfall,
+      code: section.code?.value,
+      why: section.paragraphs[1] ?? section.paragraphs[0],
+    },
+    {
+      id: `${coursePrefix}-knowledge-${section.id}-explain`,
+      level: section.level,
+      tag: section.title,
+      front: T(
+        `Explain simply: ${section.title.en}`,
+        `Wyjaśnij prosto: ${section.title.pl}`,
+      ),
+      back: section.lead,
+      code: section.code?.value,
+      why: section.bullets[0],
+    },
+  ]);
+
 export const courseStudyContent: Record<string, CourseStudyContent> = {
-  javascript,
-  typescript,
-  react,
+  javascript: {
+    knowledge: javascript.knowledge,
+    flashcards: [
+      ...javascript.flashcards,
+      ...knowledgeFlashcards("js", javascript.knowledge),
+    ],
+  },
+  typescript: {
+    knowledge: typescript.knowledge,
+    flashcards: [
+      ...typescript.flashcards,
+      ...knowledgeFlashcards("ts", typescript.knowledge),
+    ],
+  },
+  react: {
+    knowledge: react.knowledge,
+    flashcards: [
+      ...react.flashcards,
+      ...knowledgeFlashcards("react", react.knowledge),
+    ],
+  },
 };
 
 export const studyContentFor = (courseSlug: string) =>

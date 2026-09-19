@@ -42,6 +42,7 @@ export function KnowledgeLibrary({ courseSlug }: { courseSlug: string }) {
   const course = courseRepository.get(courseSlug)!;
   const study = studyContentFor(courseSlug);
   const en = locale === "en";
+  const hasQuickGlossary = courseSlug !== "it-foundations";
 
   const beginnerSections = useMemo(
     () => study?.knowledge.filter((section) => section.level === "beginner") ?? [],
@@ -139,37 +140,44 @@ export function KnowledgeLibrary({ courseSlug }: { courseSlug: string }) {
             {en ? "Understand it, page by page." : "Zrozum to, strona po stronie."}
           </h1>
           <p>
-            {en
-              ? "Learn the topic without unnecessary repetition. Important terms are highlighted — hover or tap them for a short definition, or open the glossary."
-              : "Ucz się bez niepotrzebnego powtarzania definicji. Ważne pojęcia są podświetlone — najedź lub kliknij, aby zobaczyć krótkie wyjaśnienie, albo otwórz słownik."}
+            {courseSlug === "it-foundations"
+              ? en
+                ? "Learn the topic without unnecessary repetition. Important terms are highlighted for quick context; the separate IT Fundamentals module is the full reference."
+                : "Ucz się bez niepotrzebnego powtarzania definicji. Ważne pojęcia są podświetlone dla szybkiego kontekstu; pełny słownik znajduje się w osobnym module Fundamenty IT."
+              : en
+                ? "Learn the topic without unnecessary repetition. Important terms are highlighted — hover or tap them for a short definition, or open the glossary."
+                : "Ucz się bez niepotrzebnego powtarzania definicji. Ważne pojęcia są podświetlone — najedź lub kliknij, aby zobaczyć krótkie wyjaśnienie, albo otwórz słownik."}
           </p>
         </div>
       </header>
 
-      <div className="knowledge-submode-switch" role="tablist" aria-label={en ? "Learning view" : "Widok nauki"}>
-        <button
-          type="button"
-          role="tab"
-          aria-selected={view === "knowledge"}
-          className={view === "knowledge" ? "active" : ""}
-          onClick={() => setView("knowledge")}
-        >
-          <BookOpenText size={16} />
-          <span>{en ? "Knowledge" : "Wiedza"}</span>
-        </button>
-        <button
-          type="button"
-          role="tab"
-          aria-selected={view === "glossary"}
-          className={view === "glossary" ? "active" : ""}
-          onClick={() => setView("glossary")}
-        >
-          <Lightbulb size={16} />
-          <span>{en ? "Glossary" : "Słownik"}</span>
-        </button>
-      </div>
+      {hasQuickGlossary && (
+        <div className="knowledge-submode-switch" role="tablist" aria-label={en ? "Learning view" : "Widok nauki"}>
+          <button
+            type="button"
+            role="tab"
+            aria-selected={view === "knowledge"}
+            className={view === "knowledge" ? "active" : ""}
+            onClick={() => setView("knowledge")}
+          >
+            <BookOpenText size={16} />
+            <span>{en ? "Knowledge" : "Wiedza"}</span>
+          </button>
+          <button
+            type="button"
+            role="tab"
+            aria-selected={view === "glossary"}
+            className={view === "glossary" ? "active" : ""}
+            onClick={() => setView("glossary")}
+          >
+            <Lightbulb size={16} />
+            <span>{en ? "Glossary" : "Słownik"}</span>
+          </button>
+        </div>
+      )}
 
-      {view === "glossary" ? (
+
+      {hasQuickGlossary && view === "glossary" ? (
         <GlossaryPanel
           courseSlug={courseSlug}
           onExpand={setSelectedGlossary}

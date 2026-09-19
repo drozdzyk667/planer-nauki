@@ -77,10 +77,7 @@ function fallbackDetails(
       "W infrastrukturze produkcyjnej skup się na odpowiedzialności, trybach awarii i observability. Zrozum, który komponent kontroluje tę warstwę, co dzieje się przy awarii oraz jakie logi, metryki lub konfiguracja pokazują jej rzeczywisty stan. Umieść ten element na diagramie requestu albo deploymentu i zaznacz, co znajduje się bezpośrednio przed nim i po nim. Na koniec oddziel konfigurację, stan runtime i trwałe dane, bo zwykle psują się i odtwarzają w inny sposób."
     ]
   };
-  return [
-    definition[0] + " " + suffix[category][0],
-    definition[1] + " " + suffix[category][1]
-  ];
+  return suffix[category];
 }
 
 const G = (

@@ -37,7 +37,14 @@ export function CourseModeDock({
       id: "knowledge" as const,
       href: href(`/courses/${courseSlug}/knowledge`),
       label: en ? "Learn" : "Nauka",
-      full: en ? "Learn: knowledge and glossary" : "Nauka: wiedza i słownik",
+      full:
+        courseSlug === "it-foundations"
+          ? en
+            ? "Learn: knowledge library"
+            : "Nauka: biblioteka wiedzy"
+          : en
+            ? "Learn: knowledge and glossary"
+            : "Nauka: wiedza i słownik",
       Icon: BookOpenText,
       visible: true,
     },
@@ -52,10 +59,10 @@ export function CourseModeDock({
     {
       id: "fundamentals" as const,
       href: href("/courses/it-foundations/fundamentals"),
-      label: en ? "Fundamentals" : "Fundamenty",
+      label: en ? "IT Fundamentals" : "Fundamenty IT",
       full: en
-        ? "IT Fundamentals glossary"
-        : "Fundamenty IT i słownik pojęć",
+        ? "IT Fundamentals: concepts, acronyms and relationships"
+        : "Fundamenty IT: pojęcia, skróty i zależności",
       Icon: BookMarked,
       visible: courseSlug === "it-foundations",
     },

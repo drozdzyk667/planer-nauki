@@ -1,9 +1,19 @@
 "use client";
 
 import Link from "next/link";
-import { ArrowLeft, ArrowRight, BookOpenText, Code2, RotateCw, Shuffle, Sparkles } from "lucide-react";
+import {
+  ArrowLeft,
+  ArrowRight,
+  BookOpenText,
+  Code2,
+  LockKeyhole,
+  RotateCw,
+  Shuffle,
+  Sparkles,
+} from "lucide-react";
 import { useMemo, useState } from "react";
 import { Breadcrumb } from "@/components/shell";
+import { UpgradeDialog } from "@/components/ui";
 import { useLocale } from "@/components/providers";
 import { courseRepository } from "@/services/courses";
 import { studyContentFor, type Flashcard, type StudyLevel } from "@/content/study-content";
@@ -26,6 +36,7 @@ export function FlashcardStudy({ courseSlug }: { courseSlug: string }) {
   const [order, setOrder] = useState<string[]>([]);
   const [index, setIndex] = useState(0);
   const [flipped, setFlipped] = useState(false);
+  const [upgrade, setUpgrade] = useState(false);
 
   const cards = useMemo(() => {
     if (!content) return [];
@@ -39,6 +50,10 @@ export function FlashcardStudy({ courseSlug }: { courseSlug: string }) {
   const card = cards[Math.min(index, cards.length - 1)];
 
   function setTrack(next: StudyLevel) {
+    if (next === "advanced") {
+      setUpgrade(true);
+      return;
+    }
     setLevel(next);
     setIndex(0);
     setFlipped(false);
@@ -94,6 +109,7 @@ export function FlashcardStudy({ courseSlug }: { courseSlug: string }) {
               onClick={() => setTrack(value)}
               key={value}
             >
+              {value === "advanced" && <LockKeyhole size={14} />}
               {value === "beginner"
                 ? en ? "Foundations" : "Podstawy"
                 : en ? "Advanced secrets" : "Zaawansowane smaczki"}
@@ -163,6 +179,7 @@ export function FlashcardStudy({ courseSlug }: { courseSlug: string }) {
           <ArrowRight size={18} />
         </button>
       </div>
+      <UpgradeDialog open={upgrade} onClose={() => setUpgrade(false)} />
     </div>
   );
 }

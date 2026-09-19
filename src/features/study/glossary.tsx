@@ -1,7 +1,8 @@
 "use client";
 
+import Link from "next/link";
 import { useMemo, useState } from "react";
-import { ArrowRight, Lightbulb, Search } from "lucide-react";
+import { ArrowRight, BookMarked, Lightbulb, Search } from "lucide-react";
 import { useLocale } from "@/components/providers";
 import { Dialog } from "@/components/ui";
 import {
@@ -169,7 +170,7 @@ export function GlossaryPanel({
   courseSlug: string;
   onExpand: (term: GlossaryTerm) => void;
 }) {
-  const { locale } = useLocale();
+  const { locale, href } = useLocale();
   const [query, setQuery] = useState("");
   const terms = useMemo(() => glossaryFor(courseSlug), [courseSlug]);
   const filtered = useMemo(() => {
@@ -206,7 +207,13 @@ export function GlossaryPanel({
               : "Każda karta pokazuje krótką wersję. Otwórz ją, gdy chcesz dłuższe wyjaśnienie i praktyczny kontekst."}
           </p>
         </div>
-        <label className="glossary-search">
+        <div className="glossary-header-actions">
+          <Link className="glossary-global-link" href={href("/fundamentals")}>
+            <BookMarked size={15} />
+            {en ? "IT Fundamentals" : "Pełny słownik IT"}
+            <ArrowRight size={13} />
+          </Link>
+          <label className="glossary-search">
           <Search size={17} />
           <input
             value={query}
@@ -214,7 +221,8 @@ export function GlossaryPanel({
             placeholder={en ? "Search a term or acronym…" : "Szukaj pojęcia lub skrótu…"}
             aria-label={en ? "Search glossary" : "Przeszukaj słownik"}
           />
-        </label>
+          </label>
+        </div>
       </header>
 
       <div className="glossary-grid">

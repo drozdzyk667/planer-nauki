@@ -11,6 +11,7 @@ import {
   CircleHelp,
   Code2,
   Lightbulb,
+  LockKeyhole,
   Info,
   Puzzle,
   RotateCw,
@@ -19,7 +20,7 @@ import {
 } from "lucide-react";
 import { motion } from "motion/react";
 import { useLocale, useProgress } from "@/components/providers";
-import { ProgressBar } from "@/components/ui";
+import { EmptyState, ProgressBar, UpgradeDialog } from "@/components/ui";
 import { VisualExplainer } from "@/components/visual-explainer";
 import { courseRepository } from "@/services/courses";
 import { progressStore } from "@/services/progress";
@@ -35,6 +36,7 @@ export function LessonRunner({ id }: { id: string }) {
   const [recalled, setRecalled] = useState(false);
   const [reward, setReward] = useState(0);
   const [savedCode, setSavedCode] = useState(lesson.exercise.starter);
+  const [upgrade, setUpgrade] = useState(false);
   const heading = useRef<HTMLHeadingElement>(null);
   const onPassed = useCallback((value: boolean) => setPassed(value), []);
   useEffect(() => {
@@ -43,6 +45,32 @@ export function LessonRunner({ id }: { id: string }) {
   const courseModule = courseRepository
     .get(lesson.courseId)!
     .modules.find((m) => m.id === lesson.moduleId)!;
+
+  if (courseModule.access === "premium") {
+    return (
+      <div className="container page-space premium-lesson-gate">
+        <EmptyState
+          title={l(courseModule.title)}
+          description={
+            locale === "en"
+              ? "This advanced lesson is part of the full course. The free foundations remain available without an account."
+              : "Ta zaawansowana lekcja jest częścią pełnego kursu. Darmowe podstawy pozostają dostępne bez konta."
+          }
+          action={locale === "en" ? "Back to course" : "Wróć do kursu"}
+          href={href(`/courses/${lesson.courseId}`)}
+        />
+        <button
+          className="button primary premium-preview-button"
+          onClick={() => setUpgrade(true)}
+        >
+          <LockKeyhole size={17} />
+          {locale === "en" ? "Unlock full course" : "Odblokuj pełny kurs"}
+        </button>
+        <UpgradeDialog open={upgrade} onClose={() => setUpgrade(false)} />
+      </div>
+    );
+  }
+
   const nextId = courseModule.lessonIds[courseModule.lessonIds.indexOf(id) + 1];
   const phases = [
     { title: t.concept, Icon: BookOpen },

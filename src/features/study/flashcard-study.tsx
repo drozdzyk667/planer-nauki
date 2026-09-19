@@ -34,7 +34,7 @@ function shuffle<T>(items: readonly T[]) {
 }
 
 export function FlashcardStudy({ courseSlug }: { courseSlug: string }) {
-  const { locale, l, href } = useLocale();
+  const { locale, l } = useLocale();
   const progress = useProgress();
   const course = courseRepository.get(courseSlug)!;
   const content = studyContentFor(courseSlug);

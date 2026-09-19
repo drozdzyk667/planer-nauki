@@ -41,15 +41,6 @@ export function CoursePath({ courseSlug = "javascript" }: { courseSlug?: string 
   const freeMinutes = freeModules.reduce((sum, module) => sum + module.minutes, 0);
   const done = freeLessons.filter((lesson) => progress.completed[lesson.id]).length;
   const next = freeLessons.find((lesson) => !progress.completed[lesson.id]);
-  return () => observer.disconnect();
-  }, [course.id]);
-
-  function goToModule(moduleId: string) {
-    setActiveModule(moduleId);
-    document
-      .getElementById(`module-${moduleId}`)
-      ?.scrollIntoView({ behavior: "smooth", block: "start" });
-  }
 
   return (
     <div className="container page-space">

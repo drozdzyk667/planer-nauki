@@ -1,7 +1,6 @@
 "use client";
 
-import Link from "next/link";
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import {
   ArrowLeft,
   ArrowRight,
@@ -21,7 +20,7 @@ import { studyContentFor } from "@/content/study-content";
 import { CourseModeDock } from "./course-mode-dock";
 
 export function KnowledgeLibrary({ courseSlug }: { courseSlug: string }) {
-  const { locale, l, href } = useLocale();
+  const { locale, l } = useLocale();
   const [index, setIndex] = useState(0);
   const [direction, setDirection] = useState(1);
   const [upgrade, setUpgrade] = useState(false);
@@ -40,18 +39,21 @@ export function KnowledgeLibrary({ courseSlug }: { courseSlug: string }) {
 
   const section = beginnerSections[index];
 
-  function goToChapter(nextIndex: number) {
-    if (!beginnerSections.length) return;
-    const normalized =
-      (nextIndex + beginnerSections.length) % beginnerSections.length;
-    setDirection(
-      normalized > index ||
-        (index === beginnerSections.length - 1 && normalized === 0)
-        ? 1
-        : -1,
-    );
-    setIndex(normalized);
-  }
+  const goToChapter = useCallback(
+    (nextIndex: number) => {
+      if (!beginnerSections.length) return;
+      const normalized =
+        (nextIndex + beginnerSections.length) % beginnerSections.length;
+      setDirection(
+        normalized > index ||
+          (index === beginnerSections.length - 1 && normalized === 0)
+          ? 1
+          : -1,
+      );
+      setIndex(normalized);
+    },
+    [beginnerSections.length, index],
+  );
 
   useEffect(() => {
     const onKeyDown = (event: KeyboardEvent) => {
@@ -68,7 +70,7 @@ export function KnowledgeLibrary({ courseSlug }: { courseSlug: string }) {
     };
     window.addEventListener("keydown", onKeyDown);
     return () => window.removeEventListener("keydown", onKeyDown);
-  }, [index, beginnerSections.length]);
+  }, [index, beginnerSections.length, goToChapter]);
 
   if (!study || !section) return null;
 

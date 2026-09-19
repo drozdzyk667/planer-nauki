@@ -17,8 +17,17 @@ import { UpgradeDialog } from "@/components/ui";
 import { useLocale } from "@/components/providers";
 import { courseRepository } from "@/services/courses";
 import { studyContentFor } from "@/content/study-content";
+import {
+  glossaryHighlightPlan,
+  glossaryMatches,
+  type GlossaryTerm,
+} from "@/content/glossary";
 import { CourseModeDock } from "./course-mode-dock";
-import { GlossaryPanel, GlossaryText } from "./glossary";
+import {
+  GlossaryDetailDialog,
+  GlossaryPanel,
+  GlossaryText,
+} from "./glossary";
 
 type KnowledgeView = "knowledge" | "glossary";
 
@@ -28,6 +37,7 @@ export function KnowledgeLibrary({ courseSlug }: { courseSlug: string }) {
   const [direction, setDirection] = useState(1);
   const [upgrade, setUpgrade] = useState(false);
   const [view, setView] = useState<KnowledgeView>("knowledge");
+  const [selectedGlossary, setSelectedGlossary] = useState<GlossaryTerm | null>(null);
   const course = courseRepository.get(courseSlug)!;
   const study = studyContentFor(courseSlug);
   const en = locale === "en";
@@ -42,6 +52,31 @@ export function KnowledgeLibrary({ courseSlug }: { courseSlug: string }) {
   );
 
   const section = beginnerSections[index];
+
+  const glossaryEntries = useMemo(() => {
+    if (!section) return [];
+    return [
+      { key: "lead", text: section.lead[locale] },
+      ...section.paragraphs.map((item, itemIndex) => ({
+        key: `paragraph-${itemIndex}`,
+        text: item[locale],
+      })),
+      ...section.bullets.map((item, itemIndex) => ({
+        key: `bullet-${itemIndex}`,
+        text: item[locale],
+      })),
+      { key: "rule", text: section.rule[locale] },
+      { key: "pitfall", text: section.pitfall[locale] },
+    ];
+  }, [locale, section]);
+
+  const glossaryPlan = useMemo(() => {
+    if (!section) return {};
+    const titleTerms = glossaryMatches(courseSlug, section.title[locale]).map(
+      (match) => match.term.id,
+    );
+    return glossaryHighlightPlan(courseSlug, glossaryEntries, titleTerms, 8);
+  }, [courseSlug, glossaryEntries, locale, section]);
 
   const goToChapter = useCallback(
     (nextIndex: number) => {
@@ -128,7 +163,10 @@ export function KnowledgeLibrary({ courseSlug }: { courseSlug: string }) {
       </div>
 
       {view === "glossary" ? (
-        <GlossaryPanel courseSlug={courseSlug} />
+        <GlossaryPanel
+          courseSlug={courseSlug}
+          onExpand={setSelectedGlossary}
+        />
       ) : (
         <>
           <section className="knowledge-reader-shell">
@@ -245,7 +283,13 @@ export function KnowledgeLibrary({ courseSlug }: { courseSlug: string }) {
                         </span>
                         <h2>{l(section.title)}</h2>
                         <p>
-                          <GlossaryText courseSlug={courseSlug} text={l(section.lead)} maxTerms={2} />
+                          <GlossaryText
+                            courseSlug={courseSlug}
+                            text={l(section.lead)}
+                            allowedTermIds={glossaryPlan.lead}
+                            maxTerms={2}
+                            onExpand={setSelectedGlossary}
+                          />
                         </p>
                       </div>
                       <span className="knowledge-page-number">
@@ -262,7 +306,12 @@ export function KnowledgeLibrary({ courseSlug }: { courseSlug: string }) {
                           <div className="knowledge-paragraph" key={paragraphIndex}>
                             <span>{paragraphIndex + 1}</span>
                             <p>
-                              <GlossaryText courseSlug={courseSlug} text={l(paragraph)} />
+                              <GlossaryText
+                                courseSlug={courseSlug}
+                                text={l(paragraph)}
+                                allowedTermIds={glossaryPlan[`paragraph-${paragraphIndex}`]}
+                                onExpand={setSelectedGlossary}
+                              />
                             </p>
                           </div>
                         ))}
@@ -276,7 +325,13 @@ export function KnowledgeLibrary({ courseSlug }: { courseSlug: string }) {
                               <li key={bulletIndex}>
                                 <CheckCircle2 size={17} />
                                 <span>
-                                  <GlossaryText courseSlug={courseSlug} text={l(bullet)} maxTerms={2} />
+                                  <GlossaryText
+                                    courseSlug={courseSlug}
+                                    text={l(bullet)}
+                                    allowedTermIds={glossaryPlan[`bullet-${bulletIndex}`]}
+                                    maxTerms={2}
+                                    onExpand={setSelectedGlossary}
+                                  />
                                 </span>
                               </li>
                             ))}
@@ -302,7 +357,13 @@ export function KnowledgeLibrary({ courseSlug }: { courseSlug: string }) {
                           <div>
                             <strong>{en ? "The rule" : "Najważniejsza reguła"}</strong>
                             <p>
-                              <GlossaryText courseSlug={courseSlug} text={l(section.rule)} maxTerms={2} />
+                              <GlossaryText
+                                courseSlug={courseSlug}
+                                text={l(section.rule)}
+                                allowedTermIds={glossaryPlan.rule}
+                                maxTerms={2}
+                                onExpand={setSelectedGlossary}
+                              />
                             </p>
                           </div>
                         </div>
@@ -312,7 +373,13 @@ export function KnowledgeLibrary({ courseSlug }: { courseSlug: string }) {
                           <div>
                             <strong>{en ? "Watch out" : "Uważaj na to"}</strong>
                             <p>
-                              <GlossaryText courseSlug={courseSlug} text={l(section.pitfall)} maxTerms={2} />
+                              <GlossaryText
+                                courseSlug={courseSlug}
+                                text={l(section.pitfall)}
+                                allowedTermIds={glossaryPlan.pitfall}
+                                maxTerms={2}
+                                onExpand={setSelectedGlossary}
+                              />
                             </p>
                           </div>
                         </div>
@@ -397,6 +464,10 @@ export function KnowledgeLibrary({ courseSlug }: { courseSlug: string }) {
         </>
       )}
 
+      <GlossaryDetailDialog
+        term={selectedGlossary}
+        onClose={() => setSelectedGlossary(null)}
+      />
       <UpgradeDialog open={upgrade} onClose={() => setUpgrade(false)} />
     </div>
   );

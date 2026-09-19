@@ -27,7 +27,7 @@ export default function CodeEditor({
           EditorView.theme({
             "&": { backgroundColor: "var(--code-bg)", color: "var(--code-fg)" },
             ".cm-activeLine, .cm-activeLineGutter": {
-              backgroundColor: "var(--surface)",
+              backgroundColor: "var(--code-bg)",
             },
             ".cm-gutters": {
               backgroundColor: "var(--code-bg)",

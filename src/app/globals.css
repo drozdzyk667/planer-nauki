@@ -5586,3 +5586,18 @@
     max-width: 100%;
   }
 }
+
+
+@layer wcag-contrast-fixes {
+  html[data-theme="light"] .code-function {
+    color: #07589f;
+  }
+
+  html[data-theme="light"] .code-keyword {
+    color: #6b3da8;
+  }
+
+  html[data-theme="light"] .code-string {
+    color: #17643f;
+  }
+}

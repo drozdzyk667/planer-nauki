@@ -39,6 +39,13 @@ export const exerciseSchema = z.object({
     .min(1),
 });
 export type Exercise = z.infer<typeof exerciseSchema>;
+export const drillSchema = z.object({
+  prompt: textSchema,
+  hint: textSchema,
+  answer: textSchema,
+  code: z.string().optional(),
+});
+export type Drill = z.infer<typeof drillSchema>;
 export const blockSchema = z.discriminatedUnion("type", [
   z.object({ type: z.literal("text"), heading: textSchema, body: textSchema }),
   z.object({ type: z.literal("code"), code: z.string(), caption: textSchema }),
@@ -75,6 +82,7 @@ export const lessonSchema = z.object({
   prediction: questionSchema,
   exercise: exerciseSchema,
   recall: questionSchema,
+  drills: z.array(drillSchema).optional(),
 });
 export type Lesson = z.infer<typeof lessonSchema>;
 export const moduleSchema = z.object({
@@ -82,6 +90,7 @@ export const moduleSchema = z.object({
   title: textSchema,
   description: textSchema,
   access: z.enum(["free", "premium"]),
+  level: z.enum(["beginner", "intermediate", "advanced"]).optional(),
   lessonIds: z.array(z.string()),
   minutes: z.number().nonnegative(),
 });

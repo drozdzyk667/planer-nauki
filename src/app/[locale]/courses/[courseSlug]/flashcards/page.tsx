@@ -1,7 +1,9 @@
 import { FlashcardStudy } from "@/features/study/flashcard-study";
 
 export function generateStaticParams() {
-  return ["javascript", "typescript", "react"].map((courseSlug) => ({ courseSlug }));
+  return ["javascript", "typescript", "react", "ai", "it-foundations"].map(
+    (courseSlug) => ({ courseSlug }),
+  );
 }
 
 export default async function Page({

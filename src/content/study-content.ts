@@ -1,4 +1,5 @@
 import { T, type Localized } from "@/domain/models";
+import { aiStudyContent, itStudyContent } from "./ai-it-study";
 
 export type StudyLevel = "beginner" | "advanced";
 
@@ -657,6 +658,20 @@ export const courseStudyContent: Record<string, CourseStudyContent> = {
     flashcards: [
       ...react.flashcards,
       ...knowledgeFlashcards("react", react.knowledge),
+    ],
+  },
+  ai: {
+    knowledge: aiStudyContent.knowledge,
+    flashcards: [
+      ...aiStudyContent.flashcards,
+      ...knowledgeFlashcards("ai", aiStudyContent.knowledge),
+    ],
+  },
+  "it-foundations": {
+    knowledge: itStudyContent.knowledge,
+    flashcards: [
+      ...itStudyContent.flashcards,
+      ...knowledgeFlashcards("it", itStudyContent.knowledge),
     ],
   },
 };

@@ -210,7 +210,7 @@ export const aiStudyContent: CourseStudyContent = {
       ["AI applications ingest untrusted natural language, so security cannot depend on the model following instructions perfectly.", "Aplikacje AI przyjmują niezaufany język naturalny, dlatego bezpieczeństwo nie może zależeć od idealnego wykonywania instrukcji przez model."],
       [
         ["Prompt injection tries to make untrusted content override or manipulate intended behaviour. Retrieved documents, web pages and tool output can all contain hostile instructions.", "Prompt injection próbuje sprawić, aby niezaufana treść nadpisała lub zmanipulowała zamierzone zachowanie. Pobrane dokumenty, strony internetowe i wyniki narzędzi mogą zawierać wrogie instrukcje."],
-        ["Minimize sensitive data, apply normal access controls before retrieval and tool execution, and separate untrusted data from trusted instructions.", "Minimalizuj dane wrażliwe, stosuj normalne kontrole dostępu przed retrievalidem i wykonaniem narzędzi oraz oddzielaj niezaufane dane od zaufanych instrukcji."],
+        ["Minimize sensitive data, apply normal access controls before retrieval and tool execution, and separate untrusted data from trusted instructions.", "Minimalizuj dane wrażliwe, stosuj normalne kontrole dostępu przed pobraniem dokumentów i wykonaniem narzędzi oraz oddzielaj niezaufane dane od zaufanych instrukcji."],
       ],
       [
         ["Least privilege applies to AI tools too.", "Zasada najmniejszych uprawnień dotyczy również narzędzi AI."],

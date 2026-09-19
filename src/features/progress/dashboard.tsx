@@ -7,7 +7,9 @@ import {
   Award,
   Check,
   Flame,
+  Info,
   Layers,
+  LockKeyhole,
   RotateCw,
   Sparkles,
   Target,
@@ -141,31 +143,52 @@ export function Dashboard() {
             <span>{t.mastery}</span>
           </div>
           <h2>{t.skillMap}</h2>
+          <p className="mastery-help">
+            <Info size={15} />
+            <span>{t.masteryHelp}</span>
+          </p>
           <div className="skill-nodes">
             {lessons.map((lesson) => {
               const c = progress.concepts[lesson.concept];
+              const course = courseRepository.get(lesson.courseId);
+              const module = course?.modules.find(
+                (item) => item.id === lesson.moduleId,
+              );
+              const premium = module?.access === "premium";
               return (
                 <Link
                   href={href(`/learn/${lesson.id}`)}
                   key={lesson.id}
-                  className={`skill-node ${c ? "unlocked" : ""}`}
+                  className={`skill-node ${c ? "unlocked" : ""} ${premium ? "premium" : "free"}`}
                 >
                   <span>
-                    {c?.mastery === 100 ? (
+                    {premium && !c ? (
+                      <LockKeyhole size={17} />
+                    ) : c?.mastery === 100 ? (
                       <Check size={18} />
                     ) : (
                       <span>{c?.mastery ?? 0}%</span>
                     )}
                   </span>
                   <strong>{l(conceptLabel(lesson.concept))}</strong>
-                  <small>
-                    {c
-                      ? c.mastery >= 75
+                  <small className="skill-node-status">
+                    {premium ? (
+                      <>
+                        <LockKeyhole size={11} />
+                        {t.premium}
+                      </>
+                    ) : c ? (
+                      c.mastery >= 75
                         ? t.strong
                         : c.mastery >= 50
                           ? t.growing
                           : t.weak
-                      : t.planned}
+                    ) : (
+                      <>
+                        <i className="free-access-dot" aria-hidden="true" />
+                        {t.free} · {t.notStarted}
+                      </>
+                    )}
                   </small>
                 </Link>
               );

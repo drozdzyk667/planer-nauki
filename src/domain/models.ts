@@ -101,7 +101,7 @@ export const courseSchema = z.object({
   title: textSchema,
   short: z.string(),
   description: textSchema,
-  category: z.enum(["all", "web", "data", "ai"]),
+  category: z.enum(["all", "web", "data", "ai", "it"]),
   status: z.enum(["available", "soon"]),
   color: z.string(),
   modules: z.array(moduleSchema),

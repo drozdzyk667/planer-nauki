@@ -10,6 +10,7 @@ import {
   modernQuizzes,
   modernConceptNames,
 } from "@/content/modern-courses";
+import { platformCourses } from "@/content/platform-courses";
 import {
   courseSchema,
   lessonSchema,
@@ -25,10 +26,15 @@ export interface CourseRepository {
   quiz(moduleId: string): Quiz | undefined;
   lessons(): Lesson[];
 }
-const replacements = new Map(modernCourses.map((course) => [course.id, course]));
-const allCourses = foundationCourses.map(
-  (course) => replacements.get(course.id) ?? course,
+const replacementCourses = [...modernCourses, ...platformCourses];
+const replacements = new Map(
+  replacementCourses.map((course) => [course.id, course]),
 );
+const foundationCourseIds = new Set(foundationCourses.map((course) => course.id));
+const allCourses = [
+  ...foundationCourses.map((course) => replacements.get(course.id) ?? course),
+  ...replacementCourses.filter((course) => !foundationCourseIds.has(course.id)),
+];
 const allLessons = [...foundationLessons, ...modernLessons];
 const allQuizzes = [...foundationQuizzes, ...modernQuizzes];
 const allConceptNames: Record<string, { en: string; pl: string }> = {

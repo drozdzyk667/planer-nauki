@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { BookOpenText, Code2, FlaskConical, Sparkles } from "lucide-react";
 import { useLocale } from "@/components/providers";
+import { courseRepository } from "@/services/courses";
 
 type StudyMode = "knowledge" | "flashcards" | "coding" | "practice";
 
@@ -15,6 +16,10 @@ export function CourseModeDock({
 }) {
   const { locale, href } = useLocale();
   const en = locale === "en";
+  const course = courseRepository.get(courseSlug);
+  const supportsCoding = ["javascript", "typescript", "react"].includes(courseSlug);
+  const supportsPractice =
+    course?.modules.some((module) => module.lessonIds.length > 0) ?? false;
 
   const items = [
     {
@@ -23,6 +28,7 @@ export function CourseModeDock({
       label: en ? "Knowledge" : "Wiedza",
       full: en ? "Knowledge library" : "Biblioteka wiedzy",
       Icon: BookOpenText,
+      visible: true,
     },
     {
       id: "flashcards" as const,
@@ -30,6 +36,7 @@ export function CourseModeDock({
       label: en ? "Cards" : "Fiszki",
       full: en ? "Flashcards" : "Fiszki",
       Icon: Sparkles,
+      visible: true,
     },
     {
       id: "coding" as const,
@@ -37,6 +44,7 @@ export function CourseModeDock({
       label: en ? "Code" : "Kod",
       full: en ? "Practical coding" : "Praktyczne kodowanie",
       Icon: Code2,
+      visible: supportsCoding,
     },
     {
       id: "practice" as const,
@@ -44,8 +52,9 @@ export function CourseModeDock({
       label: en ? "Practice" : "Testy",
       full: en ? "Practice & tests" : "Praktyka i testy",
       Icon: FlaskConical,
+      visible: supportsPractice,
     },
-  ];
+  ].filter((item) => item.visible);
 
   return (
     <>

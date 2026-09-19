@@ -4,6 +4,7 @@ import { useState } from "react";
 import {
   ArrowRight,
   ArrowUpRight,
+  BookOpenText,
   Check,
   Clock3,
   Code2,
@@ -13,6 +14,7 @@ import { useLocale } from "@/components/providers";
 import { Reveal } from "@/components/ui";
 import { courseRepository } from "@/services/courses";
 import type { Course } from "@/domain/models";
+import { studyContentFor } from "@/content/study-content";
 export function CourseCard({
   course,
   featured = false,
@@ -21,6 +23,18 @@ export function CourseCard({
   featured?: boolean;
 }) {
   const { t, l, href } = useLocale();
+  const freeLessonCount = course.modules
+    .filter((module) => module.access === "free")
+    .reduce((count, module) => count + module.lessonIds.length, 0);
+  const study = studyContentFor(course.slug);
+  const freeChapterCount =
+    study?.knowledge.filter((section) => section.level === "beginner").length ?? 0;
+  const target =
+    freeLessonCount > 0
+      ? `/courses/${course.slug}`
+      : study
+        ? `/courses/${course.slug}/knowledge`
+        : `/courses#course-${course.slug}`;
   return (
     <article
       id={`course-${course.slug}`}
@@ -47,15 +61,21 @@ export function CourseCard({
         {course.status === "available" ? (
           <>
             <span>
-              <Code2 size={15} />
-              {course.modules
-                .filter((module) => module.access === "free")
-                .reduce((count, module) => count + module.lessonIds.length, 0)}{" "}
-              {t.lessons} · {t.free}
+              {freeLessonCount > 0 ? (
+                <>
+                  <Code2 size={15} />
+                  {freeLessonCount} {t.lessons} · {t.free}
+                </>
+              ) : (
+                <>
+                  <BookOpenText size={15} />
+                  {freeChapterCount} {t.chapters} · {t.free}
+                </>
+              )}
             </span>
             <Link
               className="round-link"
-              href={href(`/courses/${course.slug}`)}
+              href={href(target)}
               aria-label={`${t.start} · ${l(course.title)}`}
             >
               <ArrowUpRight size={21} />
@@ -107,7 +127,7 @@ export function Catalogue() {
         </p>
       </Reveal>
       <div className="filter-bar" aria-label={t.courses}>
-        {(["all", "web", "data", "ai"] as const).map((key) => (
+        {(["all", "web", "data", "ai", "it"] as const).map((key) => (
           <button
             key={key}
             className={`filter ${filter === key ? "active" : ""}`}

@@ -72,6 +72,8 @@ const en = {
   earned: "XP earned",
   accuracy: "Accuracy",
   mastery: "Mastery",
+  masteryHelp:
+    "A learning heuristic, not a grade: each correct answer adds 25 points and each wrong answer removes 30. The dashboard average includes concepts you have practiced.",
   level: "Level",
   days: "day streak",
   completed: "Completed",
@@ -112,6 +114,8 @@ const en = {
     "Premium is not available to purchase yet. No payment or subscription is created.",
   keepLearning: "Keep learning for free",
   planned: "Planned",
+  notStarted: "Not started",
+  chapters: "chapters",
   closeDialog: "Close dialog",
   question: "Question",
   of: "of",
@@ -122,6 +126,7 @@ const en = {
   web: "Web development",
   data: "Data & automation",
   ai: "Artificial intelligence",
+  it: "IT & infrastructure",
   emptyCourses: "No courses match this filter.",
   learningDays: "Learning days",
   localNote:
@@ -269,6 +274,8 @@ const pl: Dictionary = {
   earned: "Zdobyte XP",
   accuracy: "Poprawność",
   mastery: "Opanowanie",
+  masteryHelp:
+    "To pomocniczy wskaźnik nauki, nie ocena: poprawna odpowiedź dodaje 25 punktów, a błędna odejmuje 30. Średnia na dashboardzie obejmuje tylko zagadnienia, które już ćwiczyłeś.",
   level: "Poziom",
   days: "dni z rzędu",
   completed: "Ukończone",
@@ -308,6 +315,8 @@ const pl: Dictionary = {
     "Premium nie jest jeszcze dostępne w sprzedaży. Nie dokonujesz płatności ani nie zakładasz subskrypcji.",
   keepLearning: "Ucz się dalej za darmo",
   planned: "W planie",
+  notStarted: "Nie rozpoczęto",
+  chapters: "rozdziałów",
   closeDialog: "Zamknij okno",
   question: "Pytanie",
   of: "z",
@@ -318,6 +327,7 @@ const pl: Dictionary = {
   web: "Tworzenie stron",
   data: "Dane i automatyzacja",
   ai: "Sztuczna inteligencja",
+  it: "IT i infrastruktura",
   emptyCourses: "Brak kursów dla tego filtra.",
   learningDays: "Dni nauki",
   localNote:

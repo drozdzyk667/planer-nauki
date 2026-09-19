@@ -8860,3 +8860,69 @@
     }
   }
 }
+
+
+@layer knowledge-audit-and-access {
+  .mastery-help {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    max-width: 720px;
+    margin-top: 9px;
+    color: var(--quiet);
+    font-size: 11px;
+    line-height: 1.55;
+  }
+
+  .mastery-help svg {
+    flex: 0 0 auto;
+    margin-top: 1px;
+    color: var(--blue);
+  }
+
+  .skill-node.premium > span {
+    color: var(--purple);
+    border-color: color-mix(in srgb, var(--purple), var(--border) 55%);
+    background: color-mix(in srgb, var(--purple), transparent 92%);
+  }
+
+  .skill-node-status {
+    min-height: 17px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+  }
+
+  .skill-node.premium .skill-node-status {
+    color: var(--purple);
+  }
+
+  .free-access-dot {
+    width: 6px;
+    height: 6px;
+    display: inline-block;
+    border-radius: 50%;
+    background: var(--success);
+  }
+
+  .knowledge-chapter-nav nav {
+    max-height: calc(100vh - 235px);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    scrollbar-width: thin;
+    padding-right: 2px;
+  }
+
+  .skill-it {
+    color: #75d8a8;
+  }
+
+  @media (max-width: 760px) {
+    .course-mode-dock {
+      grid-template-columns: none;
+      grid-auto-flow: column;
+      grid-auto-columns: minmax(0, 1fr);
+    }
+  }
+}

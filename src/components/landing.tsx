@@ -168,7 +168,8 @@ export function Landing() {
               ["React", "/courses/react", "react"],
               ["Python", "/courses#course-python", "python"],
               ["SQL", "/courses#course-sql", "sql"],
-              ["AI", "/courses#course-ai", "ai"],
+              ["AI", "/courses/ai/knowledge", "ai"],
+              ["IT", "/courses/it-foundations/knowledge", "it"],
             ].map(([label, path, tone]) => (
               <Link
                 key={label}

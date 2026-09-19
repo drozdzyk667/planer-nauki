@@ -1,5 +1,6 @@
 "use client";
 import Link from "next/link";
+import { Celebration } from "@/components/celebration";
 import { useCallback, useEffect, useRef, useState } from "react";
 import {
   ArrowLeft,
@@ -208,6 +209,7 @@ export function LessonRunner({ id }: { id: string }) {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
         >
+          <Celebration />
           <div className="completion-emblem">
             <CheckCircle2 size={52} />
             <Sparkles className="spark-one" size={22} />

@@ -152,7 +152,7 @@ test("language, themes and system preference persist across navigation and reloa
   page,
 }) => {
   await page.goto(`${root}/en/courses/`);
-  await page.getByLabel("Theme", { exact: true }).selectOption("light");
+  await page.getByRole("button", { name: "Light", exact: true }).click();
   await expect(page.locator("html")).toHaveAttribute("data-theme", "light");
   await page.reload();
   await expect(page.locator("html")).toHaveAttribute("data-theme", "light");
@@ -163,7 +163,7 @@ test("language, themes and system preference persist across navigation and reloa
   );
   await page.goto(`${root}/`);
   await expect(page).toHaveURL(/\/pl\/$/);
-  await page.getByLabel("Motyw", { exact: true }).selectOption("system");
+  await page.getByRole("button", { name: "Systemowy", exact: true }).click();
   await page.emulateMedia({ colorScheme: "dark" });
   await expect(page.locator("html")).toHaveAttribute("data-theme", "dark");
   await page.emulateMedia({ colorScheme: "light" });
@@ -274,6 +274,8 @@ for (const width of [375, 430, 768, 1024, 1440])
       "/pl/review/",
     ]) {
       await page.goto(`${root}${route}`);
+      if (width === 375 && route === "/en/")
+        await page.screenshot({ path: "test-results/mobile-hero.png" });
       await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
       const overflow = await page.evaluate(
         () => document.documentElement.scrollWidth > innerWidth + 1,
@@ -347,3 +349,59 @@ for (const theme of ["dark", "light"])
       fullPage: true,
     });
   });
+
+test("celebration bursts can stop and replay, and respect reduced motion", async ({
+  page,
+}) => {
+  await page.emulateMedia({ reducedMotion: "no-preference" });
+  await completeLesson(page, "first-program");
+  await expect(page.locator(".celebration-particles i")).toHaveCount(72);
+  await page
+    .getByRole("button", { name: "Stop animation", exact: true })
+    .click();
+  await expect(page.locator(".celebration-particles")).toHaveCount(0);
+  await page
+    .getByRole("button", { name: "Celebrate again", exact: true })
+    .click();
+  await expect(page.locator(".celebration-particles i")).toHaveCount(72);
+  await page.screenshot({
+    path: "test-results/celebration.png",
+    fullPage: true,
+  });
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await expect(page.locator(".celebration-particles")).toBeHidden();
+  await expect(
+    page.getByText("You did it. One step further!", { exact: true }),
+  ).toBeVisible();
+  await expect(
+    page.getByRole("button", { name: "Celebrate again", exact: true }),
+  ).toHaveCount(0);
+});
+
+test("supporting labels stay readable and the theme picker works with a keyboard", async ({
+  page,
+}) => {
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await page.setViewportSize({ width: 375, height: 900 });
+  await page.goto(`${root}/pl/courses/`);
+  const smallText = await page
+    .locator(".badge, .eyebrow, .course-card p, .footer-links")
+    .evaluateAll((elements) =>
+      elements
+        .map((element) => ({
+          text: element.textContent,
+          size: parseFloat(getComputedStyle(element).fontSize),
+        }))
+        .filter((item) => item.size < 14),
+    );
+  expect(smallText).toEqual([]);
+  const light = page.getByRole("button", { name: "Jasny", exact: true });
+  await light.focus();
+  await page.keyboard.press("Enter");
+  await expect(light).toHaveAttribute("aria-pressed", "true");
+  await expect(page.locator("html")).toHaveAttribute("data-theme", "light");
+  await page.keyboard.press("Tab");
+  await expect(
+    page.getByRole("button", { name: "Ciemny", exact: true }),
+  ).toBeFocused();
+});

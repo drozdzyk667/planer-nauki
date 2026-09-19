@@ -1,5 +1,6 @@
 "use client";
 import Link from "next/link";
+import { Celebration } from "@/components/celebration";
 import { useState } from "react";
 import {
   ArrowLeft,
@@ -64,6 +65,7 @@ export function Checkpoint({ moduleId }: { moduleId: string }) {
       </Link>
       {result ? (
         <div className="completion">
+          <Celebration />
           <div
             className={`score-ring ${result.score === 100 ? "perfect" : ""}`}
             style={{ "--score": `${result.score}%` } as React.CSSProperties}

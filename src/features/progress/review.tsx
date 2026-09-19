@@ -1,5 +1,6 @@
 "use client";
 import Link from "next/link";
+import { Celebration } from "@/components/celebration";
 import { useState } from "react";
 import { ArrowRight, CheckCircle2, RotateCw } from "lucide-react";
 import { useLocale, useProgress } from "@/components/providers";
@@ -33,6 +34,7 @@ export function Review() {
       {queue ? (
         index >= queue.length ? (
           <div className="completion">
+            <Celebration />
             <CheckCircle2 size={55} />
             <h2>{t.reviewDone}</h2>
             <p>{t.reviewDoneCopy}</p>

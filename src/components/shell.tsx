@@ -74,25 +74,27 @@ export function Header() {
               <Globe2 size={16} />
               <span>{locale.toUpperCase()}</span>
             </Link>
-            <div className="theme-control">
-              {theme === "dark" ? (
-                <Moon size={16} />
-              ) : theme === "light" ? (
-                <Sun size={16} />
-              ) : (
-                <Monitor size={16} />
-              )}
-              <select
-                aria-label={t.theme}
-                value={theme}
-                onChange={(e) =>
-                  setTheme(e.target.value as "dark" | "light" | "system")
-                }
-              >
-                <option value="dark">{t.dark}</option>
-                <option value="light">{t.light}</option>
-                <option value="system">{t.system}</option>
-              </select>
+            <div className="theme-switch" role="group" aria-label={t.theme}>
+              {(
+                [
+                  { value: "light", label: t.light, Icon: Sun },
+                  { value: "dark", label: t.dark, Icon: Moon },
+                  { value: "system", label: t.system, Icon: Monitor },
+                ] as const
+              ).map(({ value, label, Icon }) => (
+                <button
+                  key={value}
+                  type="button"
+                  className="theme-option"
+                  aria-label={label}
+                  title={label}
+                  aria-pressed={theme === value}
+                  onClick={() => setTheme(value)}
+                >
+                  <Icon size={18} />
+                  <span>{label}</span>
+                </button>
+              ))}
             </div>
             <Link
               className="button primary header-cta"

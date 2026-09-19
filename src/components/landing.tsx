@@ -58,8 +58,8 @@ export function Landing() {
           </h1>
           <p>
             {en
-              ? "See the idea. Try the code. Make it yours. Short, visual lessons that turn curiosity into real skills."
-              : "Zobacz pomysł. Wypróbuj kod. Zrozum, jak działa. Krótkie, wizualne lekcje, które zamieniają ciekawość w umiejętności."}
+              ? "Learn JavaScript step by step. Explore animated examples, write real code, and check what you know. Six lessons to get you started — for free."
+              : "Ucz się JavaScript krok po kroku. Oglądaj animowane przykłady, pisz kod i sprawdzaj swoją wiedzę. Sześć lekcji na start — za darmo."}
           </p>
           <div className="hero-buttons">
             <Link className="button primary" href={href("/courses/javascript")}>

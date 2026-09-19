@@ -81,3 +81,9 @@ Release fixes included tablet artwork overflow, reduced-motion content visibilit
 Local progress can be cleared by browser data deletion or edited by a user. In-progress editor text survives back/forward lesson steps but is not saved across a full reload. Client-side tests and locks are not certification or billing controls. The worker is suitable for these local beginner exercises; a paid assessment platform needs an independently hardened execution service. No full manual screen-reader audit, cross-browser certification, field performance study, trademark clearance, or security audit is claimed.
 
 **Recommended next implementation:** separate checkpoint question banks; author and review the Functions module in both languages; move progress and entitlements to an authenticated server when needed; add Firefox/WebKit and assistive-technology testing; measure live Core Web Vitals before increasing animation or media weight. Choose a commercial name after proper clearance.
+
+## Visual refinement — 2026-09-19
+
+Increased supporting labels to at least 14 px and main descriptions to 18 px, strengthened text contrast, and introduced warm yellow primary actions. Replaced the theme dropdown with localized Light/Dark/System buttons and a full-width mobile control. Added bounded confetti and star celebrations to lesson, checkpoint, and review completion, with replay/stop controls and reduced-motion support. Refined bilingual introductory and review copy.
+
+Verification: lint and production build passed, all 18 unit tests and 16 browser tests passed. Browser coverage includes celebration lifecycle, reduced-motion behavior, keyboard theme selection, mobile font sizes, five responsive widths, and existing accessibility and learning-flow checks. Desktop, mobile, and celebration screenshots were reviewed.

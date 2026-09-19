@@ -294,7 +294,7 @@ for (const width of [375, 430, 768, 1024, 1440])
       "/pl/courses/",
       "/pl/courses/javascript/",
       "/pl/courses/javascript/knowledge/",
-      "/pl/fundamentals/",
+      "/pl/courses/it-foundations/fundamentals/",
       "/en/learn/variables/",
       "/pl/dashboard/",
       "/pl/review/",
@@ -345,7 +345,7 @@ for (const theme of ["dark", "light"])
     for (const route of [
       "/en/",
       "/pl/courses/",
-      "/pl/fundamentals/",
+      "/pl/courses/it-foundations/fundamentals/",
       "/en/courses/javascript/",
       "/pl/learn/variables/",
       "/en/dashboard/",
@@ -380,10 +380,15 @@ for (const theme of ["dark", "light"])
 test("IT Fundamentals searches concepts and opens a connected term", async ({
   page,
 }) => {
-  await page.goto(`${root}/pl/fundamentals/`);
+  await page.goto(`${root}/pl/courses/it-foundations/fundamentals/`);
   await expect(
     page.getByRole("heading", { name: /Zrozum słowa/i }),
   ).toBeVisible();
+
+  const modeDock = page.getByRole("navigation", { name: "Tryby nauki kursu" });
+  await expect(
+    modeDock.getByRole("link", { name: "Fundamenty IT i słownik pojęć" }),
+  ).toHaveAttribute("aria-current", "page");
 
   const search = page.getByRole("textbox", { name: "Szukaj pojęć IT" });
   await search.fill("HTTP/2");

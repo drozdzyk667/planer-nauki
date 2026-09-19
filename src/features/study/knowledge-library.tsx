@@ -78,28 +78,6 @@ export function KnowledgeLibrary({ courseSlug }: { courseSlug: string }) {
     return glossaryHighlightPlan(courseSlug, glossaryEntries, titleTerms, 8);
   }, [courseSlug, glossaryEntries, locale, section]);
 
-  const deepDiveTerms = useMemo(() => {
-    if (!section) return [];
-    const texts = [
-      section.title[locale],
-      section.lead[locale],
-      ...section.paragraphs.map((item) => item[locale]),
-      ...section.bullets.map((item) => item[locale]),
-      section.rule[locale],
-      section.pitfall[locale],
-    ];
-    const seen = new Set<string>();
-    const terms: GlossaryTerm[] = [];
-    for (const text of texts) {
-      for (const match of glossaryMatches(courseSlug, text)) {
-        if (seen.has(match.term.id)) continue;
-        seen.add(match.term.id);
-        terms.push(match.term);
-      }
-    }
-    return terms.slice(0, 3);
-  }, [courseSlug, locale, section]);
-
   const goToChapter = useCallback(
     (nextIndex: number) => {
       if (!beginnerSections.length) return;
@@ -407,40 +385,6 @@ export function KnowledgeLibrary({ courseSlug }: { courseSlug: string }) {
                         </div>
                       </aside>
                     </div>
-
-                    {deepDiveTerms.length > 0 && (
-                      <details className="knowledge-deep-dive" open>
-                        <summary>
-                          <span>
-                            <Lightbulb size={17} />
-                            <strong>{en ? "Go deeper" : "Rozwiń temat"}</strong>
-                          </span>
-                          <small>
-                            {en
-                              ? `${deepDiveTerms.length} extra explanations`
-                              : `${deepDiveTerms.length} dodatkowe wyjaśnienia`}
-                          </small>
-                        </summary>
-                        <div className="knowledge-deep-dive-grid">
-                          {deepDiveTerms.map((term) => (
-                            <article key={term.id}>
-                              <div>
-                                <strong>{term.term}</strong>
-                                {term.expanded && <small>{term.expanded[locale]}</small>}
-                              </div>
-                              <p>{term.details[locale]}</p>
-                              <button
-                                type="button"
-                                onClick={() => setSelectedGlossary(term)}
-                              >
-                                {en ? "Open glossary entry" : "Otwórz w słowniku"}
-                                <ArrowRight size={13} />
-                              </button>
-                            </article>
-                          ))}
-                        </div>
-                      </details>
-                    )}
 
                     <footer className="knowledge-page-footer">
                       <button

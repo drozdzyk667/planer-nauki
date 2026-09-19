@@ -63,6 +63,53 @@ export function CoursePath({ courseSlug = "javascript" }: { courseSlug?: string 
               </span>
             </div>
           </Reveal>
+          <div className="study-mode-grid" aria-label={locale === "en" ? "Ways to learn" : "Sposoby nauki"}>
+            <Link className="study-mode-card theory" href={href(`/courses/${course.slug}/knowledge`)}>
+              <span className="study-mode-icon">
+                <Globe2 size={22} />
+              </span>
+              <div>
+                <small>{locale === "en" ? "01 · READ & UNDERSTAND" : "01 · CZYTAJ I ROZUMIEJ"}</small>
+                <strong>{locale === "en" ? "Knowledge library" : "Biblioteka wiedzy"}</strong>
+                <p>
+                  {locale === "en"
+                    ? "Friendly theory, code examples, rules, pitfalls and advanced notes."
+                    : "Przystępna teoria, przykłady kodu, reguły, pułapki i zaawansowane smaczki."}
+                </p>
+              </div>
+              <ArrowUpRight size={18} />
+            </Link>
+            <Link className="study-mode-card cards" href={href(`/courses/${course.slug}/flashcards`)}>
+              <span className="study-mode-icon">
+                <Sparkles size={22} />
+              </span>
+              <div>
+                <small>{locale === "en" ? "02 · QUICK RECALL" : "02 · SZYBKIE POWTÓRKI"}</small>
+                <strong>{locale === "en" ? "Flashcards" : "Fiszki"}</strong>
+                <p>
+                  {locale === "en"
+                    ? "Fast question → answer cards with code, rules and advanced details."
+                    : "Szybkie karty pytanie → odpowiedź z kodem, regułami i detalami."}
+                </p>
+              </div>
+              <ArrowUpRight size={18} />
+            </Link>
+            <div className="study-mode-card practice active">
+              <span className="study-mode-icon">
+                <Play size={22} />
+              </span>
+              <div>
+                <small>{locale === "en" ? "03 · LEARN BY DOING" : "03 · UCZ SIĘ W PRAKTYCE"}</small>
+                <strong>{locale === "en" ? "Interactive practice" : "Praktyka interaktywna"}</strong>
+                <p>
+                  {locale === "en"
+                    ? "Theory in context, predictions, code, puzzles, feedback and checkpoints."
+                    : "Teoria w kontekście, przewidywanie, kod, zagadki, feedback i sprawdziany."}
+                </p>
+              </div>
+              <CheckCircle2 size={18} />
+            </div>
+          </div>
           <div className="path-heading">
             <h2>{t.freePath}</h2>
             <span className="badge green">{freeModules.length} {t.modules}</span>

@@ -6,6 +6,7 @@ import {
   ArrowRight,
   BookOpenText,
   Code2,
+  Heart,
   LockKeyhole,
   RotateCw,
   Shuffle,
@@ -14,9 +15,16 @@ import {
 import { useMemo, useState } from "react";
 import { Breadcrumb } from "@/components/shell";
 import { UpgradeDialog } from "@/components/ui";
-import { useLocale } from "@/components/providers";
+import { useLocale, useProgress } from "@/components/providers";
 import { courseRepository } from "@/services/courses";
-import { studyContentFor, type Flashcard, type StudyLevel } from "@/content/study-content";
+import { progressStore } from "@/services/progress";
+import {
+  studyContentFor,
+  type Flashcard,
+  type StudyLevel,
+} from "@/content/study-content";
+
+type DeckFilter = "all" | "favorites";
 
 function shuffle<T>(items: readonly T[]) {
   const next = [...items];
@@ -29,25 +37,61 @@ function shuffle<T>(items: readonly T[]) {
 
 export function FlashcardStudy({ courseSlug }: { courseSlug: string }) {
   const { locale, l, href } = useLocale();
+  const progress = useProgress();
   const course = courseRepository.get(courseSlug)!;
   const content = studyContentFor(courseSlug);
   const en = locale === "en";
+
   const [level, setLevel] = useState<StudyLevel>("beginner");
+  const [filter, setFilter] = useState<DeckFilter>("all");
   const [order, setOrder] = useState<string[]>([]);
   const [index, setIndex] = useState(0);
   const [flipped, setFlipped] = useState(false);
   const [upgrade, setUpgrade] = useState(false);
 
-  const cards = useMemo(() => {
-    if (!content) return [];
-    const source = content.flashcards.filter((card) => card.level === level);
-    if (!order.length) return source;
-    const byId = new Map(source.map((card) => [card.id, card]));
-    return order.map((id) => byId.get(id)).filter(Boolean) as Flashcard[];
-  }, [content, level, order]);
+  const favoriteIds = useMemo(
+    () => new Set(progress.favoriteFlashcards),
+    [progress.favoriteFlashcards],
+  );
 
-  if (!content || !cards.length) return null;
-  const card = cards[Math.min(index, cards.length - 1)];
+  const sourceCards = useMemo(() => {
+    if (!content) return [];
+    return content.flashcards.filter(
+      (card) =>
+        card.level === level &&
+        (filter === "all" || favoriteIds.has(card.id)),
+    );
+  }, [content, level, filter, favoriteIds]);
+
+  const cards = useMemo(() => {
+    if (!order.length) return sourceCards;
+    const byId = new Map(sourceCards.map((card) => [card.id, card]));
+    const ordered = order
+      .map((id) => byId.get(id))
+      .filter(Boolean) as Flashcard[];
+    const seen = new Set(ordered.map((card) => card.id));
+    return [...ordered, ...sourceCards.filter((card) => !seen.has(card.id))];
+  }, [sourceCards, order]);
+
+  if (!content) return null;
+
+  const safeIndex = cards.length ? Math.min(index, cards.length - 1) : 0;
+  const card = cards[safeIndex];
+  const beginnerCount = content.flashcards.filter(
+    (item) => item.level === "beginner",
+  ).length;
+  const advancedCount = content.flashcards.filter(
+    (item) => item.level === "advanced",
+  ).length;
+  const favoriteCount = content.flashcards.filter((item) =>
+    favoriteIds.has(item.id),
+  ).length;
+
+  function resetDeck() {
+    setIndex(0);
+    setFlipped(false);
+    setOrder([]);
+  }
 
   function setTrack(next: StudyLevel) {
     if (next === "advanced") {
@@ -55,130 +99,272 @@ export function FlashcardStudy({ courseSlug }: { courseSlug: string }) {
       return;
     }
     setLevel(next);
-    setIndex(0);
-    setFlipped(false);
-    setOrder([]);
+    setFilter("all");
+    resetDeck();
+  }
+
+  function setDeckFilter(next: DeckFilter) {
+    setFilter(next);
+    resetDeck();
   }
 
   function move(delta: number) {
+    if (!cards.length) return;
     setIndex((current) => (current + delta + cards.length) % cards.length);
     setFlipped(false);
   }
 
   function shuffleDeck() {
-    setOrder(shuffle(content.flashcards.filter((item) => item.level === level)).map((item) => item.id));
+    setOrder(shuffle(sourceCards).map((item) => item.id));
     setIndex(0);
     setFlipped(false);
+  }
+
+  function toggleFavorite(id: string) {
+    progressStore.toggleFavoriteFlashcard(id);
   }
 
   return (
     <div className="container page-space flashcards-page">
       <Breadcrumb current={l(course.title)} />
-      <header className="flashcards-hero">
+
+      <header className="flashcards-hero compact-study-hero">
         <div>
           <span className="eyebrow">
             <Sparkles size={16} />
             {en ? "FLASHCARD MODE" : "TRYB FISZEK"}
           </span>
-          <h1>{en ? "Fast recall. Less reading." : "Szybkie przypominanie. Mniej czytania."}</h1>
+          <h1>
+            {en ? "One idea. One answer. Repeat." : "Jedna rzecz. Jedna odpowiedź. Powtórka."}
+          </h1>
           <p>
             {en
-              ? "One rule, question or code fragment at a time. Guess first, then flip the card. Use the advanced deck when the foundations feel automatic."
-              : "Jedna reguła, pytanie albo fragment kodu na raz. Najpierw odpowiedz w głowie, potem odwróć kartę. Gdy podstawy wchodzą automatycznie, przejdź do talii zaawansowanej."}
+              ? "Short, plain-language cards with code where code makes the idea clearer. Answer in your head first, then reveal the explanation."
+              : "Krótkie fiszki prostym językiem, z kodem tam, gdzie kod naprawdę pomaga. Najpierw odpowiedz w głowie, potem odsłoń odpowiedź i wyjaśnienie."}
           </p>
+
+          <div className="flashcard-stats">
+            <span>
+              <strong>{beginnerCount}</strong>
+              {en ? " foundation cards" : " fiszek podstawowych"}
+            </span>
+            <span>
+              <strong>{favoriteCount}</strong>
+              {en ? " favorites" : " ulubionych"}
+            </span>
+            <span className="locked-stat">
+              <LockKeyhole size={13} />
+              <strong>{advancedCount}</strong>
+              {en ? " advanced" : " zaawansowanych"}
+            </span>
+          </div>
         </div>
+
         <div className="flashcards-crosslinks">
-          <Link className="button secondary" href={href(`/courses/${courseSlug}/knowledge`)}>
+          <Link
+            className="button secondary"
+            href={href(`/courses/${courseSlug}/knowledge`)}
+          >
             <BookOpenText size={17} />
             {en ? "Knowledge library" : "Biblioteka wiedzy"}
           </Link>
           <Link className="button secondary" href={href(`/courses/${courseSlug}`)}>
             <Code2 size={17} />
-            {en ? "Practice" : "Praktyka"}
+            {en ? "Interactive practice" : "Praktyka"}
           </Link>
         </div>
       </header>
 
       <div className="flashcard-toolbar">
-        <div className="flashcard-levels" role="group" aria-label={en ? "Flashcard level" : "Poziom fiszek"}>
-          {(["beginner", "advanced"] as StudyLevel[]).map((value) => (
+        <div className="flashcard-toolbar-left">
+          <div
+            className="flashcard-levels"
+            role="group"
+            aria-label={en ? "Flashcard level" : "Poziom fiszek"}
+          >
             <button
               type="button"
-              className={level === value ? "active" : ""}
-              aria-pressed={level === value}
-              onClick={() => setTrack(value)}
-              key={value}
+              className={level === "beginner" ? "active" : ""}
+              aria-pressed={level === "beginner"}
+              onClick={() => setTrack("beginner")}
             >
-              {value === "advanced" && <LockKeyhole size={14} />}
-              {value === "beginner"
-                ? en ? "Foundations" : "Podstawy"
-                : en ? "Advanced secrets" : "Zaawansowane smaczki"}
+              {en ? "Foundations" : "Podstawy"}
+              <small>{beginnerCount}</small>
             </button>
-          ))}
+            <button
+              type="button"
+              aria-pressed={false}
+              onClick={() => setTrack("advanced")}
+            >
+              <LockKeyhole size={14} />
+              {en ? "Advanced" : "Zaawansowane"}
+              <small>{advancedCount}</small>
+            </button>
+          </div>
+
+          <div
+            className="flashcard-filter"
+            role="group"
+            aria-label={en ? "Deck filter" : "Filtr talii"}
+          >
+            <button
+              type="button"
+              className={filter === "all" ? "active" : ""}
+              aria-pressed={filter === "all"}
+              onClick={() => setDeckFilter("all")}
+            >
+              {en ? "All cards" : "Wszystkie"}
+            </button>
+            <button
+              type="button"
+              className={filter === "favorites" ? "active" : ""}
+              aria-pressed={filter === "favorites"}
+              onClick={() => setDeckFilter("favorites")}
+            >
+              <Heart size={14} fill={filter === "favorites" ? "currentColor" : "none"} />
+              {en ? "Favorites" : "Ulubione"}
+              <small>{favoriteCount}</small>
+            </button>
+          </div>
         </div>
-        <button className="button secondary small" onClick={shuffleDeck}>
+
+        <button
+          className="button secondary small"
+          onClick={shuffleDeck}
+          disabled={!cards.length}
+        >
           <Shuffle size={16} />
-          {en ? "Shuffle deck" : "Przetasuj talię"}
+          {en ? "Shuffle" : "Przetasuj"}
         </button>
       </div>
 
-      <div className="flashcard-progress">
-        <span>
-          {index + 1} / {cards.length}
-        </span>
-        <div aria-hidden="true">
-          <i style={{ width: `${((index + 1) / cards.length) * 100}%` }} />
-        </div>
-        <strong>{l(card.tag)}</strong>
-      </div>
-
-      <button
-        type="button"
-        className={`flashcard ${flipped ? "is-flipped" : ""}`}
-        onClick={() => setFlipped((value) => !value)}
-        aria-pressed={flipped}
-        aria-label={
-          flipped
-            ? en ? "Hide answer" : "Ukryj odpowiedź"
-            : en ? "Show answer" : "Pokaż odpowiedź"
-        }
-      >
-        <span className="flashcard-inner">
-          <span className="flashcard-face flashcard-front">
-            <span className="flashcard-kicker">{en ? "QUESTION / RULE" : "PYTANIE / REGUŁA"}</span>
-            <strong>{l(card.front)}</strong>
-            {card.code && <code>{card.code}</code>}
-            <span className="flashcard-hint">
-              <RotateCw size={17} />
-              {en ? "Tap to reveal the answer" : "Kliknij, aby odwrócić kartę"}
-            </span>
+      {!cards.length ? (
+        <section className="flashcards-empty">
+          <span>
+            <Heart size={27} />
           </span>
-          <span className="flashcard-face flashcard-back">
-            <span className="flashcard-kicker">{en ? "ANSWER" : "ODPOWIEDŹ"}</span>
-            <strong>{l(card.back)}</strong>
-            {card.code && <code>{card.code}</code>}
-            <span className="flashcard-hint">
-              <RotateCw size={17} />
-              {en ? "Tap to see the question again" : "Kliknij, aby wrócić do pytania"}
+          <h2>{en ? "No favorite cards yet." : "Nie masz jeszcze ulubionych fiszek."}</h2>
+          <p>
+            {en
+              ? "Open all cards and tap the heart on anything you want to revisit quickly."
+              : "Wróć do wszystkich fiszek i kliknij serduszko przy tych, do których chcesz szybko wracać."}
+          </p>
+          <button className="button primary" onClick={() => setDeckFilter("all")}>
+            {en ? "Show all cards" : "Pokaż wszystkie fiszki"}
+          </button>
+        </section>
+      ) : (
+        <>
+          <div className="flashcard-progress">
+            <span>
+              {safeIndex + 1} / {cards.length}
             </span>
-          </span>
-        </span>
-      </button>
+            <div aria-hidden="true">
+              <i style={{ width: `${((safeIndex + 1) / cards.length) * 100}%` }} />
+            </div>
+            <strong>{l(card.tag)}</strong>
+          </div>
 
-      <div className="flashcard-controls">
-        <button className="button secondary" onClick={() => move(-1)}>
-          <ArrowLeft size={18} />
-          {en ? "Previous" : "Poprzednia"}
-        </button>
-        <button className="button primary" onClick={() => setFlipped((value) => !value)}>
-          <RotateCw size={18} />
-          {flipped ? (en ? "Question" : "Pytanie") : (en ? "Show answer" : "Pokaż odpowiedź")}
-        </button>
-        <button className="button secondary" onClick={() => move(1)}>
-          {en ? "Next" : "Następna"}
-          <ArrowRight size={18} />
-        </button>
-      </div>
+          <div className="flashcard-stage">
+            <button
+              type="button"
+              className={`flashcard-favorite ${favoriteIds.has(card.id) ? "active" : ""}`}
+              aria-label={
+                favoriteIds.has(card.id)
+                  ? en
+                    ? "Remove from favorites"
+                    : "Usuń z ulubionych"
+                  : en
+                    ? "Add to favorites"
+                    : "Dodaj do ulubionych"
+              }
+              aria-pressed={favoriteIds.has(card.id)}
+              onClick={() => toggleFavorite(card.id)}
+            >
+              <Heart
+                size={20}
+                fill={favoriteIds.has(card.id) ? "currentColor" : "none"}
+              />
+            </button>
+
+            <button
+              type="button"
+              className={`flashcard ${flipped ? "is-flipped" : ""}`}
+              onClick={() => setFlipped((value) => !value)}
+              aria-pressed={flipped}
+              aria-label={
+                flipped
+                  ? en
+                    ? "Show question"
+                    : "Pokaż pytanie"
+                  : en
+                    ? "Show answer"
+                    : "Pokaż odpowiedź"
+              }
+            >
+              <span className="flashcard-inner">
+                <span className="flashcard-face flashcard-front">
+                  <span className="flashcard-kicker">
+                    {en ? "TRY TO ANSWER" : "SPRÓBUJ ODPOWIEDZIEĆ"}
+                  </span>
+                  <strong>{l(card.front)}</strong>
+                  {card.code && (
+                    <pre className="flashcard-code">
+                      <code>{card.code}</code>
+                    </pre>
+                  )}
+                  <span className="flashcard-hint">
+                    <RotateCw size={17} />
+                    {en ? "Click the card to reveal" : "Kliknij kartę, żeby odsłonić odpowiedź"}
+                  </span>
+                </span>
+
+                <span className="flashcard-face flashcard-back">
+                  <span className="flashcard-kicker">
+                    {en ? "THE SHORT ANSWER" : "NAJKRÓCEJ"}
+                  </span>
+                  <strong>{l(card.back)}</strong>
+                  {card.why && (
+                    <span className="flashcard-why">
+                      <small>{en ? "WHY?" : "DLACZEGO?"}</small>
+                      <p>{l(card.why)}</p>
+                    </span>
+                  )}
+                  <span className="flashcard-hint">
+                    <RotateCw size={17} />
+                    {en ? "Click to see the question again" : "Kliknij, żeby wrócić do pytania"}
+                  </span>
+                </span>
+              </span>
+            </button>
+          </div>
+
+          <div className="flashcard-controls">
+            <button className="button secondary" onClick={() => move(-1)}>
+              <ArrowLeft size={18} />
+              {en ? "Previous" : "Poprzednia"}
+            </button>
+            <button
+              className="button primary"
+              onClick={() => setFlipped((value) => !value)}
+            >
+              <RotateCw size={18} />
+              {flipped
+                ? en
+                  ? "Question"
+                  : "Pytanie"
+                : en
+                  ? "Show answer"
+                  : "Pokaż odpowiedź"}
+            </button>
+            <button className="button secondary" onClick={() => move(1)}>
+              {en ? "Next" : "Następna"}
+              <ArrowRight size={18} />
+            </button>
+          </div>
+        </>
+      )}
+
       <UpgradeDialog open={upgrade} onClose={() => setUpgrade(false)} />
     </div>
   );

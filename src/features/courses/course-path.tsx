@@ -215,6 +215,15 @@ export function CoursePath({ courseSlug = "javascript" }: { courseSlug?: string 
                   <span>{String(i + freeModules.length + 1).padStart(2, "0")}</span>
                   <strong>{l(module.title)}</strong>
                   <small>{l(module.description)}</small>
+                  <span className="module-level-tag">
+                    {module.level === "advanced"
+                      ? locale === "en"
+                        ? "Advanced"
+                        : "Zaawansowany"
+                      : locale === "en"
+                        ? "Foundation"
+                        : "Podstawowy"}
+                  </span>
                   <LockKeyhole size={16} />
                 </button>
               ))}

@@ -151,10 +151,10 @@ export function Dashboard() {
             {lessons.map((lesson) => {
               const c = progress.concepts[lesson.concept];
               const course = courseRepository.get(lesson.courseId);
-              const module = course?.modules.find(
+              const courseModule = course?.modules.find(
                 (item) => item.id === lesson.moduleId,
               );
-              const premium = module?.access === "premium";
+              const premium = courseModule?.access === "premium";
               return (
                 <Link
                   href={href(`/learn/${lesson.id}`)}

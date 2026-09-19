@@ -1,6 +1,6 @@
 import { T, type Course, type CourseModule } from "@/domain/models";
 
-const module = (
+const courseModule = (
   id: string,
   en: string,
   pl: string,
@@ -18,7 +18,7 @@ const module = (
 });
 
 const aiModules: CourseModule[] = [
-  module(
+  courseModule(
     "ai-foundations",
     "AI & LLM foundations",
     "Podstawy AI i LLM",
@@ -26,7 +26,7 @@ const aiModules: CourseModule[] = [
     "Modele, tokeny, kontekst, prompting i strukturalne odpowiedzi.",
     "free",
   ),
-  module(
+  courseModule(
     "ai-retrieval",
     "Embeddings & RAG",
     "Embeddingi i RAG",
@@ -34,7 +34,7 @@ const aiModules: CourseModule[] = [
     "Wyszukiwanie wektorowe, chunking, retrieval, reranking i odpowiedzi oparte na źródłach.",
     "free",
   ),
-  module(
+  courseModule(
     "ai-tools",
     "Tools, function calling & MCP",
     "Narzędzia, function calling i MCP",
@@ -42,7 +42,7 @@ const aiModules: CourseModule[] = [
     "Łącz modele z API, narzędziami i zewnętrznym kontekstem w bezpieczny sposób.",
     "free",
   ),
-  module(
+  courseModule(
     "ai-quality",
     "Evals, safety & reliability",
     "Ewaluacja, bezpieczeństwo i niezawodność",
@@ -50,7 +50,7 @@ const aiModules: CourseModule[] = [
     "Mierz jakość, broń się przed prompt injection i projektuj niezawodne przepływy.",
     "free",
   ),
-  module(
+  courseModule(
     "ai-agents",
     "Agents & orchestration",
     "Agenci i orkiestracja",
@@ -58,7 +58,7 @@ const aiModules: CourseModule[] = [
     "Pętle agentów, pamięć, planowanie i deterministyczne workflow.",
     "premium",
   ),
-  module(
+  courseModule(
     "ai-production",
     "Production AI systems",
     "Produkcyjne systemy AI",
@@ -69,7 +69,7 @@ const aiModules: CourseModule[] = [
 ];
 
 const itModules: CourseModule[] = [
-  module(
+  courseModule(
     "it-web-foundations",
     "How the web works",
     "Jak działa web",
@@ -77,7 +77,7 @@ const itModules: CourseModule[] = [
     "Przeglądarka, DNS, sieć, TLS, HTTP, CORS i cache.",
     "free",
   ),
-  module(
+  courseModule(
     "it-app-architecture",
     "Application architecture",
     "Architektura aplikacji",
@@ -85,7 +85,7 @@ const itModules: CourseModule[] = [
     "Frontend, backend, API, bazy danych, storage, kolejki i cache.",
     "free",
   ),
-  module(
+  courseModule(
     "it-identity-security",
     "Identity & web security",
     "Tożsamość i bezpieczeństwo web",
@@ -93,7 +93,7 @@ const itModules: CourseModule[] = [
     "Sesje, JWT, OAuth, OIDC, SSO, sekrety i bezpieczeństwo przeglądarki.",
     "free",
   ),
-  module(
+  courseModule(
     "it-cloud-delivery",
     "Cloud & delivery",
     "Cloud i dostarczanie",
@@ -101,7 +101,7 @@ const itModules: CourseModule[] = [
     "AWS, Azure, kontenery, Kubernetes, Terraform i CI/CD.",
     "free",
   ),
-  module(
+  courseModule(
     "it-distributed-systems",
     "Distributed systems",
     "Systemy rozproszone",
@@ -109,7 +109,7 @@ const itModules: CourseModule[] = [
     "Spójność, idempotencja, odporność, sieci i strategie deploymentu.",
     "premium",
   ),
-  module(
+  courseModule(
     "it-production-ops",
     "Production operations",
     "Utrzymanie produkcji",

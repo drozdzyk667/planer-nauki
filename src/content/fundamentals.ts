@@ -1,6 +1,7 @@
 import type { GlossaryTerm } from "./glossary";
 
 export type FundamentalsDomain =
+  | "basics"
   | "web"
   | "browser"
   | "security"
@@ -24,6 +25,18 @@ export type FundamentalsDomainDefinition = {
 };
 
 export const fundamentalsDomains: FundamentalsDomainDefinition[] = [
+  {
+    id: "basics",
+    title: { en: "Computing basics", pl: "Podstawy komputerów" },
+    description: {
+      en: "The vocabulary underneath everything else: bits, memory, processes, runtime and execution.",
+      pl: "Pojęcia leżące pod całą resztą: bity, pamięć, procesy, runtime i wykonywanie kodu.",
+    },
+    termIds: [
+      "bit","byte","binary","cpu","ram","os","process","thread","filesystem",
+      "runtime","compiler","interpreter","js","ts","json",
+    ],
+  },
   {
     id: "web",
     title: { en: "Web & Internet", pl: "Web i Internet" },
@@ -278,6 +291,8 @@ export function relatedTermIds(term: GlossaryTerm): string[] {
 export function conceptualFlow(term: GlossaryTerm): string {
   const domain = fundamentalsDomainFor(term.id)?.id;
   switch (domain) {
+    case "basics":
+      return `Source/instructions → ${term.term} → Running program/data`;
     case "web":
       return `Client → ${term.term} → Server → Response`;
     case "browser":

@@ -9315,3 +9315,337 @@
     }
   }
 }
+
+
+@layer knowledge-polish {
+  /* Popovers are state-driven so opening/closing the full dialog never leaves a ghost tooltip. */
+  .glossary-inline .glossary-tooltip,
+  .glossary-inline:hover .glossary-tooltip,
+  .glossary-inline:focus-within .glossary-tooltip {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transform: translateY(5px);
+  }
+
+  .glossary-inline.is-visible .glossary-tooltip,
+  .glossary-inline.is-visible:hover .glossary-tooltip,
+  .glossary-inline.is-visible:focus-within .glossary-tooltip {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+    transform: translateY(0);
+  }
+
+  .glossary-tooltip-expand {
+    width: fit-content;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    margin-top: 10px;
+    padding: 7px 9px;
+    border: 1px solid color-mix(in srgb, var(--accent), var(--border) 55%);
+    border-radius: 8px;
+    color: var(--accent);
+    background: var(--accent-bg);
+    font: inherit;
+    font-size: 10px;
+    font-weight: 750;
+    cursor: pointer;
+    pointer-events: auto;
+  }
+
+  .glossary-tooltip-expand:hover,
+  .glossary-tooltip-expand:focus-visible {
+    color: var(--fg);
+    border-color: var(--accent);
+  }
+
+  /* Keep navigation controls at one visual height even when chapter content grows. */
+  .knowledge-arrow {
+    top: 290px;
+    transform: none;
+  }
+
+  .knowledge-deep-dive {
+    margin: 0 clamp(26px, 4vw, 44px) clamp(28px, 4vw, 44px);
+    border: 1px solid color-mix(in srgb, var(--blue), var(--border) 68%);
+    border-radius: 16px;
+    background:
+      radial-gradient(
+        circle at 100% 0%,
+        color-mix(in srgb, var(--blue), transparent 91%),
+        transparent 40%
+      ),
+      color-mix(in srgb, var(--elevated), transparent 4%);
+    overflow: hidden;
+  }
+
+  .knowledge-deep-dive > summary {
+    min-height: 58px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 18px;
+    padding: 14px 17px;
+    list-style: none;
+    cursor: pointer;
+  }
+
+  .knowledge-deep-dive > summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .knowledge-deep-dive > summary > span {
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+  }
+
+  .knowledge-deep-dive > summary svg {
+    color: var(--blue);
+  }
+
+  .knowledge-deep-dive > summary strong {
+    font-size: 14px;
+  }
+
+  .knowledge-deep-dive > summary small {
+    color: var(--quiet);
+    font-size: 10px;
+  }
+
+  .knowledge-deep-dive-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1px;
+    border-top: 1px solid var(--border);
+    background: var(--border);
+  }
+
+  .knowledge-deep-dive-grid article {
+    min-width: 0;
+    padding: 18px;
+    background: var(--surface);
+  }
+
+  .knowledge-deep-dive-grid article > div {
+    min-height: 38px;
+  }
+
+  .knowledge-deep-dive-grid article strong,
+  .knowledge-deep-dive-grid article small {
+    display: block;
+  }
+
+  .knowledge-deep-dive-grid article strong {
+    color: var(--blue);
+    font-size: 14px;
+  }
+
+  .knowledge-deep-dive-grid article small {
+    margin-top: 3px;
+    color: var(--quiet);
+    font-size: 9px;
+  }
+
+  .knowledge-deep-dive-grid article p {
+    margin-top: 12px;
+    color: var(--muted);
+    font-size: 13px;
+    line-height: 1.72;
+  }
+
+  .knowledge-deep-dive-grid article button {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    margin-top: 13px;
+    padding: 0;
+    border: 0;
+    color: var(--accent);
+    background: transparent;
+    font: inherit;
+    font-size: 10px;
+    font-weight: 700;
+    cursor: pointer;
+  }
+
+  @media (max-width: 767px) {
+    html {
+      scroll-padding-top: 78px;
+    }
+
+    .header-inner {
+      grid-template-columns: minmax(0, 1fr) auto auto auto;
+      grid-template-rows: 1fr;
+      min-height: 62px;
+      padding-block: 8px;
+      gap: 6px;
+    }
+
+    .header-actions {
+      display: contents;
+    }
+
+    .learning-hud,
+    .header-cta {
+      display: none;
+    }
+
+    .language-switch {
+      grid-column: 2;
+      grid-row: 1;
+      min-width: 32px;
+      min-height: 34px;
+      justify-content: center;
+      padding-inline: 5px;
+    }
+
+    .theme-switch {
+      grid-column: 3;
+      grid-row: 1;
+      width: auto;
+      display: inline-flex;
+      gap: 1px;
+      padding: 2px;
+      border-radius: 9px;
+    }
+
+    .theme-option {
+      flex: 0 0 auto;
+      width: 29px;
+      min-width: 29px;
+      height: 29px;
+      min-height: 29px;
+      padding: 0;
+      border-radius: 6px;
+    }
+
+    .theme-option svg {
+      width: 15px;
+      height: 15px;
+    }
+
+    .mobile-menu {
+      grid-column: 4;
+      grid-row: 1;
+      width: 34px;
+      height: 34px;
+      min-width: 34px;
+      min-height: 34px;
+    }
+
+    .wordmark {
+      font-size: 22px;
+    }
+
+    .brand-symbol {
+      margin-right: 6px;
+      transform: scale(0.86) skewY(-26deg);
+      transform-origin: left center;
+    }
+
+    .knowledge-reader-stage {
+      margin-inline: 0;
+    }
+
+    .knowledge-arrow {
+      display: none;
+    }
+
+    .knowledge-reader-page {
+      border-radius: 18px;
+    }
+
+    .knowledge-page-header,
+    .knowledge-page-grid {
+      padding: 22px 17px;
+    }
+
+    .knowledge-page-grid {
+      grid-template-columns: 1fr;
+      gap: 22px;
+    }
+
+    .knowledge-deep-dive {
+      margin: 0 17px 22px;
+    }
+
+    .knowledge-deep-dive > summary {
+      align-items: flex-start;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .knowledge-deep-dive-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .knowledge-page-footer {
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+      gap: 10px;
+      padding: 14px;
+    }
+
+    .knowledge-page-footer > div {
+      grid-column: 1 / -1;
+      grid-row: 1;
+      width: 100%;
+    }
+
+    .knowledge-page-footer > .button:first-child {
+      grid-column: 1;
+      grid-row: 2;
+    }
+
+    .knowledge-page-footer > .button:last-child {
+      grid-column: 2;
+      grid-row: 2;
+    }
+
+    .knowledge-page-footer > .button {
+      width: 100%;
+      min-width: 0;
+      min-height: 44px;
+      padding: 10px 8px;
+      justify-content: center;
+      gap: 5px;
+      font-size: 12px;
+      line-height: 1.25;
+      white-space: normal;
+      text-align: center;
+    }
+
+    .glossary-tooltip,
+    .glossary-inline.is-visible .glossary-tooltip {
+      display: block;
+      position: fixed;
+      z-index: 80;
+      left: 12px;
+      right: 12px;
+      bottom: 78px;
+      width: auto;
+      max-width: none;
+    }
+  }
+
+  @media (max-width: 410px) {
+    .language-switch span {
+      display: none;
+    }
+
+    .theme-option {
+      width: 28px;
+      min-width: 28px;
+    }
+
+    .knowledge-page-footer {
+      padding-inline: 10px;
+    }
+
+    .knowledge-page-footer > .button {
+      font-size: 11px;
+    }
+  }
+}

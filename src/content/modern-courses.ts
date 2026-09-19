@@ -15,16 +15,31 @@ const q = (
   answer: number,
   explanation: [string, string],
   code?: string,
-): Question => ({
-  id,
-  concept,
-  type: code ? "predictOutput" : "singleChoice",
-  prompt: T(...prompt),
-  options: options.map((text, index) => ({ id: String(index), text: T(...text) })),
-  answer: String(answer),
-  explanation: T(...explanation),
-  code,
-});
+): Question => {
+  const complete = [...options];
+  const fillers: [string, string][] = [
+    ["A different result", "Inny wynik"],
+    ["The opposite behaviour", "Odwrotne zachowanie"],
+    ["It cannot be determined", "Nie da się tego określić"],
+  ];
+  for (const filler of fillers) {
+    if (complete.length >= 4) break;
+    complete.push(filler);
+  }
+  return {
+    id,
+    concept,
+    type: code ? "predictOutput" : "singleChoice",
+    prompt: T(...prompt),
+    options: complete.slice(0, 4).map((text, index) => ({
+      id: String(index),
+      text: T(...text),
+    })),
+    answer: String(answer),
+    explanation: T(...explanation),
+    code,
+  };
+};
 
 type Seed = {
   id: string;
@@ -53,7 +68,7 @@ const makeLesson = (s: Seed): Lesson => ({
   moduleId: s.moduleId,
   title: T(...s.title),
   subtitle: T(...s.subtitle),
-  minutes: 9,
+  minutes: 12,
   concept: s.concept,
   blocks: [
     {
@@ -61,7 +76,29 @@ const makeLesson = (s: Seed): Lesson => ({
       heading: T("Build the mental model first.", "Najpierw zbuduj model w głowie."),
       body: T(...s.body),
     },
-    { type: "code", code: s.code, caption: T("Read the contract, then the implementation.", "Najpierw przeczytaj kontrakt, potem implementację.") },
+    {
+      type: "code",
+      code: s.code,
+      caption: T(
+        "Read the contract, then the implementation. Ask what guarantee this line gives the rest of the program.",
+        "Najpierw przeczytaj kontrakt, potem implementację. Zapytaj, jaką gwarancję ta linia daje reszcie programu.",
+      ),
+    },
+    {
+      type: "text",
+      heading: T("What to notice in real code", "Na co zwrócić uwagę w prawdziwym kodzie"),
+      body: T(
+        "Do not memorise the syntax in isolation. Trace where the data comes from, which component or function owns it, and what assumption this pattern makes explicit.",
+        "Nie zapamiętuj samej składni. Prześledź, skąd pochodzą dane, który komponent lub funkcja jest ich właścicielem i jakie założenie ten wzorzec pokazuje wprost.",
+      ),
+    },
+    {
+      type: "tip",
+      body: T(
+        "Code-review lens: if the same rule needs repeated comments, consider whether the type, component boundary or function API can express it directly.",
+        "Perspektywa code review: jeśli tę samą regułę trzeba stale wyjaśniać komentarzem, sprawdź, czy typ, granica komponentu albo API funkcji nie może pokazać jej wprost.",
+      ),
+    },
     { type: "fact", title: T("Worth knowing", "Ciekawostka"), body: T(...s.fact) },
     {
       type: "riddle",
@@ -81,6 +118,39 @@ const makeLesson = (s: Seed): Lesson => ({
     tests: s.tests.map((test) => ({ label: T(...test.label), expression: test.expression })),
   },
   recall: s.recall,
+  drills: [
+    {
+      prompt: T(
+        "Explain the core rule in one sentence without copying the example.",
+        "Wyjaśnij główną regułę jednym zdaniem bez kopiowania przykładu.",
+      ),
+      hint: T(
+        "Focus on the guarantee this pattern gives to the caller or component.",
+        "Skup się na gwarancji, którą ten wzorzec daje wywołującemu lub komponentowi.",
+      ),
+      answer: T(...s.fact),
+    },
+    {
+      prompt: T(s.riddle[0], s.riddle[1]),
+      hint: T(
+        "Read the code from the data boundary toward the place where the value is used.",
+        "Przeczytaj kod od granicy danych do miejsca, w którym wartość jest używana.",
+      ),
+      answer: T(s.riddle[2], s.riddle[3]),
+      code: s.code,
+    },
+    {
+      prompt: T(
+        "How would you verify this rule in a tiny experiment?",
+        "Jak sprawdziłbyś tę regułę w małym eksperymencie?",
+      ),
+      hint: T(...s.hint),
+      answer: T(
+        "Change one relevant input, run the smallest possible example, and compare the result with the contract you expected.",
+        "Zmień jedno istotne wejście, uruchom najmniejszy możliwy przykład i porównaj wynik z oczekiwanym kontraktem.",
+      ),
+    },
+  ],
 });
 
 export const modernLessons: Lesson[] = [
@@ -219,7 +289,13 @@ const m = (
   id:string,en:string,pl:string,descEn:string,descPl:string,
   access:"free"|"premium",lessonIds:string[]=[],minutes=40,
 ): CourseModule => ({
-  id,title:T(en,pl),description:T(descEn,descPl),access,lessonIds,minutes,
+  id,
+  title:T(en,pl),
+  description:T(descEn,descPl),
+  access,
+  level: access === "free" ? "beginner" : "advanced",
+  lessonIds,
+  minutes,
 });
 
 const tsModules: CourseModule[] = [

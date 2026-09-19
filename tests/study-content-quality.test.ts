@@ -154,6 +154,20 @@ describe("study content quality", () => {
       expectLocalized(term.details, `glossary/${term.id}/details`);
       expect(term.details.en.length).toBeGreaterThan(term.definition.en.length + 30);
       expect(term.details.pl.length).toBeGreaterThan(term.definition.pl.length + 30);
+      expect(term.details.en.trim()).not.toBe(term.definition.en.trim());
+      expect(term.details.pl.trim()).not.toBe(term.definition.pl.trim());
+      expect(
+        term.details.en.trim().toLocaleLowerCase().startsWith(
+          term.definition.en.trim().toLocaleLowerCase(),
+        ),
+        `glossary/${term.id}/details repeats short EN definition`,
+      ).toBe(false);
+      expect(
+        term.details.pl.trim().toLocaleLowerCase().startsWith(
+          term.definition.pl.trim().toLocaleLowerCase(),
+        ),
+        `glossary/${term.id}/details repeats short PL definition`,
+      ).toBe(false);
       if (term.expanded) expectLocalized(term.expanded, `glossary/${term.id}/expanded`);
       expect(term.aliases.length).toBeGreaterThan(0);
     }

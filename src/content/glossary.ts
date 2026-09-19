@@ -5,10 +5,83 @@ export type GlossaryTerm = {
   term: string;
   expanded?: Localized;
   definition: Localized;
+  details: Localized;
   aliases: string[];
   courses: string[];
   category: "web" | "language" | "framework" | "ai" | "infra";
 };
+
+
+const LONG_DETAILS: Partial<Record<string, [string, string]>> = {
+  http: [
+    "HTTP defines how a client and server describe requests and responses: method, target, headers, status and optional body. It is an application-layer protocol, so encryption is provided by TLS when HTTP is used as HTTPS. In practice, inspect the real request and response in DevTools, a proxy or server logs. Understanding methods, status codes and caching headers makes frontend/backend debugging much easier.",
+    "HTTP definiuje sposób opisu requestów i response'ów pomiędzy klientem a serwerem: metodę, adres, nagłówki, status i opcjonalne body. Jest protokołem warstwy aplikacyjnej, więc szyfrowanie zapewnia TLS, gdy HTTP działa jako HTTPS. W praktyce warto oglądać prawdziwy request i response w DevTools, proxy lub logach serwera. Znajomość metod, statusów i cache headers mocno ułatwia debugowanie frontendu i backendu."
+  ],
+  http2: [
+    "HTTP/2 keeps HTTP semantics but changes transport on the connection. It uses binary framing, header compression and multiplexing so many streams can share one TCP connection. This reduces the need for many parallel connections, although TCP packet loss can still affect multiple streams. Application endpoints usually do not change; the browser, CDN, proxy and server negotiate the protocol.",
+    "HTTP/2 zachowuje semantykę HTTP, ale zmienia sposób transportu w ramach połączenia. Używa binarnego framingu, kompresji nagłówków i multiplexingu, dzięki czemu wiele strumieni może współdzielić jedno połączenie TCP. Ogranicza to potrzebę wielu równoległych połączeń, choć utrata pakietu TCP nadal może wpływać na wiele strumieni. Endpointy aplikacji zwykle się nie zmieniają — protokół negocjują przeglądarka, CDN, proxy i serwer."
+  ],
+  dns: [
+    "DNS is the naming system that lets clients find services without hard-coding network addresses. A resolver looks up records such as A, AAAA or CNAME and may cache the answer according to TTL. Because several caches can exist, DNS changes may appear gradually rather than everywhere at once. When a site cannot be reached, DNS is a distinct layer to inspect before blaming HTTP or the application.",
+    "DNS to system nazw pozwalający klientom odnajdywać usługi bez wpisywania na sztywno adresów sieciowych. Resolver wyszukuje rekordy, np. A, AAAA lub CNAME, i może cache'ować odpowiedź zgodnie z TTL. Ponieważ po drodze istnieje kilka warstw cache, zmiany DNS mogą pojawiać się stopniowo. Gdy strona jest niedostępna, DNS jest osobną warstwą do sprawdzenia zanim zacznie się obwiniać HTTP albo aplikację."
+  ],
+  cors: [
+    "CORS is enforced by browsers and controls whether frontend JavaScript may read a cross-origin response. For some requests the browser first sends an OPTIONS preflight describing the intended method and headers. The server answers with Access-Control-Allow-* headers. CORS is not authentication or authorization, so the backend must still verify identity and permissions.",
+    "CORS jest egzekwowany przez przeglądarkę i kontroluje, czy JavaScript frontendu może odczytać cross-origin response. Dla części requestów przeglądarka najpierw wysyła preflight OPTIONS z planowaną metodą i nagłówkami. Serwer odpowiada nagłówkami Access-Control-Allow-*. CORS nie jest uwierzytelnianiem ani autoryzacją, więc backend nadal musi sprawdzać tożsamość i uprawnienia."
+  ],
+  dom: [
+    "The DOM is the browser's object model for a document. JavaScript can inspect and change nodes, attributes and text through DOM APIs. Those changes may trigger style calculation, layout or paint work, so repeated large mutations can have a performance cost. Frameworks such as React still ultimately update the DOM even when you work through a higher-level abstraction.",
+    "DOM to obiektowy model dokumentu udostępniany przez przeglądarkę. JavaScript może odczytywać i zmieniać węzły, atrybuty i tekst przez API DOM. Takie zmiany mogą uruchamiać obliczanie stylów, layout lub paint, dlatego częste duże mutacje mogą kosztować wydajność. Frameworki takie jak React nadal ostatecznie aktualizują DOM, nawet jeśli pracujesz przez wyższą abstrakcję."
+  ],
+  rag: [
+    "RAG supplies external knowledge to a model at request time. A typical flow ingests documents, splits them into useful chunks, indexes them, retrieves candidates for a query, optionally reranks them and places the best evidence in the model context. It is useful for private, domain-specific or changing knowledge because the information stays outside model weights. Quality depends heavily on retrieval, permissions and provenance.",
+    "RAG dostarcza modelowi zewnętrzną wiedzę w czasie requestu. Typowy flow pobiera dokumenty, dzieli je na użyteczne chunki, indeksuje, wyszukuje kandydatów dla zapytania, opcjonalnie rerankuje i umieszcza najlepsze dowody w kontekście modelu. Jest przydatny dla prywatnej, domenowej lub zmiennej wiedzy, ponieważ informacje pozostają poza wagami modelu. Jakość mocno zależy od retrievalu, uprawnień i zachowania źródeł."
+  ],
+  mcp: [
+    "MCP standardizes how an AI host connects to external capabilities exposed by MCP servers. A host uses MCP clients to communicate with servers that can expose tools and contextual resources through a common protocol. MCP reduces one-off integration code, but it does not automatically make a server trusted or safe. Authentication, authorization, consent, tool scoping and validation still need explicit design.",
+    "MCP standaryzuje sposób, w jaki host AI łączy się z zewnętrznymi możliwościami udostępnianymi przez serwery MCP. Host używa klientów MCP do komunikacji z serwerami, które mogą wystawiać narzędzia i zasoby kontekstowe przez wspólny protokół. MCP ogranicza ilość jednorazowego kodu integracyjnego, ale nie sprawia automatycznie, że serwer jest zaufany lub bezpieczny. Uwierzytelnianie, autoryzacja, zgoda użytkownika, zakres narzędzi i walidacja nadal muszą być jawnie zaprojektowane."
+  ],
+  kubernetes: [
+    "Kubernetes orchestrates containerized workloads across a cluster. You declare desired state, for example a Deployment and replica count, and controllers continuously reconcile actual state toward it. Pods are disposable scheduling units, Services provide stable networking and probes influence traffic or restarts. Kubernetes automates infrastructure behaviour, but it cannot decide whether your business logic or data is correct.",
+    "Kubernetes orkiestruje konteneryzowane workloady w klastrze. Deklarujesz desired state, np. Deployment i liczbę replik, a kontrolery stale uzgadniają stan rzeczywisty z zadeklarowanym. Pody są jednorazowymi jednostkami schedulingu, Services zapewniają stabilną sieć, a probe'y wpływają na ruch lub restarty. Kubernetes automatyzuje zachowanie infrastruktury, ale nie ocenia poprawności logiki biznesowej ani danych."
+  ],
+  terraform: [
+    "Terraform is an Infrastructure as Code tool that converts declarative configuration into planned changes against provider APIs. Its state maps configuration to real resources, which makes state operationally important. A normal workflow is configuration, plan, review and apply through a controlled process. Teams still need state locking, secret handling, ownership and drift policies.",
+    "Terraform to narzędzie Infrastructure as Code, które zamienia deklaratywną konfigurację na planowane zmiany wykonywane przez API providerów. State mapuje konfigurację na realne zasoby, dlatego jest operacyjnie ważny. Typowy workflow to konfiguracja, plan, review i apply przez kontrolowany proces. Zespół nadal potrzebuje lockingu state, obsługi sekretów, ownershipu i polityki driftu."
+  ]
+};
+
+function fallbackDetails(
+  definition: [string, string],
+  category: GlossaryTerm["category"],
+): [string, string] {
+  const suffix: Record<GlossaryTerm["category"], [string, string]> = {
+    web: [
+      "In a production web application, understand which layer owns this concept: browser, network, edge or backend. Knowing that boundary helps you debug the right place and avoids confusing it with security or application logic handled elsewhere.",
+      "W aplikacji produkcyjnej warto wiedzieć, która warstwa odpowiada za to pojęcie: przeglądarka, sieć, edge czy backend. Znajomość tej granicy pomaga debugować właściwe miejsce i nie mylić go z bezpieczeństwem albo logiką aplikacji realizowaną gdzie indziej."
+    ],
+    language: [
+      "In day-to-day code, learn whether this concept affects parsing, type checking, build output or runtime behaviour. A small executable example and common edge cases are more useful than memorising the definition alone.",
+      "W codziennym kodzie warto rozumieć, czy to pojęcie wpływa na parsing, typecheck, build czy zachowanie runtime. Mały działający przykład i typowe edge case'y są bardziej użyteczne niż samo zapamiętanie definicji."
+    ],
+    framework: [
+      "In React, connect this concept to data ownership, rendering and synchronization. The useful question is not only what the API is called, but when React uses it and what responsibility should stay outside the component.",
+      "W React połącz to pojęcie z ownershipem danych, renderowaniem i synchronizacją. Ważna jest nie tylko nazwa API, ale też kiedy React z niego korzysta i jaka odpowiedzialność powinna pozostać poza komponentem."
+    ],
+    ai: [
+      "In a production AI system, separate model capability from application guarantees. Ask what data enters the model, what is validated in code, which permissions apply and how quality or failures will be measured.",
+      "W produkcyjnym systemie AI oddziel możliwości modelu od gwarancji aplikacji. Pytaj, jakie dane trafiają do modelu, co jest walidowane w kodzie, jakie obowiązują uprawnienia i jak będzie mierzona jakość lub błędy."
+    ],
+    infra: [
+      "In production infrastructure, focus on responsibility, failure modes and observability. Understand what component controls this layer, what happens when it fails and which logs, metrics or configuration show its real state.",
+      "W infrastrukturze produkcyjnej skup się na odpowiedzialności, trybach awarii i observability. Zrozum, który komponent kontroluje tę warstwę, co dzieje się przy awarii oraz jakie logi, metryki lub konfiguracja pokazują jej rzeczywisty stan."
+    ]
+  };
+  return [
+    definition[0] + " " + suffix[category][0],
+    definition[1] + " " + suffix[category][1]
+  ];
+}
 
 const G = (
   id: string,
@@ -23,6 +96,7 @@ const G = (
   term,
   expanded: expanded ? T(...expanded) : undefined,
   definition: T(...definition),
+  details: T(...(LONG_DETAILS[id] ?? fallbackDetails(definition, category))),
   aliases,
   courses,
   category,
@@ -123,3 +197,75 @@ export const glossaryTerms: GlossaryTerm[] = [
 
 export const glossaryFor = (courseSlug: string) =>
   glossaryTerms.filter((term) => term.courses.includes(courseSlug));
+
+
+const normalizeGlossary = (value: string) => value.toLocaleLowerCase();
+
+const escapeGlossary = (value: string) =>
+  value.replace(/[.*+?^$\{\}()|[\]\\]/g, "\\$&");
+
+export type GlossaryMatch = {
+  start: number;
+  end: number;
+  text: string;
+  term: GlossaryTerm;
+};
+
+export function glossaryMatches(courseSlug: string, text: string): GlossaryMatch[] {
+  const terms = glossaryFor(courseSlug);
+  const aliasMap = new Map<string, GlossaryTerm>();
+  for (const term of terms) {
+    for (const alias of term.aliases) aliasMap.set(normalizeGlossary(alias), term);
+  }
+
+  const aliases = [...aliasMap.keys()].sort((a, b) => b.length - a.length);
+  if (!aliases.length) return [];
+
+  const pattern = new RegExp(
+    "(?<![\\p{L}\\p{N}_])(" +
+      aliases.map(escapeGlossary).join("|") +
+      ")(?![\\p{L}\\p{N}_])",
+    "giu",
+  );
+
+  return [...text.matchAll(pattern)].flatMap((match) => {
+    if (match.index === undefined) return [];
+    const matchedText = match[0];
+    const term = aliasMap.get(normalizeGlossary(matchedText));
+    if (!term) return [];
+    return [{
+      start: match.index,
+      end: match.index + matchedText.length,
+      text: matchedText,
+      term,
+    }];
+  });
+}
+
+export type GlossaryHighlightEntry = {
+  key: string;
+  text: string;
+};
+
+export function glossaryHighlightPlan(
+  courseSlug: string,
+  entries: GlossaryHighlightEntry[],
+  excludedTermIds: Iterable<string> = [],
+  maxTerms = 8,
+): Record<string, string[]> {
+  const seen = new Set(excludedTermIds);
+  const plan: Record<string, string[]> = {};
+  let count = 0;
+
+  for (const entry of entries) {
+    plan[entry.key] = [];
+    for (const match of glossaryMatches(courseSlug, entry.text)) {
+      if (seen.has(match.term.id) || count >= maxTerms) continue;
+      seen.add(match.term.id);
+      plan[entry.key].push(match.term.id);
+      count += 1;
+    }
+  }
+
+  return plan;
+}

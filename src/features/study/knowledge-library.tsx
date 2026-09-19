@@ -1,55 +1,69 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
+  ArrowLeft,
+  ArrowRight,
   BookOpenText,
+  CheckCircle2,
   Code2,
   Lightbulb,
   LockKeyhole,
   ShieldAlert,
   Sparkles,
 } from "lucide-react";
+import { AnimatePresence, motion } from "motion/react";
 import { Breadcrumb } from "@/components/shell";
 import { UpgradeDialog } from "@/components/ui";
 import { useLocale } from "@/components/providers";
 import { courseRepository } from "@/services/courses";
-import { studyContentFor, type StudyLevel } from "@/content/study-content";
+import { studyContentFor } from "@/content/study-content";
 
 export function KnowledgeLibrary({ courseSlug }: { courseSlug: string }) {
   const { locale, l, href } = useLocale();
+  const [index, setIndex] = useState(0);
+  const [direction, setDirection] = useState(1);
   const [upgrade, setUpgrade] = useState(false);
   const course = courseRepository.get(courseSlug)!;
   const study = studyContentFor(courseSlug);
-  if (!study) return null;
-
   const en = locale === "en";
-  const levels: { id: StudyLevel; label: string; note: string }[] = [
-    {
-      id: "beginner",
-      label: en ? "Foundations" : "Podstawy",
-      note: en ? "Clear mental models first." : "Najpierw jasne modele myślowe.",
-    },
-    {
-      id: "advanced",
-      label: en ? "Advanced notes" : "Zaawansowane tajniki",
-      note: en
-        ? "The details that separate good from great."
-        : "Smaczki, które odróżniają dobry kod od świetnego.",
-    },
-  ];
 
-  const beginnerSections = study.knowledge.filter(
-    (section) => section.level === "beginner",
+  const beginnerSections = useMemo(
+    () => study?.knowledge.filter((section) => section.level === "beginner") ?? [],
+    [study],
   );
-  const advancedSections = study.knowledge.filter(
-    (section) => section.level === "advanced",
+  const advancedSections = useMemo(
+    () => study?.knowledge.filter((section) => section.level === "advanced") ?? [],
+    [study],
   );
+
+  const section = beginnerSections[index];
+
+  function move(next: number) {
+    if (!beginnerSections.length) return;
+    const normalized =
+      (next + beginnerSections.length) % beginnerSections.length;
+    setDirection(normalized > index || (index === beginnerSections.length - 1 && normalized === 0) ? 1 : -1);
+    setIndex(normalized);
+  }
+
+  useEffect(() => {
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "ArrowLeft") move(index - 1);
+      if (event.key === "ArrowRight") move(index + 1);
+    };
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [index, beginnerSections.length]);
+
+  if (!study || !section) return null;
 
   return (
     <div className="container page-space study-library-page">
       <Breadcrumb current={l(course.title)} />
-      <header className="study-library-hero">
+
+      <header className="study-library-hero compact-study-hero">
         <div>
           <span className="eyebrow">
             <BookOpenText size={16} />
@@ -58,168 +72,237 @@ export function KnowledgeLibrary({ courseSlug }: { courseSlug: string }) {
           <h1>
             {l(course.title)}
             <span className="accent-dot">.</span>{" "}
-            {en ? "The useful theory." : "Teoria, która się przydaje."}
+            {en ? "Understand it, page by page." : "Zrozum to, strona po stronie."}
           </h1>
           <p>
             {en
-              ? "A compact reference you can read from start to finish or revisit when one concept needs to click. Every section gives you the rule, an example and the trap to avoid."
-              : "Przystępne kompendium, które możesz przeczytać od początku do końca albo traktować jak ściągę. Każdy temat ma zasadę, przykład i pułapkę, której warto uniknąć."}
+              ? "No wall of text. One topic at a time, explained from the basics, with a rule, a real example and the mistake you are most likely to make."
+              : "Bez ściany tekstu. Jeden temat na raz — od podstaw, z prostym wyjaśnieniem, regułą, przykładem i błędem, który najłatwiej popełnić."}
           </p>
         </div>
+
         <div className="study-library-actions">
           <Link
             className="button secondary"
             href={href(`/courses/${courseSlug}/flashcards`)}
           >
             <Sparkles size={17} />
-            {en ? "Learn with flashcards" : "Ucz się fiszkami"}
+            {en ? "Practice with flashcards" : "Powtórz fiszkami"}
           </Link>
-          <Link className="button primary" href={href(`/courses/${courseSlug}`)}>
+          <Link className="button secondary" href={href(`/courses/${courseSlug}`)}>
             <Code2 size={17} />
-            {en ? "Practice path" : "Ścieżka praktyczna"}
+            {en ? "Interactive practice" : "Praktyka interaktywna"}
           </Link>
         </div>
       </header>
 
-      <div
-        className="knowledge-index"
-        aria-label={en ? "Knowledge index" : "Spis wiedzy"}
-      >
-        {levels.map((level) => {
-          const sections =
-            level.id === "beginner" ? beginnerSections : advancedSections;
-          return (
-            <section key={level.id}>
-              <div>
-                <strong>{level.label}</strong>
-                <small>{level.note}</small>
-              </div>
-              <nav>
-                {sections.map((section) =>
-                  level.id === "advanced" ? (
-                    <button
-                      type="button"
-                      className="knowledge-index-locked"
-                      key={section.id}
-                      onClick={() => setUpgrade(true)}
-                    >
-                      <LockKeyhole size={13} />
-                      {l(section.title)}
-                    </button>
-                  ) : (
-                    <a key={section.id} href={`#${section.id}`}>
-                      {l(section.title)}
-                    </a>
-                  ),
-                )}
-              </nav>
-            </section>
-          );
-        })}
-      </div>
+      <section className="knowledge-reader-shell">
+        <div className="knowledge-reader-top">
+          <div className="knowledge-track-tabs" role="tablist" aria-label={en ? "Knowledge level" : "Poziom wiedzy"}>
+            <button type="button" className="active" role="tab" aria-selected="true">
+              <span>01</span>
+              <strong>{en ? "Foundations" : "Podstawy"}</strong>
+              <small>{beginnerSections.length}</small>
+            </button>
+            <button
+              type="button"
+              role="tab"
+              aria-selected="false"
+              onClick={() => setUpgrade(true)}
+            >
+              <span>02</span>
+              <strong>{en ? "Advanced" : "Zaawansowane"}</strong>
+              <small>
+                <LockKeyhole size={12} />
+                {advancedSections.length}
+              </small>
+            </button>
+          </div>
 
-      <section className="knowledge-level">
-        <div className="knowledge-level-heading">
-          <span>01</span>
-          <div>
-            <h2>{en ? "Foundations" : "Podstawy"}</h2>
-            <p>{en ? "Clear mental models first." : "Najpierw jasne modele myślowe."}</p>
+          <div className="knowledge-page-counter" aria-live="polite">
+            <strong>{String(index + 1).padStart(2, "0")}</strong>
+            <span>/ {String(beginnerSections.length).padStart(2, "0")}</span>
           </div>
         </div>
-        <div className="knowledge-sections">
-          {beginnerSections.map((section, index) => (
-            <article
-              id={section.id}
-              className="knowledge-article"
-              key={section.id}
+
+        <div className="knowledge-chapter-strip" aria-label={en ? "Chapters" : "Rozdziały"}>
+          {beginnerSections.map((item, itemIndex) => (
+            <button
+              type="button"
+              key={item.id}
+              className={itemIndex === index ? "active" : ""}
+              aria-current={itemIndex === index ? "step" : undefined}
+              onClick={() => {
+                setDirection(itemIndex >= index ? 1 : -1);
+                setIndex(itemIndex);
+              }}
             >
-              <div className="knowledge-article-number">
-                {String(index + 1).padStart(2, "0")}
-              </div>
-              <div className="knowledge-article-main">
-                <header>
-                  <h3>{l(section.title)}</h3>
-                  <p className="knowledge-lead">{l(section.lead)}</p>
-                </header>
-                <div className="knowledge-copy">
-                  {section.paragraphs.map((paragraph, i) => (
-                    <p key={i}>{l(paragraph)}</p>
-                  ))}
+              <span>{String(itemIndex + 1).padStart(2, "0")}</span>
+              {l(item.title)}
+            </button>
+          ))}
+        </div>
+
+        <div className="knowledge-reader-stage">
+          <button
+            type="button"
+            className="knowledge-arrow knowledge-arrow-left"
+            onClick={() => move(index - 1)}
+            aria-label={en ? "Previous chapter" : "Poprzedni rozdział"}
+          >
+            <ArrowLeft size={22} />
+          </button>
+
+          <AnimatePresence mode="wait" initial={false}>
+            <motion.article
+              key={section.id}
+              className="knowledge-reader-page"
+              initial={{ opacity: 0, x: direction * 44 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: direction * -44 }}
+              transition={{ duration: 0.22 }}
+            >
+              <header className="knowledge-page-header">
+                <div>
+                  <span className="eyebrow">
+                    {en ? "FOUNDATION" : "PODSTAWY"} ·{" "}
+                    {String(index + 1).padStart(2, "0")}
+                  </span>
+                  <h2>{l(section.title)}</h2>
+                  <p>{l(section.lead)}</p>
                 </div>
-                <ul className="knowledge-points">
-                  {section.bullets.map((bullet, i) => (
-                    <li key={i}>
-                      <span>✓</span>
-                      {l(bullet)}
-                    </li>
+                <span className="knowledge-page-number">
+                  {String(index + 1).padStart(2, "0")}
+                </span>
+              </header>
+
+              <div className="knowledge-page-grid">
+                <section className="knowledge-explanation">
+                  <span className="knowledge-section-label">
+                    {en ? "STEP BY STEP" : "KROK PO KROKU"}
+                  </span>
+                  {section.paragraphs.map((paragraph, paragraphIndex) => (
+                    <div className="knowledge-paragraph" key={paragraphIndex}>
+                      <span>{paragraphIndex + 1}</span>
+                      <p>{l(paragraph)}</p>
+                    </div>
                   ))}
-                </ul>
-                {section.code && (
-                  <figure className="knowledge-code">
-                    <figcaption>{l(section.code.label)}</figcaption>
-                    <pre className="code-block">
-                      <code>{section.code.value}</code>
-                    </pre>
-                  </figure>
-                )}
-                <div className="knowledge-callouts">
-                  <aside className="knowledge-rule">
+
+                  <div className="knowledge-remember">
+                    <span className="knowledge-section-label">
+                      {en ? "REMEMBER" : "ZAPAMIĘTAJ"}
+                    </span>
+                    <ul>
+                      {section.bullets.map((bullet, bulletIndex) => (
+                        <li key={bulletIndex}>
+                          <CheckCircle2 size={17} />
+                          <span>{l(bullet)}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                </section>
+
+                <aside className="knowledge-example-column">
+                  {section.code && (
+                    <figure className="knowledge-code-card">
+                      <figcaption>
+                        <Code2 size={16} />
+                        {l(section.code.label)}
+                      </figcaption>
+                      <pre className="code-block">
+                        <code>{section.code.value}</code>
+                      </pre>
+                    </figure>
+                  )}
+
+                  <div className="knowledge-callout rule">
                     <Lightbulb size={19} />
                     <div>
-                      <strong>
-                        {en ? "Rule to remember" : "Reguła do zapamiętania"}
-                      </strong>
+                      <strong>{en ? "The rule" : "Najważniejsza reguła"}</strong>
                       <p>{l(section.rule)}</p>
                     </div>
-                  </aside>
-                  <aside className="knowledge-pitfall">
+                  </div>
+
+                  <div className="knowledge-callout pitfall">
                     <ShieldAlert size={19} />
                     <div>
-                      <strong>{en ? "Common trap" : "Częsta pułapka"}</strong>
+                      <strong>{en ? "Watch out" : "Uważaj na to"}</strong>
                       <p>{l(section.pitfall)}</p>
                     </div>
-                  </aside>
-                </div>
+                  </div>
+                </aside>
               </div>
-            </article>
-          ))}
+
+              <footer className="knowledge-page-footer">
+                <button
+                  type="button"
+                  className="button secondary"
+                  onClick={() => move(index - 1)}
+                >
+                  <ArrowLeft size={17} />
+                  {en ? "Previous" : "Poprzednia"}
+                </button>
+                <div>
+                  <span>
+                    {en
+                      ? "Use ← → on the keyboard too"
+                      : "Możesz też używać klawiszy ← →"}
+                  </span>
+                  <i>
+                    <b style={{ width: `${((index + 1) / beginnerSections.length) * 100}%` }} />
+                  </i>
+                </div>
+                <button
+                  type="button"
+                  className="button primary"
+                  onClick={() => move(index + 1)}
+                >
+                  {index === beginnerSections.length - 1
+                    ? en
+                      ? "Start again"
+                      : "Od początku"
+                    : en
+                      ? "Next chapter"
+                      : "Następny rozdział"}
+                  <ArrowRight size={17} />
+                </button>
+              </footer>
+            </motion.article>
+          </AnimatePresence>
+
+          <button
+            type="button"
+            className="knowledge-arrow knowledge-arrow-right"
+            onClick={() => move(index + 1)}
+            aria-label={en ? "Next chapter" : "Następny rozdział"}
+          >
+            <ArrowRight size={22} />
+          </button>
         </div>
       </section>
 
-      <section className="knowledge-level">
-        <div className="knowledge-level-heading">
-          <span>02</span>
-          <div>
-            <h2>{en ? "Advanced notes" : "Zaawansowane tajniki"}</h2>
-            <p>
-              {en
-                ? "The details that separate good from great."
-                : "Smaczki, które odróżniają dobry kod od świetnego."}
-            </p>
-          </div>
+      <section className="advanced-study-gate">
+        <span className="advanced-study-lock">
+          <LockKeyhole size={24} />
+        </span>
+        <div>
+          <span className="eyebrow">PREMIUM · ADVANCED</span>
+          <h3>
+            {en
+              ? "After the foundations: deeper architecture and production details."
+              : "Po podstawach: głębsza architektura i produkcyjne smaczki."}
+          </h3>
+          <p>
+            {en
+              ? `${advancedSections.length} advanced chapters continue the same page-by-page format.`
+              : `${advancedSections.length} zaawansowanych rozdziałów kontynuuje ten sam prosty format strona po stronie.`}
+          </p>
         </div>
-        <div className="advanced-study-gate">
-          <span className="advanced-study-lock">
-            <LockKeyhole size={24} />
-          </span>
-          <div>
-            <span className="eyebrow">PREMIUM · ADVANCED</span>
-            <h3>
-              {en
-                ? "Deeper architecture, production traps and senior-level details."
-                : "Głębsza architektura, pułapki produkcyjne i smaczki poziomu senior."}
-            </h3>
-            <p>
-              {en
-                ? `${advancedSections.length} advanced chapters are included in the full course, with code examples, rules and common failure modes.`
-                : `${advancedSections.length} zaawansowane rozdziały są częścią pełnego kursu — z kodem, regułami i typowymi pułapkami.`}
-            </p>
-          </div>
-          <button className="button primary" onClick={() => setUpgrade(true)}>
-            <LockKeyhole size={17} />
-            {en ? "Unlock advanced library" : "Odblokuj zaawansowaną bibliotekę"}
-          </button>
-        </div>
+        <button className="button primary" onClick={() => setUpgrade(true)}>
+          <LockKeyhole size={17} />
+          {en ? "See advanced track" : "Zobacz ścieżkę zaawansowaną"}
+        </button>
       </section>
 
       <UpgradeDialog open={upgrade} onClose={() => setUpgrade(false)} />

@@ -161,12 +161,7 @@ export function Landing() {
       </section>
       <div className="skills-strip">
         <div className="container">
-          <span>
-            {en
-              ? "YOUR CURIOSITY HAS NO LIMIT."
-              : "TWOJA CIEKAWOŚĆ NIE MA GRANIC."}
-          </span>
-          <div>
+          <div className="skills-list">
             <b className="strip-active">JavaScript</b>
             <b>TypeScript</b>
             <b>React</b>
@@ -242,8 +237,15 @@ export function Landing() {
           ].map(({ Icon, n, title, body }, i) => (
             <Reveal className="method" key={n} delay={i * 0.07}>
               <div className="method-top">
-                <Icon size={24} />
-                <span>{n}</span>
+                <span className="method-icon">
+                  <Icon size={24} />
+                </span>
+                <span className="method-number">{n}</span>
+              </div>
+              <div className="method-visual" aria-hidden="true">
+                <span />
+                <span />
+                <span />
               </div>
               <h3>{title}</h3>
               <p>{body}</p>

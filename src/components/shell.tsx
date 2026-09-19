@@ -64,6 +64,11 @@ export function Header() {
                   ? `/${locale === "en" ? "pl" : "en"}/`
                   : languagePath
               }
+              scroll
+              onClick={() => {
+                setMenu(false);
+                window.scrollTo({ top: 0, left: 0, behavior: "auto" });
+              }}
               aria-label={
                 locale === "en"
                   ? "Zmień język na polski"

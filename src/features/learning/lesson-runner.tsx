@@ -11,6 +11,8 @@ import {
   CircleHelp,
   Code2,
   Lightbulb,
+  Info,
+  Puzzle,
   RotateCw,
   Sparkles,
   Zap,
@@ -142,6 +144,32 @@ export function LessonRunner({ id }: { id: string }) {
                           <Lightbulb size={20} />
                           <p>{l(block.body)}</p>
                         </div>
+                      );
+                    case "fact":
+                      return (
+                        <aside className="fact-card" key={i}>
+                          <Info size={20} />
+                          <div>
+                            <strong>{l(block.title)}</strong>
+                            <p>{l(block.body)}</p>
+                          </div>
+                        </aside>
+                      );
+                    case "riddle":
+                      return (
+                        <details className="riddle-card" key={i}>
+                          <summary>
+                            <Puzzle size={20} />
+                            <span>
+                              <strong>{l(block.title)}</strong>
+                              <small>{l(block.prompt)}</small>
+                            </span>
+                          </summary>
+                          <div className="riddle-answer">
+                            <span aria-hidden="true">↳</span>
+                            <p>{l(block.answer)}</p>
+                          </div>
+                        </details>
                       );
                   }
                 })}

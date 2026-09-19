@@ -107,7 +107,9 @@ describe("course content integrity", () => {
     const course = courseRepository.get("javascript")!;
     expect(course.modules).toHaveLength(20);
     expect(course.modules.filter((m) => m.access === "free")).toHaveLength(4);
-    expect(courseRepository.lessons()).toHaveLength(6);
+    expect(
+      courseRepository.lessons().filter((lesson) => lesson.courseId === "javascript"),
+    ).toHaveLength(6);
     for (const m of course.modules)
       for (const id of m.lessonIds)
         expect(courseRepository.lesson(id)?.moduleId).toBe(m.id);
@@ -123,7 +125,18 @@ describe("course content integrity", () => {
       expect(q.options.some((o) => o.id === q.answer)).toBe(true);
     }
   });
-  it("never advertises coming-soon courses as playable", () => {
+  it("exposes TypeScript and React as real multi-module courses", () => {
+    for (const id of ["typescript", "react"]) {
+      const course = courseRepository.get(id)!;
+      expect(course.status).toBe("available");
+      expect(course.modules.length).toBeGreaterThanOrEqual(12);
+      expect(course.modules.filter((m) => m.access === "free")).toHaveLength(3);
+      expect(
+        courseRepository.lessons().filter((lesson) => lesson.courseId === id),
+      ).toHaveLength(6);
+    }
+  });
+  it("never advertises remaining coming-soon courses as playable", () => {
     for (const c of courseRepository.list().filter((c) => c.status === "soon"))
       expect(c.modules).toHaveLength(0);
   });

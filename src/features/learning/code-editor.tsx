@@ -5,9 +5,11 @@ import { useLocale } from "@/components/providers";
 export default function CodeEditor({
   code,
   onChange,
+  language = "javascript",
 }: {
   code: string;
   onChange: (code: string) => void;
+  language?: "javascript" | "typescript" | "tsx";
 }) {
   const { t, resolvedTheme } = useLocale();
   return (
@@ -16,7 +18,10 @@ export default function CodeEditor({
       height="240px"
       theme={resolvedTheme}
       extensions={[
-        javascript(),
+        javascript({
+          typescript: language === "typescript" || language === "tsx",
+          jsx: language === "tsx",
+        }),
         EditorView.contentAttributes.of({ "aria-label": t.editor }),
         Prec.highest(
           EditorView.theme({

@@ -88,6 +88,7 @@ export function Exercise({
         type: "run",
         id,
         code,
+        mode: exercise.mode ?? "runtime",
         tests: exercise.tests.map((test) => test.expression),
       },
       "*",
@@ -114,7 +115,12 @@ export function Exercise({
         <div className="editor-title">
           <span>
             <span className="file-dot" />
-            practice.js
+            {exercise.fileName ??
+              (exercise.language === "tsx"
+                ? "practice.tsx"
+                : exercise.language === "typescript"
+                  ? "practice.ts"
+                  : "practice.js")}
           </span>
           <button
             className="icon-button"
@@ -125,7 +131,11 @@ export function Exercise({
             <RotateCcw size={16} />
           </button>
         </div>
-        <Editor code={code} onChange={edit} />
+        <Editor
+          code={code}
+          onChange={edit}
+          language={exercise.language ?? "javascript"}
+        />
         <div className="editor-footer">
           <span>{t.editHint}</span>
           <button
@@ -134,7 +144,7 @@ export function Exercise({
             disabled={running || !ready}
           >
             <Play size={15} />
-            {running ? t.running : t.run}
+            {running ? t.running : exercise.mode === "source" ? t.check : t.run}
           </button>
         </div>
       </div>
@@ -160,9 +170,15 @@ export function Exercise({
       <div className="output-panel" aria-live="polite">
         <div className="output-title">
           <Terminal size={16} />
-          {t.console}
+          {exercise.mode === "source" ? t.tests : t.console}
         </div>
-        <pre>{result?.logs.length ? result.logs.join("\n") : t.runPrompt}</pre>
+        <pre>
+          {result?.logs.length
+            ? result.logs.join("\n")
+            : exercise.mode === "source"
+              ? l(exercise.task)
+              : t.runPrompt}
+        </pre>
         {result?.status === "error" && (
           <div className="feedback error">
             <X size={18} />

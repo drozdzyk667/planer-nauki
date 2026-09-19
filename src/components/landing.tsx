@@ -161,14 +161,24 @@ export function Landing() {
       </section>
       <div className="skills-strip">
         <div className="container">
-          <div className="skills-list">
-            <b className="strip-active">JavaScript</b>
-            <b>TypeScript</b>
-            <b>React</b>
-            <b>Python</b>
-            <b>SQL</b>
-            <b>AI</b>
-          </div>
+          <nav className="skills-list" aria-label={en ? "Course shortcuts" : "Skróty do kursów"}>
+            {[
+              ["JavaScript", "/courses/javascript", "js"],
+              ["TypeScript", "/courses/typescript", "ts"],
+              ["React", "/courses/react", "react"],
+              ["Python", "/courses#course-python", "python"],
+              ["SQL", "/courses#course-sql", "sql"],
+              ["AI", "/courses#course-ai", "ai"],
+            ].map(([label, path, tone]) => (
+              <Link
+                key={label}
+                className={`skill-link skill-${tone}`}
+                href={href(path as string)}
+              >
+                {label}
+              </Link>
+            ))}
+          </nav>
         </div>
       </div>
       <section id="how-it-works" className="container section how-section">

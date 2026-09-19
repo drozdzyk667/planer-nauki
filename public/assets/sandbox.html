@@ -21,7 +21,7 @@
           return;
         }
         if (event.data.type !== "run") return;
-        const { id, code, tests } = event.data;
+        const { id, code, tests, mode } = event.data;
         if (
           typeof code !== "string" ||
           code.length > 20000 ||
@@ -31,11 +31,17 @@
         if (worker) worker.terminate();
         if (timer) clearTimeout(timer);
         const source = `self.onmessage = function(event) {
-    const {code, tests} = event.data;
+    const {code, tests, mode} = event.data;
     const logs=[];
     const safeConsole={log:(...args)=>{if(logs.length<50)logs.push(args.map(v=>typeof v==='string'?v:JSON.stringify(v)).join(' ').slice(0,1000));}};
     try {
       const expressions=tests.map(expression=>'Boolean('+expression+')').join(',');
+      if(mode==='source'){
+        const inspect=new Function('__source','"use strict";return ['+expressions+'];');
+        const results=inspect(code);
+        self.postMessage({status:'ok',logs,results});
+        return;
+      }
       const run=new Function('console','__logs','"use strict";\\n'+code+'\\n;return ['+expressions+'];');
       const results=run(safeConsole,logs);
       self.postMessage({status:'ok',logs,results});
@@ -72,7 +78,7 @@
             "*",
           );
         };
-        worker.postMessage({ code, tests });
+        worker.postMessage({ code, tests, mode });
       });
     </script>
   </body>

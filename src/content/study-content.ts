@@ -21,6 +21,7 @@ export type Flashcard = {
   front: Localized;
   back: Localized;
   code?: string;
+  why?: Localized;
 };
 
 export type CourseStudyContent = {
@@ -57,6 +58,7 @@ const F = (
   front: [string, string],
   back: [string, string],
   code?: string,
+  why?: [string, string],
 ): Flashcard => ({
   id,
   level,
@@ -64,6 +66,7 @@ const F = (
   front: T(...front),
   back: T(...back),
   code,
+  why: why ? T(...why) : undefined,
 });
 
 const javascript: CourseStudyContent = {

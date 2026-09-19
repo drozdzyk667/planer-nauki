@@ -122,6 +122,16 @@ export const progressStore = {
     });
     return reward;
   },
+  toggleFavoriteFlashcard(id: string) {
+    const favoriteFlashcards = state.favoriteFlashcards.includes(id)
+      ? state.favoriteFlashcards.filter((item) => item !== id)
+      : [...state.favoriteFlashcards, id];
+    commit({
+      ...state,
+      favoriteFlashcards,
+    });
+    return favoriteFlashcards.includes(id);
+  },
   review(question: Question, answer: string) {
     const correct = this.answer(question, answer);
     const key = `${localDay()}:${question.concept}`;

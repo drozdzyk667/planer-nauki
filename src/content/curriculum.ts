@@ -649,6 +649,25 @@ const checkpointExtras: Record<string, Question[]> = {
       ),
       '// console.log("A");\nconsole.log("B");',
     ),
+
+    question(
+      "intro-bonus-log-number",
+      "execution",
+      T("What does console.log(3 + 4) print?", "Co wyświetli console.log(3 + 4)?"),
+      [T("34", "34"), T("7", "7"), T("3 + 4", "3 + 4")],
+      1,
+      T("With numbers, + performs addition.", "Dla liczb operator + wykonuje dodawanie."),
+      "console.log(3 + 4);",
+    ),
+    question(
+      "intro-bonus-sequence",
+      "execution",
+      T("Which statement runs first?", "Która instrukcja wykona się pierwsza?"),
+      [T("The top one", "Ta na górze"), T("The bottom one", "Ta na dole"), T("Both at once", "Obie jednocześnie")],
+      0,
+      T("Normal JavaScript statements execute from top to bottom.", "Zwykłe instrukcje JavaScript wykonują się od góry do dołu."),
+      'console.log("first");\nconsole.log("second");',
+    ),
   ],
   "variables-types": [
     question(
@@ -702,6 +721,56 @@ const checkpointExtras: Record<string, Question[]> = {
       ),
       'let value = 10;\nvalue = "10";',
     ),
+
+    question(
+      "variables-bonus-declare",
+      "variables",
+      T("Which declaration can be reassigned later?", "Którą deklarację można później przypisać ponownie?"),
+      [T("let score = 1", "let score = 1"), T("const score = 1", "const score = 1"), T("Neither", "Żadną")],
+      0,
+      T("let creates a binding that can be reassigned.", "let tworzy zmienną, której można ponownie przypisać wartość."),
+    ),
+    question(
+      "variables-bonus-before",
+      "variables",
+      T("What is score after these lines?", "Ile wynosi score po tych liniach?"),
+      [T("5", "5"), T("10", "10"), T("15", "15")],
+      2,
+      T("score += 10 adds ten to the existing value five.", "score += 10 dodaje dziesięć do obecnej wartości pięć."),
+      "let score = 5;\nscore += 10;",
+    ),
+    question(
+      "constants-bonus-valid",
+      "constants",
+      T("Which line is valid JavaScript?", "Która linia jest poprawnym JavaScriptem?"),
+      [T("const language = \"JS\";", "const language = \"JS\";"), T("const language;", "const language;"), T("const = \"JS\";", "const = \"JS\";")],
+      0,
+      T("A const declaration needs both a name and an initial value.", "Deklaracja const potrzebuje nazwy oraz wartości początkowej."),
+    ),
+    question(
+      "constants-bonus-object",
+      "constants",
+      T("What can still change inside a const object?", "Co nadal może się zmienić wewnątrz obiektu const?"),
+      [T("Its properties", "Jego właściwości"), T("The binding name", "Nazwa zmiennej"), T("Nothing ever", "Nic")],
+      0,
+      T("const prevents reassignment of the binding, not mutation of object properties.", "const blokuje ponowne przypisanie zmiennej, ale nie zmianę właściwości obiektu."),
+    ),
+    question(
+      "types-bonus-boolean",
+      "types",
+      T("Which value is a boolean?", "Która wartość jest booleanem?"),
+      [T("\"true\"", "\"true\""), T("true", "true"), T("1", "1")],
+      1,
+      T("true without quotes is a boolean. With quotes it would be a string.", "true bez cudzysłowu jest booleanem. W cudzysłowie byłby stringiem."),
+    ),
+    question(
+      "types-bonus-null",
+      "types",
+      T("Which value is often used to intentionally mean 'nothing here'?", "Której wartości często używa się celowo w znaczeniu „tutaj nic nie ma”?"),
+      [T("null", "null"), T("false", "false"), T("0", "0")],
+      0,
+      T("null is commonly assigned deliberately to represent an empty value.", "null często przypisuje się celowo jako reprezentację pustej wartości."),
+    ),
   ],
   operators: [
     question(
@@ -727,6 +796,23 @@ const checkpointExtras: Record<string, Question[]> = {
         'Number("7") zamienia tekst na liczbę 7.',
       ),
     ),
+
+    question(
+      "operators-bonus-strict",
+      "operators",
+      T('What does 5 === "5" return?', 'Co zwróci 5 === "5"?'),
+      [T("true", "true"), T("false", "false")],
+      1,
+      T("Strict equality compares both value and type.", "Ścisłe porównanie sprawdza zarówno wartość, jak i typ."),
+    ),
+    question(
+      "operators-bonus-remainder",
+      "operators",
+      T("What is 10 % 3?", "Ile wynosi 10 % 3?"),
+      [T("0", "0"), T("1", "1"), T("3", "3")],
+      1,
+      T("The remainder after dividing 10 by 3 is 1.", "Reszta z dzielenia 10 przez 3 wynosi 1."),
+    ),
   ],
   conditions: [
     question(
@@ -751,6 +837,24 @@ const checkpointExtras: Record<string, Question[]> = {
         "ready ma wartość false, więc JavaScript wybiera gałąź else.",
       ),
       'const ready = false;\nif (ready) console.log("Go");\nelse console.log("Wait");',
+    ),
+
+    question(
+      "conditions-bonus-equality",
+      "conditions",
+      T("Which branch runs when age is 18?", "Która gałąź wykona się, gdy age wynosi 18?"),
+      [T("if", "if"), T("else", "else"), T("neither", "żadna")],
+      0,
+      T("18 >= 18 is true, so the if branch runs.", "18 >= 18 jest prawdą, więc wykona się gałąź if."),
+      "const age = 18;\nif (age >= 18) console.log('Adult');\nelse console.log('Minor');",
+    ),
+    question(
+      "conditions-bonus-and",
+      "conditions",
+      T("When is a && b true?", "Kiedy a && b ma wartość true?"),
+      [T("When both are true", "Gdy oba są true"), T("When either is true", "Gdy dowolny jest true"), T("Always", "Zawsze")],
+      0,
+      T("Logical AND requires both sides to be truthy.", "Operator logiczny AND wymaga, aby obie strony były prawdziwe."),
     ),
   ],
 };

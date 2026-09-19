@@ -16,22 +16,8 @@ import { EmptyState, ProgressBar } from "@/components/ui";
 import { courseRepository, conceptLabel } from "@/services/courses";
 import { progressStore } from "@/services/progress";
 import { moduleProgress, scoreQuiz } from "@/domain/learning";
+import { selectCheckpointQuestions } from "@/domain/quiz-randomization";
 import { QuestionCard } from "./question";
-
-function hash(value: string) {
-  let result = 2166136261;
-  for (let i = 0; i < value.length; i += 1) {
-    result ^= value.charCodeAt(i);
-    result = Math.imul(result, 16777619);
-  }
-  return result >>> 0;
-}
-
-function shuffled<T extends { id: string }>(items: T[], seed: string) {
-  return [...items].sort(
-    (a, b) => hash(`${seed}:${a.id}`) - hash(`${seed}:${b.id}`),
-  );
-}
 
 export function Checkpoint({ moduleId }: { moduleId: string }) {
   const { t, l, href } = useLocale();
@@ -48,13 +34,25 @@ export function Checkpoint({ moduleId }: { moduleId: string }) {
   } | null>(null);
   const previousAttempts = progress.quizAttempts[quiz.id] ?? 0;
   const [attempt, setAttempt] = useState(previousAttempts);
-  const questions = useMemo(() => {
-    const pool =
-      attempt === 0
-        ? quiz.questions
-        : shuffled(quiz.questions, `${moduleId}:${attempt}`);
-    return pool.slice(0, Math.min(8, pool.length));
-  }, [attempt, moduleId, quiz.questions]);
+  const [recentQuestionIds] = useState(() =>
+    progress.answers.slice(-24).map((answer) => answer.questionId),
+  );
+  const [weakConcepts] = useState(() =>
+    Object.entries(progress.concepts)
+      .filter(([, concept]) => concept.mastery < 60)
+      .map(([id]) => id),
+  );
+  const questions = useMemo(
+    () =>
+      selectCheckpointQuestions(
+        quiz.questions,
+        moduleId,
+        attempt,
+        recentQuestionIds,
+        weakConcepts,
+      ),
+    [attempt, moduleId, quiz.questions, recentQuestionIds, weakConcepts],
+  );
   if (moduleProgress(courseModule, progress) < 100)
     return (
       <div className="container page-space">
@@ -171,6 +169,7 @@ export function Checkpoint({ moduleId }: { moduleId: string }) {
           <QuestionCard
             key={`${attempt}-${question.id}`}
             question={question}
+            shuffleSeed={`${moduleId}:${attempt}`}
             onAnswered={(answer) => {
               setAnswers((a) => ({ ...a, [question.id]: answer }));
               progressStore.answer(question, answer);

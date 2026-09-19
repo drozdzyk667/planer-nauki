@@ -1,20 +1,27 @@
 "use client";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { Check, CircleHelp, X } from "lucide-react";
 import { useLocale } from "@/components/providers";
 import type { Question } from "@/domain/models";
+import { shuffleQuestionOptions } from "@/domain/quiz-randomization";
 export function QuestionCard({
   question,
   onAnswered,
   record = true,
+  shuffleSeed,
 }: {
   question: Question;
   onAnswered: (answer: string, correct: boolean) => void;
   record?: boolean;
+  shuffleSeed?: string;
 }) {
   const { t, l } = useLocale();
   const [answer, setAnswer] = useState("");
   const [checked, setChecked] = useState(false);
+  const options = useMemo(
+    () => shuffleQuestionOptions(question, shuffleSeed),
+    [question, shuffleSeed],
+  );
   const correct = answer === question.answer;
   function submit() {
     if (!answer) return;
@@ -35,7 +42,7 @@ export function QuestionCard({
           </pre>
         )}
         <div className="answer-options">
-          {question.options.map((option, i) => (
+          {options.map((option, i) => (
             <label
               key={option.id}
               className={`answer-option ${answer === option.id ? "selected" : ""} ${checked && option.id === question.answer ? "is-correct" : ""} ${checked && answer === option.id && !correct ? "is-incorrect" : ""}`}

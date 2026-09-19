@@ -205,47 +205,87 @@ export function Landing() {
             {
               Icon: Eye,
               n: "01",
+              tone: "amber",
+              visual: "observe",
               title: en ? "See it." : "Zobacz.",
               body: en
-                ? "Ideas come to life with interactive visual explanations."
-                : "Pojęcia ożywają w interaktywnych wyjaśnieniach.",
+                ? "Watch the idea move before you touch the code. Visuals turn abstractions into something concrete."
+                : "Najpierw zobacz, jak działa pomysł. Wizualizacja zamienia abstrakcję w coś konkretnego.",
             },
             {
               Icon: Braces,
               n: "02",
+              tone: "blue",
+              visual: "code",
               title: en ? "Try it." : "Spróbuj.",
               body: en
-                ? "Make a prediction. Write real code. Find out what happens."
-                : "Przewiduj. Pisz prawdziwy kod. Zobacz, co się wydarzy.",
+                ? "Predict the result, change real code, run it, and compare your mental model with reality."
+                : "Przewiduj wynik, zmieniaj prawdziwy kod, uruchamiaj go i porównuj swoje założenia z wynikiem.",
             },
             {
               Icon: Sparkles,
               n: "03",
+              tone: "violet",
+              visual: "logic",
               title: en ? "Get it." : "Zrozum.",
               body: en
-                ? "Helpful feedback makes every mistake a step forward."
-                : "Przydatna informacja zwrotna zamienia błąd w krok naprzód.",
+                ? "Feedback explains why, not only whether you were wrong, so each mistake moves you forward."
+                : "Feedback pokazuje dlaczego, a nie tylko że było źle — dzięki temu każdy błąd uczy.",
             },
             {
               Icon: RotateCw,
               n: "04",
+              tone: "mint",
+              visual: "memory",
               title: en ? "Keep it." : "Zapamiętaj.",
               body: en
-                ? "Come back to the right ideas before they fade."
-                : "Wracaj do właściwych pojęć, zanim umkną z pamięci.",
+                ? "Smart review brings weaker ideas back at the right time, before they disappear from memory."
+                : "Mądre powtórki wracają do słabszych tematów w odpowiednim momencie, zanim wypadną z pamięci.",
             },
-          ].map(({ Icon, n, title, body }, i) => (
-            <Reveal className="method" key={n} delay={i * 0.07}>
+          ].map(({ Icon, n, tone, visual, title, body }, i) => (
+            <Reveal className={`method method-${tone}`} key={n} delay={i * 0.07}>
               <div className="method-top">
                 <span className="method-icon">
                   <Icon size={24} />
                 </span>
                 <span className="method-number">{n}</span>
               </div>
-              <div className="method-visual" aria-hidden="true">
-                <span />
-                <span />
-                <span />
+              <div className={`method-scene method-scene-${visual}`} aria-hidden="true">
+                {visual === "observe" && (
+                  <>
+                    <span className="radar-ring radar-ring-a" />
+                    <span className="radar-ring radar-ring-b" />
+                    <span className="radar-pulse" />
+                    <span className="radar-beam" />
+                  </>
+                )}
+                {visual === "code" && (
+                  <>
+                    <span className="code-line code-line-a" />
+                    <span className="code-line code-line-b" />
+                    <span className="code-line code-line-c" />
+                    <span className="code-cursor" />
+                    <span className="code-output">✓</span>
+                  </>
+                )}
+                {visual === "logic" && (
+                  <>
+                    <span className="logic-link logic-link-a" />
+                    <span className="logic-link logic-link-b" />
+                    <span className="logic-node logic-node-a" />
+                    <span className="logic-node logic-node-b" />
+                    <span className="logic-node logic-node-c" />
+                  </>
+                )}
+                {visual === "memory" && (
+                  <>
+                    <span className="memory-orbit" />
+                    <span className="memory-dot memory-dot-a" />
+                    <span className="memory-dot memory-dot-b" />
+                    <span className="memory-dot memory-dot-c" />
+                    <span className="memory-arrow">↻</span>
+                  </>
+                )}
               </div>
               <h3>{title}</h3>
               <p>{body}</p>

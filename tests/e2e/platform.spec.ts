@@ -1,5 +1,10 @@
 import { test, expect, type Page } from "@playwright/test";
 import AxeBuilder from "@axe-core/playwright";
+import { courseRepository } from "../../src/services/courses";
+import {
+  selectCheckpointQuestions,
+  shuffleQuestionOptions,
+} from "../../src/domain/quiz-randomization";
 const root = "";
 async function expectAccessible(page: Page, label = "Learning state") {
   const results = await new AxeBuilder({ page })
@@ -73,11 +78,22 @@ test("full variables module, checkpoint, XP persistence and retry protection", a
   await page
     .getByRole("link", { name: "Continue to checkpoint", exact: true })
     .click();
-  for (const [i, choice] of [1, 1, 1, 1, 1, 2, 2, 0].entries()) {
-    await answer(page, choice);
+  const checkpoint = courseRepository.quiz("variables-types")!;
+  const checkpointQuestions = selectCheckpointQuestions(
+    checkpoint.questions,
+    "variables-types",
+    0,
+  );
+  for (const [i, question] of checkpointQuestions.entries()) {
+    const options = shuffleQuestionOptions(question, "variables-types:0");
+    const correctIndex = options.findIndex(
+      (option) => option.id === question.answer,
+    );
+    await answer(page, correctIndex);
     await page
       .getByRole("button", {
-        name: i === 7 ? "See my results" : "Next",
+        name:
+          i === checkpointQuestions.length - 1 ? "See my results" : "Next",
         exact: true,
       })
       .click();

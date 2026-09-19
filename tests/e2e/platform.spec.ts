@@ -1,6 +1,6 @@
 import { test, expect, type Page } from "@playwright/test";
 import AxeBuilder from "@axe-core/playwright";
-const root = "/planer-nauki";
+const root = "";
 async function expectAccessible(page: Page, label = "Learning state") {
   const results = await new AxeBuilder({ page })
     .withTags(["wcag2a", "wcag2aa", "wcag21aa", "wcag22aa"])
@@ -73,11 +73,11 @@ test("full variables module, checkpoint, XP persistence and retry protection", a
   await page
     .getByRole("link", { name: "Continue to checkpoint", exact: true })
     .click();
-  for (const [i, choice] of [1, 1, 1, 1, 1, 2].entries()) {
+  for (const [i, choice] of [1, 1, 1, 1, 1, 2, 2, 0].entries()) {
     await answer(page, choice);
     await page
       .getByRole("button", {
-        name: i === 5 ? "See my results" : "Next",
+        name: i === 7 ? "See my results" : "Next",
         exact: true,
       })
       .click();

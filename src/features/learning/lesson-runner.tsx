@@ -27,7 +27,7 @@ import { QuestionCard } from "./question";
 import { Exercise } from "./exercise";
 export function LessonRunner({ id }: { id: string }) {
   const lesson = courseRepository.lesson(id)!;
-  const { t, l, href } = useLocale();
+  const { t, l, href, locale } = useLocale();
   const progress = useProgress();
   const [step, setStep] = useState(0);
   const [answered, setAnswered] = useState(false);
@@ -178,22 +178,67 @@ export function LessonRunner({ id }: { id: string }) {
               <QuestionCard
                 key={lesson.prediction.id}
                 question={lesson.prediction}
+                shuffleSeed={`${lesson.id}:predict:${progress.answers.length}`}
                 onAnswered={(answer) => {
                   progressStore.answer(lesson.prediction, answer);
                   setAnswered(true);
                 }}
               />
             ) : step === 2 ? (
-              <Exercise
-                exercise={lesson.exercise}
-                onPassed={onPassed}
-                savedCode={savedCode}
-                onCodeChange={setSavedCode}
-              />
+              <>
+                <Exercise
+                  exercise={lesson.exercise}
+                  onPassed={onPassed}
+                  savedCode={savedCode}
+                  onCodeChange={setSavedCode}
+                />
+                {!!lesson.drills?.length && (
+                  <section className="lesson-drills" aria-labelledby="drill-heading">
+                    <div className="lesson-drills-heading">
+                      <Puzzle size={18} />
+                      <div>
+                        <h2 id="drill-heading">
+                          {locale === "en" ? "Bonus drills" : "Dodatkowe mini-zadania"}
+                        </h2>
+                        <p>
+                          {locale === "en"
+                            ? "Short prompts to make the idea stick before you move on."
+                            : "Krótkie zadania, żeby temat został w głowie przed przejściem dalej."}
+                        </p>
+                      </div>
+                    </div>
+                    <div className="drill-list">
+                      {lesson.drills.map((drill, drillIndex) => (
+                        <details className="drill-card" key={drillIndex}>
+                          <summary>
+                            <span>{String(drillIndex + 1).padStart(2, "0")}</span>
+                            <strong>{l(drill.prompt)}</strong>
+                          </summary>
+                          <div>
+                            {drill.code && (
+                              <pre className="code-block">
+                                <code>{drill.code}</code>
+                              </pre>
+                            )}
+                            <p>
+                              <b>{t.hint}:</b> {l(drill.hint)}
+                            </p>
+                            <p className="drill-answer">
+                              <b>{locale === "en" ? "Answer:" : "Odpowiedź:"}</b>{" "}
+                              {l(drill.answer)}
+                            </p>
+                          </div>
+                        </details>
+                      ))}
+                    </div>
+                  </section>
+                )}
+              </>
             ) : (
               <QuestionCard
                 key={lesson.recall.id}
                 question={lesson.recall}
+                shuffleSeed={`${lesson.id}:recall:${progress.answers.length}`}
                 onAnswered={(answer) => {
                   progressStore.answer(lesson.recall, answer);
                   setRecalled(true);

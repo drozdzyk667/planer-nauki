@@ -233,7 +233,15 @@ export function CoursePath({ courseSlug = "javascript" }: { courseSlug?: string 
                         </span>
                       </div>
                       <div className="module-achievement">
-                        <div className="module-stars" aria-label={`${stars} / 3`}>
+                        <div
+                          className="module-stars"
+                          role="img"
+                          aria-label={
+                            locale === "en"
+                              ? `${stars} of 3 achievement stars`
+                              : `${stars} z 3 gwiazdek osiągnięcia`
+                          }
+                        >
                           {[0, 1, 2].map((starIndex) => (
                             <Star
                               key={starIndex}

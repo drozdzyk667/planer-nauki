@@ -43,10 +43,9 @@ async function answerQuestion(
     question.options.find((item) =>
       correct ? item.id === question.answer : item.id !== question.answer,
     ) ?? question.options[0];
-  const label = page.locator(".answer-option").filter({
-    hasText: option.text[locale],
-  });
-  await label.getByRole("radio").check();
+  await page
+    .getByRole("radio", { name: option.text[locale], exact: true })
+    .check();
   await page
     .getByRole("button", {
       name: locale === "en" ? "Check answer" : "Sprawdź odpowiedź",

@@ -387,7 +387,7 @@ test("IT Fundamentals searches concepts and opens a connected term", async ({
 
   const modeDock = page.getByRole("navigation", { name: "Tryby nauki kursu" });
   await expect(
-    modeDock.getByRole("link", { name: "Fundamenty IT i słownik pojęć" }),
+    modeDock.getByRole("link", { name: "Fundamenty IT: pojęcia, skróty i zależności" }),
   ).toHaveAttribute("aria-current", "page");
 
   const search = page.getByRole("textbox", { name: "Szukaj pojęć IT" });
@@ -410,6 +410,13 @@ test("knowledge glossary popovers use exact terms and dismiss after details", as
 }) => {
   await page.setViewportSize({ width: 1100, height: 900 });
   await page.goto(`${root}/pl/courses/it-foundations/knowledge/`);
+
+  await expect(
+    page.getByRole("button", { name: "Słownik", exact: true }),
+  ).toHaveCount(0);
+  await expect(
+    page.getByRole("link", { name: "Fundamenty IT: pojęcia, skróty i zależności" }),
+  ).toBeVisible();
 
   const trigger = page.locator(".glossary-inline-trigger").first();
   await expect(trigger).toBeVisible();

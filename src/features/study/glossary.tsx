@@ -61,6 +61,10 @@ export function GlossaryText({
   onExpand: (term: GlossaryTerm) => void;
 }) {
   const { locale } = useLocale();
+  const [hoveredTermId, setHoveredTermId] = useState<string | null>(null);
+  const [pinnedTermId, setPinnedTermId] = useState<string | null>(null);
+  const [suppressedTermId, setSuppressedTermId] = useState<string | null>(null);
+
   const matches = useMemo(
     () => glossaryMatches(courseSlug, text),
     [courseSlug, text],
@@ -69,6 +73,16 @@ export function GlossaryText({
     () => buildSegments(text, matches, allowedTermIds, maxTerms),
     [allowedTermIds, matches, maxTerms, text],
   );
+
+  const openDetails = (term: GlossaryTerm) => {
+    setPinnedTermId(null);
+    setHoveredTermId(null);
+    setSuppressedTermId(term.id);
+    if (document.activeElement instanceof HTMLElement) {
+      document.activeElement.blur();
+    }
+    onExpand(term);
+  };
 
   return (
     <>
@@ -81,25 +95,65 @@ export function GlossaryText({
         const accessible = expanded
           ? `${term.term}: ${expanded}. ${definition}`
           : `${term.term}: ${definition}`;
+        const visible =
+          suppressedTermId !== term.id &&
+          (hoveredTermId === term.id || pinnedTermId === term.id);
 
         return (
-          <span className="glossary-inline" key={index}>
+          <span
+            className={`glossary-inline ${visible ? "is-visible" : ""}`}
+            key={index}
+            onMouseEnter={() => {
+              if (suppressedTermId !== term.id) setHoveredTermId(term.id);
+            }}
+            onMouseLeave={() => {
+              setHoveredTermId((current) => (current === term.id ? null : current));
+              setPinnedTermId((current) => (current === term.id ? null : current));
+              setSuppressedTermId((current) => (current === term.id ? null : current));
+            }}
+          >
             <button
               type="button"
+              className="glossary-inline-trigger"
               aria-label={accessible}
-              onClick={() => onExpand(term)}
+              aria-expanded={visible}
+              onFocus={() => {
+                if (suppressedTermId !== term.id) setHoveredTermId(term.id);
+              }}
+              onBlur={(event) => {
+                const next = event.relatedTarget as Node | null;
+                if (next && event.currentTarget.parentElement?.contains(next)) return;
+                setHoveredTermId((current) => (current === term.id ? null : current));
+              }}
+              onClick={() => {
+                setSuppressedTermId(null);
+                setPinnedTermId((current) => (current === term.id ? null : term.id));
+              }}
             >
               {segment.text}
               <sup aria-hidden="true">↗</sup>
             </button>
-            <span className="glossary-tooltip" role="tooltip" aria-hidden="true">
+
+            <span
+              className="glossary-tooltip"
+              aria-hidden={!visible}
+              onMouseEnter={() => setHoveredTermId(term.id)}
+              onMouseLeave={() => {
+                setHoveredTermId(null);
+                setPinnedTermId(null);
+              }}
+            >
               <strong>{term.term}</strong>
               {expanded && <small>{expanded}</small>}
               <span>{definition}</span>
-              <span className="glossary-tooltip-more">
-                {locale === "en" ? "Click to learn more" : "Kliknij, aby rozwinąć"}{" "}
-                <ArrowRight size={11} />
-              </span>
+              <button
+                type="button"
+                className="glossary-tooltip-expand"
+                onClick={() => openDetails(term)}
+              >
+                {locale === "en" ? "Learn more" : "Rozwiń"}
+                <ArrowRight size={12} />
+              </button>
             </span>
           </span>
         );

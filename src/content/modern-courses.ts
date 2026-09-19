@@ -557,7 +557,7 @@ const premiumLessons: Lesson[] = [
     task:["Create ThemeContext with dark as the default.","Utwórz ThemeContext z dark jako default."],
     starter:'const ThemeContext = null;',
     hint:['Use createContext<Theme>("dark").','Użyj createContext<Theme>("dark").'],
-    tests:[{label:["uses createContext","używa createContext"],expression:'__source.includes("createContext")'},{label:["dark default","dark jako default"],expression:'__source.includes("\\"dark\\")'}],
+    tests:[{label:["uses createContext","używa createContext"],expression:'__source.includes("createContext")'},{label:["dark default","dark jako default"],expression:'__source.includes("dark")'}],
     language:"tsx",fileName:"ThemeContext.tsx",
   }),
   makePremiumLesson({

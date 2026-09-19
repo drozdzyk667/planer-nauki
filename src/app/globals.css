@@ -76,19 +76,19 @@
 }
 @layer base {
   :root {
-    --bg: #0d0d14;
-    --fg: #f2f0fa;
-    --surface: #16161f;
-    --elevated: #1d1d29;
-    --subtle: #13131d;
-    --border: #30303e;
-    --control-border: #777286;
-    --muted: #c4c1d3;
-    --quiet: #b1abc6;
-    --accent: #c1adff;
-    --accent-strong: #8e68ef;
-    --accent-bg: #282038;
-    --primary: #ffdc62;
+    --bg: #090a08;
+    --fg: #f7f5ee;
+    --surface: #12130f;
+    --elevated: #1a1b15;
+    --subtle: #0f100d;
+    --border: #34362c;
+    --control-border: #7b7d70;
+    --muted: #cbc8ba;
+    --quiet: #aaa696;
+    --accent: #ffd23f;
+    --accent-strong: #ffb000;
+    --accent-bg: #302708;
+    --primary: #ffd23f;
     --on-primary: #241c06;
     --success: #7de3b7;
     --success-bg: #132b25;
@@ -97,10 +97,10 @@
     --warning: #f4d786;
     --code-bg: #11121a;
     --code-fg: #d7d8ec;
-    --focus: #d6c7ff;
+    --focus: #ffe98d;
     --shadow: 0 20px 70px #0003;
-    --hero-blend: #0d0d14;
-    --yellow: #f4d871;
+    --hero-blend: #090a08;
+    --yellow: #ffd23f;
     --yellow-ink: #201c0d;
     --blue: #9bc4ff;
     --cyan: #99e5f6;
@@ -114,19 +114,19 @@
     color-scheme: dark;
   }
   html[data-theme="light"] {
-    --bg: #f8f7fc;
-    --fg: #23212e;
-    --surface: #fff;
-    --elevated: #f2eff9;
-    --subtle: #f0edf7;
-    --border: #ded9e9;
-    --control-border: #8b829b;
-    --muted: #514762;
-    --quiet: #625572;
-    --accent: #6844b6;
-    --accent-strong: #7047d1;
-    --accent-bg: #eee6ff;
-    --primary: #ffda57;
+    --bg: #f4f2e9;
+    --fg: #171810;
+    --surface: #fffef8;
+    --elevated: #ece9dc;
+    --subtle: #f1eee3;
+    --border: #d8d3c1;
+    --control-border: #716d5e;
+    --muted: #4d4a3f;
+    --quiet: #686456;
+    --accent: #765600;
+    --accent-strong: #9c6800;
+    --accent-bg: #fff3b8;
+    --primary: #f4c928;
     --on-primary: #241c06;
     --success: #166448;
     --success-bg: #e5f5ed;
@@ -135,9 +135,9 @@
     --warning: #775314;
     --code-bg: #f2f0f8;
     --code-fg: #33294c;
-    --focus: #7244d3;
+    --focus: #765600;
     --shadow: 0 20px 70px #3520590d;
-    --yellow: #ebc445;
+    --yellow: #d9ad00;
     --yellow-ink: #241d03;
     --blue: #2265a9;
     --cyan: #14768b;
@@ -402,12 +402,12 @@
   }
   .gradient-text {
     color: var(--accent);
-    background: linear-gradient(110deg, #ece5ff 0%, #b598ef 50%, #9989eb 100%);
+    background: linear-gradient(110deg, #fff6bd 0%, #ffd23f 50%, #ffad1f 100%);
     background-clip: text;
     -webkit-text-fill-color: transparent;
   }
   html[data-theme="light"] .gradient-text {
-    background-image: linear-gradient(110deg, #6541a9, #8a60d6);
+    background-image: linear-gradient(110deg, #765600, #a86800);
   }
   .serif-word {
     font-family: Georgia, serif;
@@ -4427,6 +4427,297 @@
     }
     .completion {
       opacity: 1 !important;
+    }
+  }
+}
+
+@layer components {
+  .header {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    background: color-mix(in srgb, var(--bg), transparent 5%);
+    backdrop-filter: blur(18px);
+    box-shadow: 0 1px 0 color-mix(in srgb, var(--border), transparent 12%);
+  }
+
+  .theme-switch {
+    display: inline-flex;
+    align-items: center;
+    gap: 2px;
+    padding: 3px;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    background: var(--subtle);
+  }
+
+  .theme-option {
+    display: inline-grid;
+    place-items: center;
+    width: 36px;
+    height: 36px;
+    padding: 0;
+    border-radius: 7px;
+    color: var(--muted);
+  }
+
+  .theme-option:hover {
+    color: var(--fg);
+    background: var(--elevated);
+  }
+
+  .theme-option[aria-pressed="true"] {
+    color: var(--on-primary);
+    background: var(--primary);
+  }
+
+  .hero {
+    min-height: 720px;
+    gap: 28px;
+    isolation: isolate;
+  }
+
+  .hero::before {
+    content: "";
+    position: absolute;
+    inset: 7% -10% 5% 36%;
+    z-index: -2;
+    pointer-events: none;
+    background:
+      radial-gradient(circle at 54% 48%, color-mix(in srgb, var(--primary), transparent 72%), transparent 31%),
+      radial-gradient(circle at 58% 50%, color-mix(in srgb, var(--accent-strong), transparent 90%), transparent 56%);
+    filter: blur(8px);
+  }
+
+  .hero::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -3;
+    pointer-events: none;
+    opacity: 0.18;
+    background-image:
+      linear-gradient(color-mix(in srgb, var(--fg), transparent 94%) 1px, transparent 1px),
+      linear-gradient(90deg, color-mix(in srgb, var(--fg), transparent 94%) 1px, transparent 1px);
+    background-size: 54px 54px;
+    mask-image: linear-gradient(to bottom, transparent, #000 18%, #000 70%, transparent);
+  }
+
+  .hero-copy {
+    max-width: 590px;
+  }
+
+  .hero h1 {
+    font-weight: 720;
+    letter-spacing: -0.064em;
+  }
+
+  .hero-copy > p {
+    max-width: 520px;
+  }
+
+  .hero-kicker {
+    border-color: color-mix(in srgb, var(--primary), var(--border) 58%);
+    background: color-mix(in srgb, var(--primary), transparent 93%);
+    color: var(--fg);
+  }
+
+  .hero-art {
+    height: 590px;
+    margin-right: -44px;
+  }
+
+  .core-image {
+    background:
+      radial-gradient(circle at 50% 52%, color-mix(in srgb, var(--primary), transparent 76%), transparent 28%),
+      radial-gradient(circle at center, color-mix(in srgb, var(--accent-strong), transparent 92%), transparent 64%);
+  }
+
+  .core-image > img {
+    filter: saturate(0.92) contrast(1.08) sepia(0.12);
+  }
+
+  .hero-reward,
+  .hero-code-fragment,
+  .orbit-label {
+    border-color: color-mix(in srgb, var(--primary), var(--border) 77%);
+  }
+
+  .hero-course-card {
+    position: absolute;
+    z-index: 5;
+    top: 7%;
+    right: -1%;
+    width: 190px;
+    padding: 20px;
+    border: 1px solid color-mix(in srgb, var(--primary), #fff 24%);
+    border-radius: 18px;
+    color: var(--on-primary);
+    background: linear-gradient(145deg, color-mix(in srgb, var(--primary), #fff 9%), var(--primary));
+    box-shadow:
+      0 22px 70px #0006,
+      0 0 50px color-mix(in srgb, var(--primary), transparent 78%);
+    transform: rotate(2deg);
+  }
+
+  .hero-course-card > span {
+    display: block;
+    font-size: 11px;
+    font-weight: 750;
+    letter-spacing: 0.11em;
+  }
+
+  .hero-course-card > div {
+    display: flex;
+    align-items: flex-end;
+    gap: 8px;
+    margin-top: 14px;
+  }
+
+  .hero-course-card strong {
+    font-size: 54px;
+    line-height: 0.9;
+    letter-spacing: -0.08em;
+  }
+
+  .hero-course-card small {
+    max-width: 70px;
+    padding-bottom: 4px;
+    font-size: 10px;
+    line-height: 1.25;
+    font-weight: 750;
+  }
+
+  .hero-course-card p {
+    margin-top: 14px;
+    color: color-mix(in srgb, var(--on-primary), transparent 18%);
+    font-size: 12px;
+    line-height: 1.5;
+  }
+
+  .hero-course-card a {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    min-height: 42px;
+    margin-top: 15px;
+    border-radius: 999px;
+    background: #11120e;
+    color: #fff;
+    font-size: 12px;
+    font-weight: 700;
+  }
+
+  .orbit-ts {
+    top: 51%;
+    right: 1%;
+  }
+
+  .skills-strip {
+    background: var(--primary);
+    border-color: color-mix(in srgb, var(--on-primary), transparent 78%);
+  }
+
+  .skills-strip .container > span,
+  .skills-strip b {
+    color: color-mix(in srgb, var(--on-primary), transparent 27%);
+  }
+
+  .skills-strip .strip-active {
+    color: var(--on-primary);
+  }
+
+  .course-card,
+  .demo-card,
+  .visual-explainer,
+  .lesson-list,
+  .path-summary,
+  .continue-card,
+  .daily-card,
+  .review-card,
+  .skill-map {
+    box-shadow: 0 18px 55px color-mix(in srgb, #000, transparent 88%);
+  }
+
+  .course-card.featured {
+    border-color: color-mix(in srgb, var(--primary), var(--border) 62%);
+  }
+}
+
+@layer responsive {
+  @media (max-width: 900px) {
+    .header-cta {
+      display: inline-flex;
+    }
+
+    .hero-course-card {
+      right: 0;
+      top: 8%;
+      width: 166px;
+      padding: 16px;
+    }
+
+    .hero-course-card strong {
+      font-size: 46px;
+    }
+  }
+
+  @media (max-width: 767px) {
+    .header-cta {
+      display: inline-flex;
+      width: 40px;
+      min-width: 40px;
+      height: 40px;
+      min-height: 40px;
+      padding: 0;
+      gap: 0;
+      font-size: 0;
+      border-radius: 9px;
+    }
+
+    .header-cta svg {
+      width: 18px;
+      height: 18px;
+    }
+
+    .theme-switch {
+      padding: 2px;
+    }
+
+    .theme-option {
+      width: 34px;
+      height: 34px;
+    }
+
+    .hero {
+      padding-top: 34px;
+    }
+
+    .hero-art {
+      height: 450px;
+    }
+
+    .hero-course-card {
+      top: 7%;
+      right: 1%;
+      width: 158px;
+    }
+  }
+
+  @media (max-width: 430px) {
+    .language-switch span {
+      display: none;
+    }
+
+    .hero-course-card {
+      right: -2%;
+      width: 148px;
+      padding: 14px;
+    }
+
+    .hero-course-card p {
+      display: none;
     }
   }
 }

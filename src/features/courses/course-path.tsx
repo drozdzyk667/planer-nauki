@@ -1,6 +1,6 @@
 "use client";
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   ArrowDown,
   ArrowRight,
@@ -13,12 +13,18 @@ import {
   LockKeyhole,
   Play,
   Sparkles,
+  Star,
 } from "lucide-react";
 import { useLocale, useProgress } from "@/components/providers";
 import { Breadcrumb } from "@/components/shell";
 import { ProgressBar, Reveal, UpgradeDialog } from "@/components/ui";
 import { courseRepository } from "@/services/courses";
-import { moduleProgress } from "@/domain/learning";
+import {
+  moduleMaxXp,
+  moduleProgress,
+  moduleStars,
+  moduleXp,
+} from "@/domain/learning";
 export function CoursePath({ courseSlug = "javascript" }: { courseSlug?: string }) {
   const { t, l, locale, href } = useLocale();
   const progress = useProgress();
@@ -34,11 +40,91 @@ export function CoursePath({ courseSlug = "javascript" }: { courseSlug?: string 
   const freeMinutes = freeModules.reduce((sum, module) => sum + module.minutes, 0);
   const done = freeLessons.filter((lesson) => progress.completed[lesson.id]).length;
   const next = freeLessons.find((lesson) => !progress.completed[lesson.id]);
+  const [activeModule, setActiveModule] = useState(freeModules[0]?.id ?? "");
+
+  useEffect(() => {
+    const elements = freeModules
+      .map((module) => document.getElementById(`module-${module.id}`))
+      .filter(Boolean) as HTMLElement[];
+    if (!elements.length) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const visible = entries
+          .filter((entry) => entry.isIntersecting)
+          .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
+        const moduleId = visible?.target.getAttribute("data-module-id");
+        if (moduleId) setActiveModule(moduleId);
+      },
+      { rootMargin: "-22% 0px -58% 0px", threshold: [0.05, 0.2, 0.5] },
+    );
+
+    elements.forEach((element) => observer.observe(element));
+    return () => observer.disconnect();
+  }, [course.id]);
+
+  function goToModule(moduleId: string) {
+    setActiveModule(moduleId);
+    document
+      .getElementById(`module-${moduleId}`)
+      ?.scrollIntoView({ behavior: "smooth", block: "start" });
+  }
+
   return (
     <div className="container page-space">
       <Breadcrumb current={l(course.title)} />
       <div className="course-layout">
-        <div>
+        <aside className="course-module-rail" aria-label={locale === "en" ? "Course modules" : "Moduły kursu"}>
+          <div className="course-module-rail-inner">
+            <span className="eyebrow">
+              {locale === "en" ? "COURSE MAP" : "MAPA KURSU"}
+            </span>
+            <strong>{l(course.title)}</strong>
+            <nav>
+              {course.modules.map((module, moduleIndex) => {
+                const locked = module.access === "premium";
+                const stars = locked ? 0 : moduleStars(module, progress);
+                return (
+                  <button
+                    type="button"
+                    key={module.id}
+                    className={`${activeModule === module.id ? "active" : ""} ${locked ? "locked" : ""}`}
+                    aria-current={activeModule === module.id ? "step" : undefined}
+                    onClick={() =>
+                      locked ? setUpgrade(true) : goToModule(module.id)
+                    }
+                  >
+                    <span className="module-rail-index">
+                      {String(moduleIndex + 1).padStart(2, "0")}
+                    </span>
+                    <span className="module-rail-copy">
+                      <b>{l(module.title)}</b>
+                      <small>
+                        {locked ? (
+                          <>
+                            <LockKeyhole size={11} />
+                            Premium
+                          </>
+                        ) : (
+                          <>
+                            {[0, 1, 2].map((starIndex) => (
+                              <Star
+                                key={starIndex}
+                                size={11}
+                                fill={starIndex < stars ? "currentColor" : "none"}
+                              />
+                            ))}
+                          </>
+                        )}
+                      </small>
+                    </span>
+                  </button>
+                );
+              })}
+            </nav>
+          </div>
+        </aside>
+        <div className="course-main-column">
           <Reveal className="course-intro">
             <span className={`language-icon ${course.color} large`}>{course.short}</span>
             <div className="eyebrow">
@@ -119,8 +205,16 @@ export function CoursePath({ courseSlug = "javascript" }: { courseSlug?: string 
                 const percent = moduleProgress(module, progress);
                 const checkpointDone =
                   progress.quizBest[`checkpoint-${module.id}`] !== undefined;
+                const stars = moduleStars(module, progress);
+                const earnedXp = moduleXp(module, progress);
+                const maxXp = moduleMaxXp(module);
                 return (
-                  <article className="module-section" key={module.id}>
+                  <article
+                    className="module-section"
+                    id={`module-${module.id}`}
+                    data-module-id={module.id}
+                    key={module.id}
+                  >
                     <div
                       className={`path-node ${percent === 100 ? "done" : ""}`}
                     >
@@ -138,7 +232,19 @@ export function CoursePath({ courseSlug = "javascript" }: { courseSlug?: string 
                           {module.minutes} {t.minutes}
                         </span>
                       </div>
-                      <span className="badge subtle">{t.free}</span>
+                      <div className="module-achievement">
+                        <div className="module-stars" aria-label={`${stars} / 3`}>
+                          {[0, 1, 2].map((starIndex) => (
+                            <Star
+                              key={starIndex}
+                              size={15}
+                              fill={starIndex < stars ? "currentColor" : "none"}
+                            />
+                          ))}
+                        </div>
+                        <span className="module-xp">{earnedXp} / {maxXp} XP</span>
+                        <span className="badge subtle">{t.free}</span>
+                      </div>
                     </div>
                     <div className="lesson-list">
                       {module.lessonIds.map((id) => {

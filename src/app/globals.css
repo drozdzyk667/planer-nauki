@@ -8500,3 +8500,363 @@
     }
   }
 }
+
+
+@layer coding-lab-v1 {
+  /* Course landing is now intentionally clean: the fixed mode dock handles mode navigation. */
+  .course-layout.course-layout-clean {
+    grid-template-columns: minmax(0, 1fr) 278px;
+    gap: 34px;
+  }
+
+  /* Give the edge icons real breathing room and keep the active marker independent. */
+  .course-mode-dock > a {
+    width: 54px;
+    min-height: 52px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 7px 6px 7px 11px;
+  }
+
+  .course-mode-dock-line {
+    position: absolute;
+    left: 5px;
+    top: 50%;
+    transform: translateY(-50%);
+  }
+
+  .course-mode-dock-icon {
+    width: 36px;
+    height: 36px;
+    flex: 0 0 36px;
+  }
+
+  .course-mode-dock-label {
+    left: 62px;
+  }
+
+  /* Code Lab */
+  .coding-lab-page {
+    max-width: 1180px;
+  }
+
+  .coding-lab-hero {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 230px;
+    gap: 32px;
+    align-items: end;
+    padding: 32px 0 34px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .coding-lab-hero h1 {
+    margin-top: 12px;
+    font-size: clamp(42px, 6vw, 72px);
+    line-height: 0.98;
+    letter-spacing: -0.055em;
+  }
+
+  .coding-lab-hero p {
+    max-width: 760px;
+    margin-top: 17px;
+    color: var(--muted);
+    font-size: 16px;
+    line-height: 1.7;
+  }
+
+  .coding-engine-card {
+    min-height: 154px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 7px;
+    padding: 22px;
+    border: 1px solid color-mix(in srgb, var(--accent), var(--border) 58%);
+    border-radius: 18px;
+    background:
+      radial-gradient(circle at 90% 10%, color-mix(in srgb, var(--accent), transparent 82%), transparent 38%),
+      var(--surface);
+    box-shadow: 0 20px 55px #0000002b;
+  }
+
+  .coding-engine-card > span {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    color: var(--accent);
+    font: 700 10px "JetBrains Mono", monospace;
+    letter-spacing: 0.08em;
+  }
+
+  .coding-engine-card > strong {
+    font: 800 40px/1 "JetBrains Mono", monospace;
+  }
+
+  .coding-engine-card > small {
+    color: var(--quiet);
+    font-size: 10px;
+    line-height: 1.5;
+  }
+
+  .coding-lab-toolbar {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    gap: 16px;
+    align-items: center;
+    padding: 18px 0;
+  }
+
+  .coding-challenge-position {
+    display: flex;
+    align-items: baseline;
+    gap: 4px;
+    font-family: "JetBrains Mono", monospace;
+  }
+
+  .coding-challenge-position > span {
+    color: var(--fg);
+    font-size: 21px;
+    font-weight: 800;
+  }
+
+  .coding-challenge-position > small {
+    color: var(--quiet);
+    font-size: 10px;
+  }
+
+  .coding-challenge-meta {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-width: 0;
+    color: var(--muted);
+    font-size: 11px;
+  }
+
+  .coding-difficulty,
+  .coding-solved {
+    min-height: 28px;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 5px 8px;
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    background: var(--surface);
+    font: 700 9px "JetBrains Mono", monospace;
+    text-transform: uppercase;
+  }
+
+  .coding-difficulty.easy {
+    color: var(--success);
+  }
+
+  .coding-difficulty.medium {
+    color: var(--accent);
+  }
+
+  .coding-difficulty.hard {
+    color: var(--purple);
+  }
+
+  .coding-solved {
+    color: var(--success);
+  }
+
+  .coding-lab-actions {
+    display: flex;
+    gap: 8px;
+  }
+
+  .coding-challenge-card {
+    overflow: hidden;
+    border: 1px solid var(--border);
+    border-radius: 22px;
+    background:
+      radial-gradient(circle at 100% 0%, color-mix(in srgb, var(--blue), transparent 92%), transparent 32%),
+      linear-gradient(145deg, var(--surface), var(--elevated));
+    box-shadow:
+      0 30px 90px #00000032,
+      inset 0 1px 0 #ffffff0a;
+  }
+
+  .coding-challenge-card > header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 24px;
+    padding: 28px 30px 22px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .coding-challenge-card > header h2 {
+    margin-top: 8px;
+    font-size: clamp(25px, 3vw, 36px);
+  }
+
+  .coding-challenge-card > header p {
+    max-width: 720px;
+    margin-top: 8px;
+    color: var(--muted);
+    line-height: 1.6;
+  }
+
+  .coding-xp {
+    min-width: max-content;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 10px;
+    border: 1px solid color-mix(in srgb, var(--accent), var(--border) 55%);
+    border-radius: 10px;
+    color: var(--accent);
+    background: color-mix(in srgb, var(--accent), transparent 91%);
+    font: 700 10px "JetBrains Mono", monospace;
+  }
+
+  .coding-variant-note {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 18px 30px 0;
+    padding: 11px 13px;
+    border: 1px solid var(--border);
+    border-radius: 11px;
+    color: var(--muted);
+    background: var(--subtle);
+    font-size: 11px;
+    line-height: 1.5;
+  }
+
+  .coding-variant-note svg {
+    flex: 0 0 auto;
+    color: var(--purple);
+  }
+
+  .coding-challenge-card > .exercise {
+    padding: 22px 30px 30px;
+  }
+
+  .coding-success {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    gap: 15px;
+    align-items: center;
+    margin: 0 30px 30px;
+    padding: 16px;
+    border: 1px solid color-mix(in srgb, var(--success), var(--border) 58%);
+    border-radius: 14px;
+    color: var(--fg);
+    background: color-mix(in srgb, var(--success), transparent 92%);
+  }
+
+  .coding-success > svg {
+    color: var(--success);
+  }
+
+  .coding-success strong {
+    display: block;
+    font-size: 13px;
+  }
+
+  .coding-success p {
+    margin-top: 4px;
+    color: var(--muted);
+    font-size: 11px;
+    line-height: 1.5;
+  }
+
+  .coding-lab-note {
+    margin-top: 18px;
+    padding: 15px 17px;
+    border-left: 3px solid var(--control-border);
+    color: var(--muted);
+    background: var(--surface);
+  }
+
+  .coding-lab-note strong {
+    color: var(--fg);
+    font-size: 12px;
+  }
+
+  .coding-lab-note p {
+    margin-top: 5px;
+    font-size: 11px;
+    line-height: 1.6;
+  }
+
+  @media (max-width: 1180px) {
+    .course-layout.course-layout-clean {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
+
+  @media (max-width: 760px) {
+    .course-mode-dock {
+      width: min(430px, calc(100vw - 20px));
+      grid-template-columns: repeat(4, 1fr);
+    }
+
+    .course-mode-dock > a {
+      min-height: 54px;
+      padding: 6px 3px 4px;
+    }
+
+    .course-mode-dock-line {
+      left: 50%;
+      top: 2px;
+      transform: translateX(-50%);
+    }
+
+    .coding-lab-hero {
+      grid-template-columns: 1fr;
+      gap: 20px;
+    }
+
+    .coding-engine-card {
+      min-height: 120px;
+    }
+
+    .coding-lab-toolbar {
+      grid-template-columns: auto 1fr;
+    }
+
+    .coding-challenge-meta {
+      justify-content: flex-end;
+      flex-wrap: wrap;
+    }
+
+    .coding-lab-actions {
+      grid-column: 1 / -1;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+    }
+
+    .coding-lab-actions .button {
+      width: 100%;
+    }
+
+    .coding-challenge-card > header {
+      padding: 22px 18px 18px;
+    }
+
+    .coding-variant-note {
+      margin: 14px 18px 0;
+    }
+
+    .coding-challenge-card > .exercise {
+      padding: 18px;
+    }
+
+    .coding-success {
+      grid-template-columns: auto 1fr;
+      margin: 0 18px 18px;
+    }
+
+    .coding-success .button {
+      grid-column: 1 / -1;
+      width: 100%;
+    }
+  }
+}

@@ -122,6 +122,16 @@ export const progressStore = {
     });
     return reward;
   },
+  completeCodingChallenge(id: string) {
+    const alreadySolved = state.codingSolved.includes(id);
+    const reward = alreadySolved ? 0 : 35;
+    commit({
+      ...active(state),
+      xp: state.xp + reward,
+      codingSolved: alreadySolved ? state.codingSolved : [...state.codingSolved, id],
+    });
+    return reward;
+  },
   toggleFavoriteFlashcard(id: string) {
     const favoriteFlashcards = state.favoriteFlashcards.includes(id)
       ? state.favoriteFlashcards.filter((item) => item !== id)

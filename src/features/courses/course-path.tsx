@@ -1,6 +1,6 @@
 "use client";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import {
   ArrowDown,
   ArrowRight,
@@ -41,27 +41,7 @@ export function CoursePath({ courseSlug = "javascript" }: { courseSlug?: string 
   const freeMinutes = freeModules.reduce((sum, module) => sum + module.minutes, 0);
   const done = freeLessons.filter((lesson) => progress.completed[lesson.id]).length;
   const next = freeLessons.find((lesson) => !progress.completed[lesson.id]);
-  const [activeModule, setActiveModule] = useState(freeModules[0]?.id ?? "");
-
-  useEffect(() => {
-    const elements = freeModules
-      .map((module) => document.getElementById(`module-${module.id}`))
-      .filter(Boolean) as HTMLElement[];
-    if (!elements.length) return;
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        const visible = entries
-          .filter((entry) => entry.isIntersecting)
-          .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
-        const moduleId = visible?.target.getAttribute("data-module-id");
-        if (moduleId) setActiveModule(moduleId);
-      },
-      { rootMargin: "-22% 0px -58% 0px", threshold: [0.05, 0.2, 0.5] },
-    );
-
-    elements.forEach((element) => observer.observe(element));
-    return () => observer.disconnect();
+  return () => observer.disconnect();
   }, [course.id]);
 
   function goToModule(moduleId: string) {
@@ -75,57 +55,7 @@ export function CoursePath({ courseSlug = "javascript" }: { courseSlug?: string 
     <div className="container page-space">
       <CourseModeDock courseSlug={course.slug} active="practice" />
       <Breadcrumb current={l(course.title)} />
-      <div className="course-layout">
-        <aside className="course-module-rail" aria-label={locale === "en" ? "Course modules" : "Moduły kursu"}>
-          <div className="course-module-rail-inner">
-            <span className="eyebrow">
-              {locale === "en" ? "COURSE MAP" : "MAPA KURSU"}
-            </span>
-            <strong>{l(course.title)}</strong>
-            <nav>
-              {course.modules.map((module, moduleIndex) => {
-                const locked = module.access === "premium";
-                const stars = locked ? 0 : moduleStars(module, progress);
-                return (
-                  <button
-                    type="button"
-                    key={module.id}
-                    className={`${activeModule === module.id ? "active" : ""} ${locked ? "locked" : ""}`}
-                    aria-current={activeModule === module.id ? "step" : undefined}
-                    onClick={() =>
-                      locked ? setUpgrade(true) : goToModule(module.id)
-                    }
-                  >
-                    <span className="module-rail-index">
-                      {String(moduleIndex + 1).padStart(2, "0")}
-                    </span>
-                    <span className="module-rail-copy">
-                      <b>{l(module.title)}</b>
-                      <small>
-                        {locked ? (
-                          <>
-                            <LockKeyhole size={11} />
-                            Premium
-                          </>
-                        ) : (
-                          <>
-                            {[0, 1, 2].map((starIndex) => (
-                              <Star
-                                key={starIndex}
-                                size={11}
-                                fill={starIndex < stars ? "currentColor" : "none"}
-                              />
-                            ))}
-                          </>
-                        )}
-                      </small>
-                    </span>
-                  </button>
-                );
-              })}
-            </nav>
-          </div>
-        </aside>
+      <div className="course-layout course-layout-clean">
         <div className="course-main-column">
           <Reveal className="course-intro">
             <span className={`language-icon ${course.color} large`}>{course.short}</span>
@@ -151,53 +81,6 @@ export function CoursePath({ courseSlug = "javascript" }: { courseSlug?: string 
               </span>
             </div>
           </Reveal>
-          <div className="study-mode-grid" aria-label={locale === "en" ? "Ways to learn" : "Sposoby nauki"}>
-            <Link className="study-mode-card theory" href={href(`/courses/${course.slug}/knowledge`)}>
-              <span className="study-mode-icon">
-                <Globe2 size={22} />
-              </span>
-              <div>
-                <small>{locale === "en" ? "01 · READ & UNDERSTAND" : "01 · CZYTAJ I ROZUMIEJ"}</small>
-                <strong>{locale === "en" ? "Knowledge library" : "Biblioteka wiedzy"}</strong>
-                <p>
-                  {locale === "en"
-                    ? "Friendly theory, code examples, rules, pitfalls and advanced notes."
-                    : "Przystępna teoria, przykłady kodu, reguły, pułapki i zaawansowane smaczki."}
-                </p>
-              </div>
-              <ArrowUpRight size={18} />
-            </Link>
-            <Link className="study-mode-card cards" href={href(`/courses/${course.slug}/flashcards`)}>
-              <span className="study-mode-icon">
-                <Sparkles size={22} />
-              </span>
-              <div>
-                <small>{locale === "en" ? "02 · QUICK RECALL" : "02 · SZYBKIE POWTÓRKI"}</small>
-                <strong>{locale === "en" ? "Flashcards" : "Fiszki"}</strong>
-                <p>
-                  {locale === "en"
-                    ? "Fast question → answer cards with code, rules and advanced details."
-                    : "Szybkie karty pytanie → odpowiedź z kodem, regułami i detalami."}
-                </p>
-              </div>
-              <ArrowUpRight size={18} />
-            </Link>
-            <div className="study-mode-card practice active">
-              <span className="study-mode-icon">
-                <Play size={22} />
-              </span>
-              <div>
-                <small>{locale === "en" ? "03 · LEARN BY DOING" : "03 · UCZ SIĘ W PRAKTYCE"}</small>
-                <strong>{locale === "en" ? "Interactive practice" : "Praktyka interaktywna"}</strong>
-                <p>
-                  {locale === "en"
-                    ? "Theory in context, predictions, code, puzzles, feedback and checkpoints."
-                    : "Teoria w kontekście, przewidywanie, kod, zagadki, feedback i sprawdziany."}
-                </p>
-              </div>
-              <CheckCircle2 size={18} />
-            </div>
-          </div>
           <div className="path-heading">
             <h2>{t.freePath}</h2>
             <span className="badge green">{freeModules.length} {t.modules}</span>

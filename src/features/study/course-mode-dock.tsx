@@ -1,10 +1,10 @@
 "use client";
 
 import Link from "next/link";
-import { BookOpenText, FlaskConical, Sparkles } from "lucide-react";
+import { BookOpenText, Code2, FlaskConical, Sparkles } from "lucide-react";
 import { useLocale } from "@/components/providers";
 
-type StudyMode = "knowledge" | "flashcards" | "practice";
+type StudyMode = "knowledge" | "flashcards" | "coding" | "practice";
 
 export function CourseModeDock({
   courseSlug,
@@ -30,6 +30,13 @@ export function CourseModeDock({
       label: en ? "Cards" : "Fiszki",
       full: en ? "Flashcards" : "Fiszki",
       Icon: Sparkles,
+    },
+    {
+      id: "coding" as const,
+      href: href(`/courses/${courseSlug}/coding`),
+      label: en ? "Code" : "Kod",
+      full: en ? "Practical coding" : "Praktyczne kodowanie",
+      Icon: Code2,
     },
     {
       id: "practice" as const,

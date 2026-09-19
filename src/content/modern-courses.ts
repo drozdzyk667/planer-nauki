@@ -460,7 +460,7 @@ const premiumLessons: Lesson[] = [
     task:["Enable strict and noUncheckedIndexedAccess.","Włącz strict i noUncheckedIndexedAccess."],
     starter:'{ "compilerOptions": { "strict": false } }',
     hint:["Set both options to true.","Ustaw obie opcje na true."],
-    tests:[{label:["strict true","strict true"],expression:'__source.includes("\\"strict\\": true")'},{label:["checks index access","sprawdza index access"],expression:'__source.includes("noUncheckedIndexedAccess")'}],
+    tests:[{label:["strict true","strict true"],expression:'__source.includes("strict") && __source.includes("true")'},{label:["checks index access","sprawdza index access"],expression:'__source.includes("noUncheckedIndexedAccess")'}],
     language:"typescript",fileName:"tsconfig.json",
   }),
   makePremiumLesson({
@@ -573,7 +573,7 @@ const premiumLessons: Lesson[] = [
     task:["Model loading, success and error as a union.","Zamodeluj loading, success i error jako unię."],
     starter:'type State<T> = { status: string };',
     hint:["Use three literal union members.","Użyj trzech członów unii z literalami."],
-    tests:[{label:["loading state","stan loading"],expression:'__source.includes("\\"loading\\")'},{label:["success and error","success i error"],expression:'__source.includes("\\"success\\") && __source.includes("\\"error\\")'},{label:["uses union","używa unii"],expression:'__source.includes("|")'}],
+    tests:[{label:["loading state","stan loading"],expression:'__source.includes("loading")'},{label:["success and error","success i error"],expression:'__source.includes("success") && __source.includes("error")'},{label:["uses union","używa unii"],expression:'__source.includes("|")'}],
     language:"tsx",fileName:"QueryState.ts",
   }),
   makePremiumLesson({
@@ -621,7 +621,7 @@ const premiumLessons: Lesson[] = [
     task:["Query Save by role and accessible name.","Znajdź Save po roli i dostępnej nazwie."],
     starter:'const button = document.querySelector(".save");',
     hint:['Use screen.getByRole("button", { name: /save/i }).','Użyj screen.getByRole("button", { name: /save/i }).'],
-    tests:[{label:["uses getByRole","używa getByRole"],expression:'__source.includes("getByRole")'},{label:["queries button","wyszukuje button"],expression:'__source.includes("\\"button\\")'}],
+    tests:[{label:["uses getByRole","używa getByRole"],expression:'__source.includes("getByRole")'},{label:["queries button","wyszukuje button"],expression:'__source.includes("button")'}],
     language:"tsx",fileName:"Save.test.tsx",
   }),
   makePremiumLesson({

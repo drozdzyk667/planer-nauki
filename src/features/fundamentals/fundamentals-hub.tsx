@@ -18,6 +18,7 @@ import {
   conceptualFlow,
   fundamentalsDomainFor,
   fundamentalsDomains,
+  fundamentalsDomainsFor,
   fundamentalsExamples,
   fundamentalsLevel,
   relatedTermIds,
@@ -71,11 +72,13 @@ export function FundamentalsHub() {
     const needle = query.trim().toLocaleLowerCase();
     return terms
       .filter((term) => {
-        const termDomain = fundamentalsDomainFor(term.id)?.id;
+        const explicitDomains = fundamentalsDomainsFor(term.id).map(
+          (item) => item.id,
+        );
         const matchesDomain =
           domain === "all" ||
-          termDomain === domain ||
-          (!termDomain &&
+          explicitDomains.includes(domain) ||
+          (!explicitDomains.length &&
             domain ===
               (term.category === "ai"
                 ? "ai"

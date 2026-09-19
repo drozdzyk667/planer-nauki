@@ -29,12 +29,11 @@ export function CourseCard({
   const study = studyContentFor(course.slug);
   const freeChapterCount =
     study?.knowledge.filter((section) => section.level === "beginner").length ?? 0;
-  const target =
-    freeLessonCount > 0
+  const target = study
+    ? `/courses/${course.slug}/knowledge`
+    : freeLessonCount > 0
       ? `/courses/${course.slug}`
-      : study
-        ? `/courses/${course.slug}/knowledge`
-        : `/courses#course-${course.slug}`;
+      : `/courses#course-${course.slug}`;
   return (
     <article
       id={`course-${course.slug}`}

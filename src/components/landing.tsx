@@ -62,7 +62,7 @@ export function Landing() {
               : "Krótkie wizualne lekcje, prawdziwy kod, checkpointy i mądre powtórki. Uczysz się przez działanie — a potem sprawdzasz, czy temat naprawdę został w głowie."}
           </p>
           <div className="hero-buttons">
-            <Link className="button primary" href={href("/courses/javascript")}>
+            <Link className="button primary" href={href("/courses/javascript/knowledge")}>
               {t.startFree}
               <ArrowUpRight size={19} />
             </Link>
@@ -146,7 +146,7 @@ export function Landing() {
                 ? "Start with the foundations. No account required."
                 : "Zacznij od podstaw. Bez zakładania konta."}
             </p>
-            <Link href={href("/courses/javascript")}>
+            <Link href={href("/courses/javascript/knowledge")}>
               {en ? "Start free" : "Zacznij za darmo"}
               <ArrowUpRight size={16} />
             </Link>
@@ -163,9 +163,9 @@ export function Landing() {
         <div className="container">
           <nav className="skills-list" aria-label={en ? "Course shortcuts" : "Skróty do kursów"}>
             {[
-              ["JavaScript", "/courses/javascript", "js"],
-              ["TypeScript", "/courses/typescript", "ts"],
-              ["React", "/courses/react", "react"],
+              ["JavaScript", "/courses/javascript/knowledge", "js"],
+              ["TypeScript", "/courses/typescript/knowledge", "ts"],
+              ["React", "/courses/react/knowledge", "react"],
               ["Python", "/courses#course-python", "python"],
               ["SQL", "/courses#course-sql", "sql"],
               ["AI", "/courses/ai/knowledge", "ai"],
@@ -478,7 +478,7 @@ export function Landing() {
           </div>
           <h2>{t.getStarted}</h2>
           <p>{t.getStartedCopy}</p>
-          <Link className="button primary" href={href("/courses/javascript")}>
+          <Link className="button primary" href={href("/courses/javascript/knowledge")}>
             {t.startFree}
             <ArrowRight size={19} />
           </Link>

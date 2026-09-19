@@ -25,8 +25,8 @@ export function CourseModeDock({
     {
       id: "knowledge" as const,
       href: href(`/courses/${courseSlug}/knowledge`),
-      label: en ? "Knowledge" : "Wiedza",
-      full: en ? "Knowledge library" : "Biblioteka wiedzy",
+      label: en ? "Learn" : "Nauka",
+      full: en ? "Learn: knowledge and glossary" : "Nauka: wiedza i słownik",
       Icon: BookOpenText,
       visible: true,
     },

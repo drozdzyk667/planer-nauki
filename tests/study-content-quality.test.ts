@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import * as ts from "typescript";
 import { courseStudyContent } from "../src/content/study-content";
 import { courseRepository } from "../src/services/courses";
+import { glossaryFor, glossaryTerms } from "../src/content/glossary";
 import type { Localized } from "../src/domain/models";
 
 function expectLocalized(value: Localized, label: string) {
@@ -129,6 +130,28 @@ describe("study content quality", () => {
         expect(() => new Function(`return Boolean(${check.expression});`), `${lesson.id}: ${check.expression}`).not.toThrow();
       }
     }
+  });
+
+
+  it("keeps the glossary bilingual, unique and available for every study course", () => {
+    const ids = new Set<string>();
+    for (const term of glossaryTerms) {
+      expect(ids.has(term.id), `duplicate glossary term ${term.id}`).toBe(false);
+      ids.add(term.id);
+      expect(term.term.trim()).not.toBe("");
+      expectLocalized(term.definition, `glossary/${term.id}/definition`);
+      if (term.expanded) expectLocalized(term.expanded, `glossary/${term.id}/expanded`);
+      expect(term.aliases.length).toBeGreaterThan(0);
+    }
+
+    for (const course of ["javascript", "typescript", "react", "ai", "it-foundations"]) {
+      expect(glossaryFor(course).length, `${course} glossary size`).toBeGreaterThanOrEqual(15);
+    }
+
+    expect(glossaryFor("ai").some((term) => term.id === "mcp")).toBe(true);
+    expect(glossaryFor("ai").some((term) => term.id === "rag")).toBe(true);
+    expect(glossaryFor("it-foundations").some((term) => term.id === "http2")).toBe(true);
+    expect(glossaryFor("it-foundations").some((term) => term.id === "kubernetes")).toBe(true);
   });
 
   it("publishes AI and production IT as available reference courses", () => {

@@ -99,7 +99,7 @@ export function Review() {
           title={t.noReview}
           description={t.noReviewCopy}
           action={t.reviewEmptyLink}
-          href={href("/courses/javascript")}
+          href={href("/courses/javascript/knowledge")}
         />
       )}
     </div>

@@ -127,7 +127,7 @@ export function Header() {
             </div>
             <Link
               className="button primary header-cta"
-              href={href("/courses/javascript")}
+              href={href("/courses/javascript/knowledge")}
             >
               {t.start}
               <ArrowUpRight size={16} />

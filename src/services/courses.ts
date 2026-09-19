@@ -1,4 +1,15 @@
-import { courses, lessons, quizzes, conceptNames } from "@/content/curriculum";
+import {
+  courses as foundationCourses,
+  lessons as foundationLessons,
+  quizzes as foundationQuizzes,
+  conceptNames as foundationConceptNames,
+} from "@/content/curriculum";
+import {
+  modernCourses,
+  modernLessons,
+  modernQuizzes,
+  modernConceptNames,
+} from "@/content/modern-courses";
 import {
   courseSchema,
   lessonSchema,
@@ -14,10 +25,18 @@ export interface CourseRepository {
   quiz(moduleId: string): Quiz | undefined;
   lessons(): Lesson[];
 }
+const replacements = new Map(modernCourses.map((course) => [course.id, course]));
+const allCourses = foundationCourses.map(
+  (course) => replacements.get(course.id) ?? course,
+);
+const allLessons = [...foundationLessons, ...modernLessons];
+const allQuizzes = [...foundationQuizzes, ...modernQuizzes];
+const allConceptNames = { ...foundationConceptNames, ...modernConceptNames };
+
 class StaticCourseRepository implements CourseRepository {
-  private courses = courses.map((c) => courseSchema.parse(c));
-  private content = lessons.map((l) => lessonSchema.parse(l));
-  private quizzes = quizzes.map((q) => quizSchema.parse(q));
+  private courses = allCourses.map((c) => courseSchema.parse(c));
+  private content = allLessons.map((l) => lessonSchema.parse(l));
+  private quizzes = allQuizzes.map((q) => quizSchema.parse(q));
   list() {
     return this.courses;
   }
@@ -36,4 +55,4 @@ class StaticCourseRepository implements CourseRepository {
 }
 export const courseRepository: CourseRepository = new StaticCourseRepository();
 export const conceptLabel = (id: string) =>
-  conceptNames[id] ?? { en: id, pl: id };
+  allConceptNames[id] ?? { en: id, pl: id };

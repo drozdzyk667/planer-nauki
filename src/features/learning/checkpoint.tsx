@@ -23,9 +23,10 @@ export function Checkpoint({ moduleId }: { moduleId: string }) {
   const { t, l, href } = useLocale();
   const progress = useProgress();
   const quiz = courseRepository.quiz(moduleId)!;
-  const courseModule = courseRepository
-    .get("javascript")!
-    .modules.find((m) => m.id === moduleId)!;
+  const course = courseRepository.list().find((candidate) =>
+    candidate.modules.some((module) => module.id === moduleId),
+  )!;
+  const courseModule = course.modules.find((m) => m.id === moduleId)!;
   const [index, setIndex] = useState(0);
   const [answers, setAnswers] = useState<Record<string, string>>({});
   const [result, setResult] = useState<{
@@ -60,7 +61,7 @@ export function Checkpoint({ moduleId }: { moduleId: string }) {
           title={t.checkpoint}
           description={t.quizLocked}
           action={t.toPath}
-          href={href("/courses/javascript")}
+          href={href(`/courses/${course.slug}`)}
         />
       </div>
     );
@@ -81,7 +82,7 @@ export function Checkpoint({ moduleId }: { moduleId: string }) {
   }
   return (
     <div className="container checkpoint-page">
-      <Link className="text-link" href={href("/courses/javascript")}>
+      <Link className="text-link" href={href(`/courses/${course.slug}`)}>
         <ArrowLeft size={17} />
         {t.path}
       </Link>
@@ -129,7 +130,7 @@ export function Checkpoint({ moduleId }: { moduleId: string }) {
             </p>
           )}
           <div className="completion-actions">
-            <Link className="button primary" href={href("/courses/javascript")}>
+            <Link className="button primary" href={href(`/courses/${course.slug}`)}>
               {t.continue}
               <ArrowRight size={18} />
             </Link>

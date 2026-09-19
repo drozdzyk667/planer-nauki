@@ -31,6 +31,9 @@ export const exerciseSchema = z.object({
   task: textSchema,
   starter: z.string(),
   hint: textSchema,
+  mode: z.enum(["runtime", "source"]).optional(),
+  language: z.enum(["javascript", "typescript", "tsx"]).optional(),
+  fileName: z.string().optional(),
   tests: z
     .array(z.object({ label: textSchema, expression: z.string() }))
     .min(1),
@@ -40,6 +43,13 @@ export const blockSchema = z.discriminatedUnion("type", [
   z.object({ type: z.literal("text"), heading: textSchema, body: textSchema }),
   z.object({ type: z.literal("code"), code: z.string(), caption: textSchema }),
   z.object({ type: z.literal("tip"), body: textSchema }),
+  z.object({ type: z.literal("fact"), title: textSchema, body: textSchema }),
+  z.object({
+    type: z.literal("riddle"),
+    title: textSchema,
+    prompt: textSchema,
+    answer: textSchema,
+  }),
   z.object({
     type: z.literal("visual"),
     kind: z.enum([

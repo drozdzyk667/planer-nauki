@@ -19,35 +19,39 @@ import { Breadcrumb } from "@/components/shell";
 import { ProgressBar, Reveal, UpgradeDialog } from "@/components/ui";
 import { courseRepository } from "@/services/courses";
 import { moduleProgress } from "@/domain/learning";
-export function CoursePath() {
+export function CoursePath({ courseSlug = "javascript" }: { courseSlug?: string }) {
   const { t, l, locale, href } = useLocale();
   const progress = useProgress();
   const [upgrade, setUpgrade] = useState(false);
   const [full, setFull] = useState(false);
-  const course = courseRepository.get("javascript")!;
-  const lessons = courseRepository
-    .lessons()
-    .filter((l) => l.courseId === course.id);
+  const course = courseRepository.get(courseSlug)!;
+  const lessons = courseRepository.lessons().filter((l) => l.courseId === course.id);
+  const freeModules = course.modules.filter((m) => m.access === "free");
+  const premiumModules = course.modules.filter((m) => m.access === "premium");
+  const freeLessons = lessons.filter((lesson) =>
+    freeModules.some((module) => module.id === lesson.moduleId),
+  );
+  const freeMinutes = freeModules.reduce((sum, module) => sum + module.minutes, 0);
   const done = lessons.filter((l) => progress.completed[l.id]).length;
   const next = lessons.find((l) => !progress.completed[l.id]);
   return (
     <div className="container page-space">
-      <Breadcrumb current="JavaScript" />
+      <Breadcrumb current={l(course.title)} />
       <div className="course-layout">
         <div>
           <Reveal className="course-intro">
-            <span className="language-icon yellow large">JS</span>
+            <span className={`language-icon ${course.color} large`}>{course.short}</span>
             <div className="eyebrow">
               {t.beginner} <span>·</span> {t.freeLabel}
             </div>
             <h1 className="page-heading">
-              JavaScript<span className="accent-dot">.</span>
+              {l(course.title)}<span className="accent-dot">.</span>
             </h1>
             <p className="page-intro">{l(course.description)}</p>
             <div className="course-facts">
               <span>
                 <Clock3 size={16} />
-                37 {t.minutes}
+                {freeMinutes} {t.minutes}
               </span>
               <span>
                 <Globe2 size={16} />
@@ -55,18 +59,16 @@ export function CoursePath() {
               </span>
               <span>
                 <CheckCircle2 size={16} />
-                {t.availableLessonCount}
+                {freeLessons.length} {t.lessons} · {t.free}
               </span>
             </div>
           </Reveal>
           <div className="path-heading">
             <h2>{t.freePath}</h2>
-            <span className="badge green">4 {t.modules}</span>
+            <span className="badge green">{freeModules.length} {t.modules}</span>
           </div>
           <div className="module-path">
-            {course.modules
-              .filter((m) => m.access === "free")
-              .map((module, index) => {
+            {freeModules.map((module, index) => {
                 const percent = moduleProgress(module, progress);
                 const checkpointDone =
                   progress.quizBest[`checkpoint-${module.id}`] !== undefined;
@@ -154,9 +156,8 @@ export function CoursePath() {
           </div>
           <p className="muted">{t.roadmapNote}</p>
           <div className="premium-roadmap">
-            {course.modules
-              .filter((m) => m.access === "premium")
-              .slice(0, full ? 16 : 4)
+            {premiumModules
+              .slice(0, full ? premiumModules.length : 4)
               .map((module, i) => (
                 <button
                   className="premium-module"
@@ -164,9 +165,9 @@ export function CoursePath() {
                   onClick={() => setUpgrade(true)}
                   aria-label={`${l(module.title)} — ${t.locked} — ${t.premium}`}
                 >
-                  <span>{String(i + 5).padStart(2, "0")}</span>
+                  <span>{String(i + freeModules.length + 1).padStart(2, "0")}</span>
                   <strong>{l(module.title)}</strong>
-                  <small>{t.planned}</small>
+                  <small>{l(module.description)}</small>
                   <LockKeyhole size={16} />
                 </button>
               ))}
@@ -195,7 +196,7 @@ export function CoursePath() {
               <span>{t.lessons}</span>
             </div>
             <ProgressBar
-              value={Math.round((done / lessons.length) * 100)}
+              value={lessons.length ? Math.round((done / lessons.length) * 100) : 0}
               label={t.progress}
             />
             <p>{t.noPressure}</p>

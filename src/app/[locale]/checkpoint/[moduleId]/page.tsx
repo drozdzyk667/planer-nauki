@@ -3,9 +3,13 @@ import { courseRepository } from "@/services/courses";
 import { Checkpoint } from "@/features/learning/checkpoint";
 export function generateStaticParams() {
   return courseRepository
-    .get("javascript")!
-    .modules.filter((m) => m.access === "free")
-    .map((m) => ({ moduleId: m.id }));
+    .list()
+    .flatMap((course) => course.modules)
+    .filter(
+      (module) =>
+        module.access === "free" && courseRepository.quiz(module.id),
+    )
+    .map((module) => ({ moduleId: module.id }));
 }
 export const dynamicParams = false;
 export async function generateMetadata({

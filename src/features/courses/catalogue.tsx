@@ -23,6 +23,7 @@ export function CourseCard({
   const { t, l, href } = useLocale();
   return (
     <article
+      id={`course-${course.slug}`}
       className={`course-card ${featured ? "featured" : ""} ${course.color}`}
     >
       <div className="course-card-top">
@@ -47,7 +48,10 @@ export function CourseCard({
           <>
             <span>
               <Code2 size={15} />
-              {t.availableLessonCount}
+              {course.modules
+                .filter((module) => module.access === "free")
+                .reduce((count, module) => count + module.lessonIds.length, 0)}{" "}
+              {t.lessons} · {t.free}
             </span>
             <Link
               className="round-link"

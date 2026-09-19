@@ -52,7 +52,6 @@ const LONG_DETAILS: Partial<Record<string, [string, string]>> = {
 };
 
 function fallbackDetails(
-  definition: [string, string],
   category: GlossaryTerm["category"],
 ): [string, string] {
   const suffix: Record<GlossaryTerm["category"], [string, string]> = {
@@ -93,7 +92,7 @@ const G = (
   term,
   expanded: expanded ? T(...expanded) : undefined,
   definition: T(...definition),
-  details: T(...(LONG_DETAILS[id] ?? fallbackDetails(definition, category))),
+  details: T(...(LONG_DETAILS[id] ?? fallbackDetails(category))),
   aliases,
   courses,
   category,

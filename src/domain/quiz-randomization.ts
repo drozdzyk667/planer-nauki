@@ -59,7 +59,43 @@ export function selectCheckpointQuestions(
     .map(({ question }) => question);
 }
 
+const fallbackOptions = [
+  {
+    id: "__fallback-1",
+    text: {
+      en: "A different result not listed above",
+      pl: "Inny wynik niewymieniony powyżej",
+    },
+  },
+  {
+    id: "__fallback-2",
+    text: {
+      en: "The concept works in the opposite way",
+      pl: "Ta zasada działa w odwrotny sposób",
+    },
+  },
+  {
+    id: "__fallback-3",
+    text: {
+      en: "There is not enough information to decide",
+      pl: "Nie ma wystarczających informacji, aby zdecydować",
+    },
+  },
+];
+
+export function ensureFourOptions(question: Question) {
+  const options = [...question.options];
+  for (const fallback of fallbackOptions) {
+    if (options.length >= 4) break;
+    options.push({ ...fallback, id: `${fallback.id}-${question.id}` });
+  }
+  return options.slice(0, 4);
+}
+
 export function shuffleQuestionOptions(question: Question, seed?: string) {
-  if (!seed) return question.options;
-  return seededShuffle(question.options, `${seed}:${question.id}:options`);
+  const options = ensureFourOptions(question);
+  return seededShuffle(
+    options,
+    `${seed ?? "question"}:${question.id}:options`,
+  );
 }

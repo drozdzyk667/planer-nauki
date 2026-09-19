@@ -32,8 +32,8 @@ export function CoursePath({ courseSlug = "javascript" }: { courseSlug?: string 
     freeModules.some((module) => module.id === lesson.moduleId),
   );
   const freeMinutes = freeModules.reduce((sum, module) => sum + module.minutes, 0);
-  const done = lessons.filter((l) => progress.completed[l.id]).length;
-  const next = lessons.find((l) => !progress.completed[l.id]);
+  const done = freeLessons.filter((lesson) => progress.completed[lesson.id]).length;
+  const next = freeLessons.find((lesson) => !progress.completed[lesson.id]);
   return (
     <div className="container page-space">
       <Breadcrumb current={l(course.title)} />
@@ -247,12 +247,16 @@ export function CoursePath({ courseSlug = "javascript" }: { courseSlug?: string 
             <div className="summary-progress">
               <strong>
                 {done}
-                <span> / {lessons.length}</span>
+                <span> / {freeLessons.length}</span>
               </strong>
               <span>{t.lessons}</span>
             </div>
             <ProgressBar
-              value={lessons.length ? Math.round((done / lessons.length) * 100) : 0}
+              value={
+                freeLessons.length
+                  ? Math.round((done / freeLessons.length) * 100)
+                  : 0
+              }
               label={t.progress}
             />
             <p>{t.noPressure}</p>

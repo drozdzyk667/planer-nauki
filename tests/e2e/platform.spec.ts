@@ -294,6 +294,7 @@ for (const width of [375, 430, 768, 1024, 1440])
       "/pl/courses/",
       "/pl/courses/javascript/",
       "/pl/courses/javascript/knowledge/",
+      "/pl/fundamentals/",
       "/en/learn/variables/",
       "/pl/dashboard/",
       "/pl/review/",
@@ -374,6 +375,27 @@ for (const theme of ["dark", "light"])
       fullPage: true,
     });
   });
+
+test("IT Fundamentals searches concepts and opens a connected term", async ({
+  page,
+}) => {
+  await page.goto(`${root}/pl/fundamentals/`);
+  await expect(
+    page.getByRole("heading", { name: /Zrozum słowa/i }),
+  ).toBeVisible();
+
+  const search = page.getByRole("textbox", { name: "Szukaj pojęć IT" });
+  await search.fill("HTTP/2");
+  const card = page.locator(".fundamentals-card").filter({ hasText: "HTTP/2" });
+  await expect(card).toBeVisible();
+  await card.getByRole("button", { name: "Otwórz pojęcie" }).click();
+
+  const dialog = page.getByRole("dialog");
+  await expect(dialog).toBeVisible();
+  await expect(dialog).toContainText("Hypertext Transfer Protocol");
+  await page.getByRole("button", { name: "Zamknij okno" }).click();
+  await expect(dialog).not.toBeVisible();
+});
 
 test("knowledge glossary popovers use exact terms and dismiss after details", async ({
   page,

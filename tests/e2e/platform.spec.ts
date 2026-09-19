@@ -345,6 +345,7 @@ for (const theme of ["dark", "light"])
     for (const route of [
       "/en/",
       "/pl/courses/",
+      "/pl/fundamentals/",
       "/en/courses/javascript/",
       "/pl/learn/variables/",
       "/en/dashboard/",

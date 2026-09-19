@@ -154,7 +154,7 @@ export function Header() {
   );
 }
 export function Footer() {
-  const { t, href } = useLocale();
+  const { t, href, locale } = useLocale();
   const [privacy, setPrivacy] = useState(false);
   return (
     <>

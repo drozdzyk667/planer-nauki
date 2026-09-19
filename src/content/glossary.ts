@@ -376,14 +376,17 @@ export function glossaryHighlightPlan(
   entries: GlossaryHighlightEntry[],
   excludedTermIds: Iterable<string> = [],
   maxTerms = 8,
+  allowedTermIds?: Iterable<string>,
 ): Record<string, string[]> {
   const seen = new Set(excludedTermIds);
+  const allowed = allowedTermIds ? new Set(allowedTermIds) : null;
   const plan: Record<string, string[]> = {};
   let count = 0;
 
   for (const entry of entries) {
     plan[entry.key] = [];
     for (const match of glossaryMatches(courseSlug, entry.text)) {
+      if (allowed && !allowed.has(match.term.id)) continue;
       if (seen.has(match.term.id) || count >= maxTerms) continue;
       seen.add(match.term.id);
       plan[entry.key].push(match.term.id);

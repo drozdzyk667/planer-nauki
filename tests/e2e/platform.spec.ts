@@ -86,7 +86,7 @@ test("full variables module, checkpoint, XP persistence and retry protection", a
     .getByRole("link", { name: "Start learning for free", exact: true })
     .first()
     .click();
-  await expect(page).toHaveURL(/courses\/javascript\/?$/);
+  await expect(page).toHaveURL(/courses\/javascript\/knowledge\/?$/);
   for (const id of ["variables", "constants", "types"])
     await completeLesson(page, id);
   await page

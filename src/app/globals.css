@@ -4721,3 +4721,10 @@
     }
   }
 }
+
+@layer fixes {
+  /* Decorative hero layers and floating cards must never widen the document. */
+  .hero {
+    overflow: clip;
+  }
+}

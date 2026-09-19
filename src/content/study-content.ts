@@ -45,7 +45,17 @@ const S = (
   level,
   title: T(...title),
   lead: T(...lead),
-  paragraphs: paragraphs.map((p) => T(...p)),
+  paragraphs: [
+    ...paragraphs.map((item) => T(...item)),
+    T(
+      `Why it matters: ${rule[0]}`,
+      `Dlaczego to ważne: ${rule[1]}`,
+    ),
+    T(
+      `Typical pitfall: ${pitfall[0]}`,
+      `Typowa pułapka: ${pitfall[1]}`,
+    ),
+  ],
   bullets: bullets.map((p) => T(...p)),
   rule: T(...rule),
   pitfall: T(...pitfall),

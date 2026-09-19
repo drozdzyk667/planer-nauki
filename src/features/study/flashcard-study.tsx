@@ -1,11 +1,8 @@
 "use client";
 
-import Link from "next/link";
 import {
   ArrowLeft,
   ArrowRight,
-  BookOpenText,
-  Code2,
   Heart,
   LockKeyhole,
   RotateCw,
@@ -18,6 +15,7 @@ import { UpgradeDialog } from "@/components/ui";
 import { useLocale, useProgress } from "@/components/providers";
 import { courseRepository } from "@/services/courses";
 import { progressStore } from "@/services/progress";
+import { CourseModeDock } from "./course-mode-dock";
 import {
   studyContentFor,
   type Flashcard,
@@ -126,6 +124,7 @@ export function FlashcardStudy({ courseSlug }: { courseSlug: string }) {
 
   return (
     <div className="container page-space flashcards-page">
+      <CourseModeDock courseSlug={courseSlug} active="flashcards" />
       <Breadcrumb current={l(course.title)} />
 
       <header className="flashcards-hero compact-study-hero">
@@ -160,19 +159,6 @@ export function FlashcardStudy({ courseSlug }: { courseSlug: string }) {
           </div>
         </div>
 
-        <div className="flashcards-crosslinks">
-          <Link
-            className="button secondary"
-            href={href(`/courses/${courseSlug}/knowledge`)}
-          >
-            <BookOpenText size={17} />
-            {en ? "Knowledge library" : "Biblioteka wiedzy"}
-          </Link>
-          <Link className="button secondary" href={href(`/courses/${courseSlug}`)}>
-            <Code2 size={17} />
-            {en ? "Interactive practice" : "Praktyka"}
-          </Link>
-        </div>
       </header>
 
       <div className="flashcard-toolbar">

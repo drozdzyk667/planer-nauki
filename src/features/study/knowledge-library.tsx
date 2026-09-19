@@ -11,7 +11,6 @@ import {
   Lightbulb,
   LockKeyhole,
   ShieldAlert,
-  Sparkles,
 } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import { Breadcrumb } from "@/components/shell";
@@ -19,6 +18,7 @@ import { UpgradeDialog } from "@/components/ui";
 import { useLocale } from "@/components/providers";
 import { courseRepository } from "@/services/courses";
 import { studyContentFor } from "@/content/study-content";
+import { CourseModeDock } from "./course-mode-dock";
 
 export function KnowledgeLibrary({ courseSlug }: { courseSlug: string }) {
   const { locale, l, href } = useLocale();
@@ -40,18 +40,31 @@ export function KnowledgeLibrary({ courseSlug }: { courseSlug: string }) {
 
   const section = beginnerSections[index];
 
-  function move(next: number) {
+  function goToChapter(nextIndex: number) {
     if (!beginnerSections.length) return;
     const normalized =
-      (next + beginnerSections.length) % beginnerSections.length;
-    setDirection(normalized > index || (index === beginnerSections.length - 1 && normalized === 0) ? 1 : -1);
+      (nextIndex + beginnerSections.length) % beginnerSections.length;
+    setDirection(
+      normalized > index ||
+        (index === beginnerSections.length - 1 && normalized === 0)
+        ? 1
+        : -1,
+    );
     setIndex(normalized);
   }
 
   useEffect(() => {
     const onKeyDown = (event: KeyboardEvent) => {
-      if (event.key === "ArrowLeft") move(index - 1);
-      if (event.key === "ArrowRight") move(index + 1);
+      const target = event.target as HTMLElement | null;
+      if (
+        target &&
+        (target.tagName === "INPUT" ||
+          target.tagName === "TEXTAREA" ||
+          target.tagName === "SELECT")
+      )
+        return;
+      if (event.key === "ArrowLeft") goToChapter(index - 1);
+      if (event.key === "ArrowRight") goToChapter(index + 1);
     };
     window.addEventListener("keydown", onKeyDown);
     return () => window.removeEventListener("keydown", onKeyDown);
@@ -61,6 +74,7 @@ export function KnowledgeLibrary({ courseSlug }: { courseSlug: string }) {
 
   return (
     <div className="container page-space study-library-page">
+      <CourseModeDock courseSlug={courseSlug} active="knowledge" />
       <Breadcrumb current={l(course.title)} />
 
       <header className="study-library-hero compact-study-hero">
@@ -80,25 +94,15 @@ export function KnowledgeLibrary({ courseSlug }: { courseSlug: string }) {
               : "Bez ściany tekstu. Jeden temat na raz — od podstaw, z prostym wyjaśnieniem, regułą, przykładem i błędem, który najłatwiej popełnić."}
           </p>
         </div>
-
-        <div className="study-library-actions">
-          <Link
-            className="button secondary"
-            href={href(`/courses/${courseSlug}/flashcards`)}
-          >
-            <Sparkles size={17} />
-            {en ? "Practice with flashcards" : "Powtórz fiszkami"}
-          </Link>
-          <Link className="button secondary" href={href(`/courses/${courseSlug}`)}>
-            <Code2 size={17} />
-            {en ? "Interactive practice" : "Praktyka interaktywna"}
-          </Link>
-        </div>
       </header>
 
       <section className="knowledge-reader-shell">
         <div className="knowledge-reader-top">
-          <div className="knowledge-track-tabs" role="tablist" aria-label={en ? "Knowledge level" : "Poziom wiedzy"}>
+          <div
+            className="knowledge-track-tabs"
+            role="tablist"
+            aria-label={en ? "Knowledge level" : "Poziom wiedzy"}
+          >
             <button type="button" className="active" role="tab" aria-selected="true">
               <span>01</span>
               <strong>{en ? "Foundations" : "Podstawy"}</strong>
@@ -125,160 +129,201 @@ export function KnowledgeLibrary({ courseSlug }: { courseSlug: string }) {
           </div>
         </div>
 
-        <div className="knowledge-chapter-strip" aria-label={en ? "Chapters" : "Rozdziały"}>
-          {beginnerSections.map((item, itemIndex) => (
+        <label className="knowledge-mobile-chapter">
+          <span>{en ? "Chapter" : "Rozdział"}</span>
+          <select
+            value={index}
+            onChange={(event) => goToChapter(Number(event.target.value))}
+          >
+            {beginnerSections.map((item, itemIndex) => (
+              <option value={itemIndex} key={item.id}>
+                {String(itemIndex + 1).padStart(2, "0")} · {l(item.title)}
+              </option>
+            ))}
+          </select>
+        </label>
+
+        <div className="knowledge-reader-layout">
+          <aside
+            className="knowledge-chapter-nav"
+            aria-label={en ? "Knowledge chapters" : "Rozdziały biblioteki wiedzy"}
+          >
+            <div className="knowledge-chapter-nav-inner">
+              <span className="eyebrow">
+                {en ? "FOUNDATIONS" : "PODSTAWY"} · {beginnerSections.length}
+              </span>
+              <nav>
+                {beginnerSections.map((item, itemIndex) => (
+                  <button
+                    type="button"
+                    key={item.id}
+                    className={itemIndex === index ? "active" : ""}
+                    aria-current={itemIndex === index ? "step" : undefined}
+                    onClick={() => goToChapter(itemIndex)}
+                  >
+                    <span className="knowledge-chapter-dot" aria-hidden="true" />
+                    <span className="knowledge-chapter-copy">
+                      <small>{String(itemIndex + 1).padStart(2, "0")}</small>
+                      <strong>{l(item.title)}</strong>
+                    </span>
+                  </button>
+                ))}
+              </nav>
+              <button
+                type="button"
+                className="knowledge-advanced-link"
+                onClick={() => setUpgrade(true)}
+              >
+                <LockKeyhole size={14} />
+                <span>
+                  <strong>{en ? "Advanced" : "Zaawansowane"}</strong>
+                  <small>{advancedSections.length} {en ? "chapters" : "rozdziałów"}</small>
+                </span>
+              </button>
+            </div>
+          </aside>
+
+          <div className="knowledge-reader-stage">
             <button
               type="button"
-              key={item.id}
-              className={itemIndex === index ? "active" : ""}
-              aria-current={itemIndex === index ? "step" : undefined}
-              onClick={() => {
-                setDirection(itemIndex >= index ? 1 : -1);
-                setIndex(itemIndex);
-              }}
+              className="knowledge-arrow knowledge-arrow-left"
+              onClick={() => goToChapter(index - 1)}
+              aria-label={en ? "Previous chapter" : "Poprzedni rozdział"}
             >
-              <span>{String(itemIndex + 1).padStart(2, "0")}</span>
-              {l(item.title)}
+              <ArrowLeft size={22} />
             </button>
-          ))}
-        </div>
 
-        <div className="knowledge-reader-stage">
-          <button
-            type="button"
-            className="knowledge-arrow knowledge-arrow-left"
-            onClick={() => move(index - 1)}
-            aria-label={en ? "Previous chapter" : "Poprzedni rozdział"}
-          >
-            <ArrowLeft size={22} />
-          </button>
-
-          <AnimatePresence mode="wait" initial={false}>
-            <motion.article
-              key={section.id}
-              className="knowledge-reader-page"
-              initial={{ opacity: 0, x: direction * 44 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: direction * -44 }}
-              transition={{ duration: 0.22 }}
-            >
-              <header className="knowledge-page-header">
-                <div>
-                  <span className="eyebrow">
-                    {en ? "FOUNDATION" : "PODSTAWY"} ·{" "}
+            <AnimatePresence mode="wait" initial={false}>
+              <motion.article
+                key={section.id}
+                className="knowledge-reader-page"
+                initial={{ opacity: 0, x: direction * 44 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: direction * -44 }}
+                transition={{ duration: 0.22 }}
+              >
+                <header className="knowledge-page-header">
+                  <div>
+                    <span className="eyebrow">
+                      {en ? "FOUNDATION" : "PODSTAWY"} ·{" "}
+                      {String(index + 1).padStart(2, "0")}
+                    </span>
+                    <h2>{l(section.title)}</h2>
+                    <p>{l(section.lead)}</p>
+                  </div>
+                  <span className="knowledge-page-number">
                     {String(index + 1).padStart(2, "0")}
                   </span>
-                  <h2>{l(section.title)}</h2>
-                  <p>{l(section.lead)}</p>
-                </div>
-                <span className="knowledge-page-number">
-                  {String(index + 1).padStart(2, "0")}
-                </span>
-              </header>
+                </header>
 
-              <div className="knowledge-page-grid">
-                <section className="knowledge-explanation">
-                  <span className="knowledge-section-label">
-                    {en ? "STEP BY STEP" : "KROK PO KROKU"}
-                  </span>
-                  {section.paragraphs.map((paragraph, paragraphIndex) => (
-                    <div className="knowledge-paragraph" key={paragraphIndex}>
-                      <span>{paragraphIndex + 1}</span>
-                      <p>{l(paragraph)}</p>
-                    </div>
-                  ))}
-
-                  <div className="knowledge-remember">
+                <div className="knowledge-page-grid">
+                  <section className="knowledge-explanation">
                     <span className="knowledge-section-label">
-                      {en ? "REMEMBER" : "ZAPAMIĘTAJ"}
+                      {en ? "STEP BY STEP" : "KROK PO KROKU"}
                     </span>
-                    <ul>
-                      {section.bullets.map((bullet, bulletIndex) => (
-                        <li key={bulletIndex}>
-                          <CheckCircle2 size={17} />
-                          <span>{l(bullet)}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                </section>
+                    {section.paragraphs.map((paragraph, paragraphIndex) => (
+                      <div className="knowledge-paragraph" key={paragraphIndex}>
+                        <span>{paragraphIndex + 1}</span>
+                        <p>{l(paragraph)}</p>
+                      </div>
+                    ))}
 
-                <aside className="knowledge-example-column">
-                  {section.code && (
-                    <figure className="knowledge-code-card">
-                      <figcaption>
-                        <Code2 size={16} />
-                        {l(section.code.label)}
-                      </figcaption>
-                      <pre className="code-block">
-                        <code>{section.code.value}</code>
-                      </pre>
-                    </figure>
-                  )}
-
-                  <div className="knowledge-callout rule">
-                    <Lightbulb size={19} />
-                    <div>
-                      <strong>{en ? "The rule" : "Najważniejsza reguła"}</strong>
-                      <p>{l(section.rule)}</p>
+                    <div className="knowledge-remember">
+                      <span className="knowledge-section-label">
+                        {en ? "REMEMBER" : "ZAPAMIĘTAJ"}
+                      </span>
+                      <ul>
+                        {section.bullets.map((bullet, bulletIndex) => (
+                          <li key={bulletIndex}>
+                            <CheckCircle2 size={17} />
+                            <span>{l(bullet)}</span>
+                          </li>
+                        ))}
+                      </ul>
                     </div>
-                  </div>
+                  </section>
 
-                  <div className="knowledge-callout pitfall">
-                    <ShieldAlert size={19} />
-                    <div>
-                      <strong>{en ? "Watch out" : "Uważaj na to"}</strong>
-                      <p>{l(section.pitfall)}</p>
+                  <aside className="knowledge-example-column">
+                    {section.code && (
+                      <figure className="knowledge-code-card">
+                        <figcaption>
+                          <Code2 size={16} />
+                          {l(section.code.label)}
+                        </figcaption>
+                        <pre className="code-block">
+                          <code>{section.code.value}</code>
+                        </pre>
+                      </figure>
+                    )}
+
+                    <div className="knowledge-callout rule">
+                      <Lightbulb size={19} />
+                      <div>
+                        <strong>{en ? "The rule" : "Najważniejsza reguła"}</strong>
+                        <p>{l(section.rule)}</p>
+                      </div>
                     </div>
-                  </div>
-                </aside>
-              </div>
 
-              <footer className="knowledge-page-footer">
-                <button
-                  type="button"
-                  className="button secondary"
-                  onClick={() => move(index - 1)}
-                >
-                  <ArrowLeft size={17} />
-                  {en ? "Previous" : "Poprzednia"}
-                </button>
-                <div>
-                  <span>
-                    {en
-                      ? "Use ← → on the keyboard too"
-                      : "Możesz też używać klawiszy ← →"}
-                  </span>
-                  <i>
-                    <b style={{ width: `${((index + 1) / beginnerSections.length) * 100}%` }} />
-                  </i>
+                    <div className="knowledge-callout pitfall">
+                      <ShieldAlert size={19} />
+                      <div>
+                        <strong>{en ? "Watch out" : "Uważaj na to"}</strong>
+                        <p>{l(section.pitfall)}</p>
+                      </div>
+                    </div>
+                  </aside>
                 </div>
-                <button
-                  type="button"
-                  className="button primary"
-                  onClick={() => move(index + 1)}
-                >
-                  {index === beginnerSections.length - 1
-                    ? en
-                      ? "Start again"
-                      : "Od początku"
-                    : en
-                      ? "Next chapter"
-                      : "Następny rozdział"}
-                  <ArrowRight size={17} />
-                </button>
-              </footer>
-            </motion.article>
-          </AnimatePresence>
 
-          <button
-            type="button"
-            className="knowledge-arrow knowledge-arrow-right"
-            onClick={() => move(index + 1)}
-            aria-label={en ? "Next chapter" : "Następny rozdział"}
-          >
-            <ArrowRight size={22} />
-          </button>
+                <footer className="knowledge-page-footer">
+                  <button
+                    type="button"
+                    className="button secondary"
+                    onClick={() => goToChapter(index - 1)}
+                  >
+                    <ArrowLeft size={17} />
+                    {en ? "Previous" : "Poprzednia"}
+                  </button>
+                  <div>
+                    <span>
+                      {en
+                        ? "Use ← → on the keyboard too"
+                        : "Możesz też używać klawiszy ← →"}
+                    </span>
+                    <i>
+                      <b
+                        style={{
+                          width: `${((index + 1) / beginnerSections.length) * 100}%`,
+                        }}
+                      />
+                    </i>
+                  </div>
+                  <button
+                    type="button"
+                    className="button primary"
+                    onClick={() => goToChapter(index + 1)}
+                  >
+                    {index === beginnerSections.length - 1
+                      ? en
+                        ? "Start again"
+                        : "Od początku"
+                      : en
+                        ? "Next chapter"
+                        : "Następny rozdział"}
+                    <ArrowRight size={17} />
+                  </button>
+                </footer>
+              </motion.article>
+            </AnimatePresence>
+
+            <button
+              type="button"
+              className="knowledge-arrow knowledge-arrow-right"
+              onClick={() => goToChapter(index + 1)}
+              aria-label={en ? "Next chapter" : "Następny rozdział"}
+            >
+              <ArrowRight size={22} />
+            </button>
+          </div>
         </div>
       </section>
 

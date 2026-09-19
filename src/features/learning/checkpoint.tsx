@@ -17,6 +17,7 @@ import { courseRepository, conceptLabel } from "@/services/courses";
 import { progressStore } from "@/services/progress";
 import { moduleProgress, scoreQuiz } from "@/domain/learning";
 import { selectCheckpointQuestions } from "@/domain/quiz-randomization";
+import { CourseModeDock } from "@/features/study/course-mode-dock";
 import { QuestionCard } from "./question";
 
 export function Checkpoint({ moduleId }: { moduleId: string }) {
@@ -57,6 +58,7 @@ export function Checkpoint({ moduleId }: { moduleId: string }) {
   if (moduleProgress(courseModule, progress) < 100)
     return (
       <div className="container page-space">
+        <CourseModeDock courseSlug={course.slug} active="practice" />
         <EmptyState
           title={t.checkpoint}
           description={t.quizLocked}
@@ -82,6 +84,7 @@ export function Checkpoint({ moduleId }: { moduleId: string }) {
   }
   return (
     <div className="container checkpoint-page">
+      <CourseModeDock courseSlug={course.slug} active="practice" />
       <Link className="text-link" href={href(`/courses/${course.slug}`)}>
         <ArrowLeft size={17} />
         {t.path}

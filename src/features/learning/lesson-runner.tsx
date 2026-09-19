@@ -24,6 +24,7 @@ import { EmptyState, ProgressBar, UpgradeDialog } from "@/components/ui";
 import { VisualExplainer } from "@/components/visual-explainer";
 import { courseRepository } from "@/services/courses";
 import { progressStore } from "@/services/progress";
+import { CourseModeDock } from "@/features/study/course-mode-dock";
 import { QuestionCard } from "./question";
 import { Exercise } from "./exercise";
 export function LessonRunner({ id }: { id: string }) {
@@ -49,6 +50,7 @@ export function LessonRunner({ id }: { id: string }) {
   if (courseModule.access === "premium") {
     return (
       <div className="container page-space premium-lesson-gate">
+        <CourseModeDock courseSlug={lesson.courseId} active="practice" />
         <EmptyState
           title={l(courseModule.title)}
           description={
@@ -87,6 +89,7 @@ export function LessonRunner({ id }: { id: string }) {
   };
   return (
     <div className="container lesson-page">
+      <CourseModeDock courseSlug={lesson.courseId} active="practice" />
       <div className="lesson-top">
         <Link className="text-link" href={href(`/courses/${lesson.courseId}`)}>
           <ArrowLeft size={16} />

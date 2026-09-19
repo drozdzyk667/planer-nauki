@@ -19,6 +19,7 @@ import { useLocale, useProgress } from "@/components/providers";
 import { Breadcrumb } from "@/components/shell";
 import { ProgressBar, Reveal, UpgradeDialog } from "@/components/ui";
 import { courseRepository } from "@/services/courses";
+import { CourseModeDock } from "@/features/study/course-mode-dock";
 import {
   moduleMaxXp,
   moduleProgress,
@@ -72,6 +73,7 @@ export function CoursePath({ courseSlug = "javascript" }: { courseSlug?: string 
 
   return (
     <div className="container page-space">
+      <CourseModeDock courseSlug={course.slug} active="practice" />
       <Breadcrumb current={l(course.title)} />
       <div className="course-layout">
         <aside className="course-module-rail" aria-label={locale === "en" ? "Course modules" : "Moduły kursu"}>

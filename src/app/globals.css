@@ -5572,3 +5572,17 @@
     }
   }
 }
+
+
+@layer final-overflow-guard {
+  html,
+  body {
+    max-width: 100%;
+    overflow-x: clip;
+  }
+
+  .hero,
+  .hero-art {
+    max-width: 100%;
+  }
+}

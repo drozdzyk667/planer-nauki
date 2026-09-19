@@ -8,6 +8,7 @@ import {
   glossaryMatches,
   glossaryTerms,
 } from "../src/content/glossary";
+import { glossaryTermsForSection } from "../src/content/glossary-context";
 import {
   fundamentalsDomains,
   fundamentalsDomainFor,
@@ -193,6 +194,27 @@ describe("study content quality", () => {
       "Pod receives traffic only when it is ready.",
     );
     expect(kubernetesPod.some((match) => match.term.id === "pod")).toBe(true);
+  });
+
+  it("uses lesson context instead of annotating every matching dictionary word", () => {
+    expect(glossaryTermsForSection("it-kubernetes")).toContain("pod");
+    expect(glossaryTermsForSection("it-redis-cache")).not.toContain("pod");
+    expect(glossaryTermsForSection("react-effects")).toContain("effect");
+
+    const plan = glossaryHighlightPlan(
+      "it-foundations",
+      [
+        {
+          key: "copy",
+          text: "Cache'owanie danych pod współdzielonym kluczem może wyciekać między użytkownikami.",
+        },
+      ],
+      [],
+      8,
+      glossaryTermsForSection("it-redis-cache"),
+    );
+    expect(plan.copy).toContain("cache");
+    expect(plan.copy).not.toContain("pod");
   });
 
   it("highlights a glossary concept only on its first useful occurrence per page", () => {

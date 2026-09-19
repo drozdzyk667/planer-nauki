@@ -22,6 +22,7 @@ import {
   glossaryMatches,
   type GlossaryTerm,
 } from "@/content/glossary";
+import { glossaryTermsForSection } from "@/content/glossary-context";
 import { CourseModeDock } from "./course-mode-dock";
 import {
   GlossaryDetailDialog,
@@ -75,7 +76,13 @@ export function KnowledgeLibrary({ courseSlug }: { courseSlug: string }) {
     const titleTerms = glossaryMatches(courseSlug, section.title[locale]).map(
       (match) => match.term.id,
     );
-    return glossaryHighlightPlan(courseSlug, glossaryEntries, titleTerms, 8);
+    return glossaryHighlightPlan(
+      courseSlug,
+      glossaryEntries,
+      titleTerms,
+      8,
+      glossaryTermsForSection(section.id),
+    );
   }, [courseSlug, glossaryEntries, locale, section]);
 
   const goToChapter = useCallback(

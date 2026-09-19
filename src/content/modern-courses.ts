@@ -150,7 +150,7 @@ export const modernLessons: Lesson[] = [
     prediction:q("ts-union-predict","ts-unions",["Which value fits Status?","Która wartość pasuje do Status?"],[["loading","loading"],["waiting-room","waiting-room"],["42","42"]],0,["loading is one of the allowed literals.","loading jest jednym z dozwolonych literałów."]),
     recall:q("ts-union-recall","ts-unions",["What does a union express?","Co wyraża unia?"],[["One of several valid alternatives","Jedną z kilku poprawnych alternatyw"],["A loop","Pętlę"],["A selector","Selektor"]],0,["A union defines controlled alternatives.","Unia definiuje kontrolowane alternatywy."]),
     task:["Create Status from idle, loading and done.","Utwórz Status z idle, loading i done."],starter:'type Status = string;',hint:["Use string literals separated by |.","Użyj literałów rozdzielonych przez |."],
-    tests:[{label:["uses idle","używa idle"],expression:'__source.includes('"idle"')'},{label:["uses loading and done","używa loading i done"],expression:'__source.includes('"loading"') && __source.includes('"done"')'},{label:["uses union","używa unii"],expression:'__source.includes("|")'}],language:"typescript",fileName:"status.ts",
+    tests:[{label:["uses idle","używa idle"],expression:'__source.includes("\\\"idle\\\"")'},{label:["uses loading and done","używa loading i done"],expression:'__source.includes("\\\"loading\\\"") && __source.includes("\\\"done\\\"")'},{label:["uses union","używa unii"],expression:'__source.includes("|")'}],language:"typescript",fileName:"status.ts",
   }),
 
   makeLesson({

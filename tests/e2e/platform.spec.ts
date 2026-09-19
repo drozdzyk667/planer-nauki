@@ -148,7 +148,7 @@ test("runtime errors, infinite loop timeout, DOM isolation and recovery", async 
   ).toBeVisible();
 });
 
-test("language, themes and system preference persist across navigation and reload", async ({
+test("language and explicit themes persist across navigation and reload", async ({
   page,
 }) => {
   await page.goto(`${root}/en/courses/`);

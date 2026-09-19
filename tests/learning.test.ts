@@ -23,7 +23,7 @@ describe("learning rules", () => {
       scoreQuiz(quiz.questions, {
         [quiz.questions[0].id]: quiz.questions[0].answer,
       }),
-    ).toBe(17);
+    ).toBe(Math.round(100 / quiz.questions.length));
   });
   it("scores complete correct answers at 100%", () => {
     expect(

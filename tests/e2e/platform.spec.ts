@@ -32,22 +32,38 @@ const solutions: Record<string, string> = {
     'const score = 75;\nlet result = "";\nif (score >= 60) { result = "Pass"; } else { result = "Try again"; }\nconsole.log(result);',
   "first-program": 'const greeting = "Hello!";\nconsole.log(greeting);',
 };
-const choices: Record<string, [number, number]> = {
-  variables: [1, 1],
-  constants: [1, 1],
-  types: [1, 2],
-  operators: [1, 1],
-  conditions: [0, 1],
-  "first-program": [0, 0],
-};
+async function answerQuestion(
+  page: Page,
+  question: ReturnType<typeof courseRepository.lesson> extends infer _T
+    ? { answer: string; options: { id: string; text: { en: string; pl: string } }[] }
+    : never,
+  locale: "en" | "pl",
+  correct = true,
+) {
+  const option =
+    question.options.find((item) =>
+      correct ? item.id === question.answer : item.id !== question.answer,
+    ) ?? question.options[0];
+  const label = page.locator(".answer-option").filter({
+    hasText: option.text[locale],
+  });
+  await label.getByRole("radio").check();
+  await page
+    .getByRole("button", {
+      name: locale === "en" ? "Check answer" : "Sprawdź odpowiedź",
+      exact: true,
+    })
+    .click();
+}
 async function answer(page: Page, index: number) {
   await page.getByRole("radio").nth(index).check();
   await page.getByRole("button", { name: "Check answer", exact: true }).click();
 }
 async function completeLesson(page: Page, id: string) {
   await page.goto(`${root}/en/learn/${id}/`);
+  const lesson = courseRepository.lesson(id)!;
   await page.getByRole("button", { name: "Continue", exact: true }).click();
-  await answer(page, choices[id][0]);
+  await answerQuestion(page, lesson.prediction, "en");
   await page.getByRole("button", { name: "Continue", exact: true }).click();
   const editor = page.locator(".cm-content");
   await editor.fill(solutions[id]);
@@ -56,7 +72,7 @@ async function completeLesson(page: Page, id: string) {
     page.getByText("All checks passed. You made it work."),
   ).toBeVisible();
   await page.getByRole("button", { name: "Continue", exact: true }).click();
-  await answer(page, choices[id][1]);
+  await answerQuestion(page, lesson.recall, "en");
   await page.getByRole("button", { name: "Done", exact: true }).click();
   await expect(
     page.getByText("Lesson complete", { exact: true }),
@@ -189,21 +205,16 @@ test("Polish lesson flow and helpful wrong-answer feedback", async ({
   page,
 }) => {
   await page.goto(`${root}/pl/learn/variables/`);
+  const lesson = courseRepository.lesson("variables")!;
   await page.getByRole("button", { name: "Kontynuuj", exact: true }).click();
-  await page.getByRole("radio").nth(0).check();
-  await page
-    .getByRole("button", { name: "Sprawdź odpowiedź", exact: true })
-    .click();
+  await answerQuestion(page, lesson.prediction, "pl", false);
   await expect(page.getByText("Jeszcze nie — sprawdź dlaczego.")).toBeVisible();
   await page.getByRole("button", { name: "Kontynuuj", exact: true }).click();
   await page.locator(".cm-content").fill(solutions.variables);
   await page.getByRole("button", { name: "Uruchom kod", exact: true }).click();
   await expect(page.getByText("Wszystko działa. Udało Ci się.")).toBeVisible();
   await page.getByRole("button", { name: "Kontynuuj", exact: true }).click();
-  await page.getByRole("radio").nth(1).check();
-  await page
-    .getByRole("button", { name: "Sprawdź odpowiedź", exact: true })
-    .click();
+  await answerQuestion(page, lesson.recall, "pl");
   await page.getByRole("button", { name: "Gotowe", exact: true }).click();
   await expect(
     page.getByText("Lekcja ukończona", { exact: true }),

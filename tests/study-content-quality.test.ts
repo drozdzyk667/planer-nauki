@@ -72,6 +72,41 @@ describe("study content quality", () => {
     }
   });
 
+  it("keeps language knowledge prerequisite-first", () => {
+    expect(
+      courseStudyContent.javascript.knowledge.slice(0, 6).map((section) => section.id),
+    ).toEqual([
+      "js-execution",
+      "js-bindings",
+      "js-types",
+      "js-operators-basics",
+      "js-conditions-basics",
+      "js-functions",
+    ]);
+
+    expect(
+      courseStudyContent.typescript.knowledge.slice(0, 6).map((section) => section.id),
+    ).toEqual([
+      "ts-mental-model",
+      "ts-primitives-literals",
+      "ts-functions",
+      "ts-null-undefined",
+      "ts-arrays-tuples",
+      "ts-alias-interface",
+    ]);
+
+    expect(
+      courseStudyContent.react.knowledge.slice(0, 6).map((section) => section.id),
+    ).toEqual([
+      "react-mental-model",
+      "react-jsx-basics",
+      "react-components",
+      "react-props-state",
+      "react-conditional-ui",
+      "react-events-lists",
+    ]);
+  });
+
   it("keeps the major libraries substantial", () => {
     expect(courseStudyContent.javascript.knowledge.length).toBeGreaterThanOrEqual(16);
     expect(courseStudyContent.typescript.knowledge.length).toBeGreaterThanOrEqual(16);

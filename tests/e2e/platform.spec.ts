@@ -294,6 +294,7 @@ for (const width of [375, 430, 768, 1024, 1440])
       "/pl/courses/",
       "/pl/courses/javascript/",
       "/pl/courses/javascript/knowledge/",
+      "/pl/courses/javascript/flashcards/",
       "/pl/courses/it-foundations/fundamentals/",
       "/en/learn/variables/",
       "/pl/dashboard/",
@@ -376,6 +377,46 @@ for (const theme of ["dark", "light"])
       fullPage: true,
     });
   });
+
+test("flashcard code renders as one clean code panel", async ({ page }) => {
+  await page.goto(`${root}/pl/courses/javascript/flashcards/`);
+
+  const card = page.locator(".flashcard").first();
+  const face = card.locator(".flashcard-front");
+  const pre = face.locator(".flashcard-code");
+  const code = pre.locator(":scope > code");
+
+  await expect(card).toBeVisible();
+  await expect(pre).toBeVisible();
+
+  const styles = await code.evaluate((element) => {
+    const style = getComputedStyle(element);
+    return {
+      borderTopWidth: style.borderTopWidth,
+      paddingTop: style.paddingTop,
+      backgroundColor: style.backgroundColor,
+    };
+  });
+
+  expect(styles.borderTopWidth).toBe("0px");
+  expect(styles.paddingTop).toBe("0px");
+  expect(styles.backgroundColor).toBe("rgba(0, 0, 0, 0)");
+
+  const [faceBox, preBox] = await Promise.all([
+    face.boundingBox(),
+    pre.boundingBox(),
+  ]);
+  expect(faceBox).not.toBeNull();
+  expect(preBox).not.toBeNull();
+  expect(preBox!.x).toBeGreaterThanOrEqual(faceBox!.x);
+  expect(preBox!.y).toBeGreaterThanOrEqual(faceBox!.y);
+  expect(preBox!.x + preBox!.width).toBeLessThanOrEqual(
+    faceBox!.x + faceBox!.width + 1,
+  );
+  expect(preBox!.y + preBox!.height).toBeLessThanOrEqual(
+    faceBox!.y + faceBox!.height + 1,
+  );
+});
 
 test("IT Fundamentals searches concepts and opens a connected term", async ({
   page,

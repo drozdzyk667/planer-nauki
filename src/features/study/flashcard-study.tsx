@@ -275,7 +275,11 @@ export function FlashcardStudy({ courseSlug }: { courseSlug: string }) {
 
             <button
               type="button"
-              className={`flashcard ${flipped ? "is-flipped" : ""}`}
+              className={`flashcard ${flipped ? "is-flipped" : ""} ${
+                l(card.front).length > 68 || (card.code?.includes("\n") ?? false)
+                  ? "is-dense"
+                  : ""
+              }`}
               onClick={() => setFlipped((value) => !value)}
               aria-pressed={flipped}
               aria-label={

@@ -10483,3 +10483,21 @@
     font-size: 9px;
   }
 }
+
+
+@layer learning-mode-summary {
+  .learning-modes-note {
+    display: flex;
+    align-items: flex-start;
+    gap: 7px;
+    margin: 14px 4px 0;
+    color: var(--quiet);
+    font-size: 10.5px;
+    line-height: 1.55;
+  }
+
+  .learning-modes-note > span {
+    color: var(--accent);
+    font-weight: 800;
+  }
+}

@@ -520,6 +520,19 @@ test("main learning screens do not emit browser console errors", async ({ page }
   expect(errors).toEqual([]);
 });
 
+test("animated course intro opens from the knowledge page", async ({ page }) => {
+  await page.goto(`${root}/pl/courses/javascript/knowledge/`);
+  await page
+    .getByRole("button", { name: /Animowane intro kursu/i })
+    .click();
+  const dialog = page.getByRole("dialog");
+  await expect(dialog).toBeVisible();
+  await expect(dialog).toContainText("Jak ten kurs łączy się w całość");
+  await expect(dialog).toContainText("WYKONANIE");
+  await page.getByRole("button", { name: "Zamknij okno" }).click();
+  await expect(dialog).not.toBeVisible();
+});
+
 test("knowledge glossary popovers use exact terms and dismiss after details", async ({
   page,
 }) => {

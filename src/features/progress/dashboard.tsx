@@ -55,6 +55,13 @@ export function Dashboard() {
       ["concept to revisit", "concepts to revisit"],
       ["zagadnienie do powtórki", "zagadnienia do powtórki", "zagadnień do powtórki"],
     );
+  const streakCount = streak(progress.learningDays);
+  const streakLabel = countLabel(
+    locale,
+    streakCount,
+    ["day streak", "day streak"],
+    ["dzień z rzędu", "dni z rzędu", "dni z rzędu"],
+  );
   const todayDone = Object.values(progress.completed).some(
     (date) => localDay(new Date(date)) === localDay(),
   );
@@ -125,7 +132,7 @@ export function Dashboard() {
         {[
           { Icon: Zap, value: progress.xp, label: "XP" },
           { Icon: Layers, value: level(progress.xp), label: t.level },
-          { Icon: Flame, value: streak(progress.learningDays), label: t.days },
+          { Icon: Flame, value: streakCount, label: streakLabel },
           {
             Icon: Target,
             value: `${activeCourseProgress}%`,

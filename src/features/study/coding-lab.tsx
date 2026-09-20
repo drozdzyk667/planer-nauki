@@ -39,6 +39,17 @@ export function CodingLab({ courseSlug }: { courseSlug: CodingCourse }) {
     [courseSlug, templateIndex, seed],
   );
 
+  const visibleVariantSignature = useCallback(
+    (candidate: ReturnType<typeof generateCodingChallenge>) =>
+      [
+        candidate.title.en,
+        candidate.description.en,
+        candidate.exercise.task.en,
+        candidate.exercise.starter,
+      ].join("\n"),
+    [],
+  );
+
   const solved = progress.codingSolved.includes(challenge.templateId);
 
   const onPassed = useCallback(
@@ -57,7 +68,24 @@ export function CodingLab({ courseSlug }: { courseSlug: CodingCourse }) {
 
   function newVariant() {
     resetFeedback();
-    setSeed((current) => current + 1);
+
+    const currentSignature = visibleVariantSignature(challenge);
+    let candidateSeed = seed + 1;
+
+    for (let attempt = 0; attempt < 24; attempt += 1) {
+      const candidate = generateCodingChallenge(
+        courseSlug,
+        templateIndex,
+        candidateSeed,
+      );
+      if (visibleVariantSignature(candidate) !== currentSignature) {
+        setSeed(candidateSeed);
+        return;
+      }
+      candidateSeed += 1;
+    }
+
+    setSeed(candidateSeed);
   }
 
   function nextChallenge() {
@@ -144,6 +172,7 @@ export function CodingLab({ courseSlug }: { courseSlug: CodingCourse }) {
           key={challenge.id}
           exercise={challenge.exercise}
           onPassed={onPassed}
+          hideTestDetails
         />
 
         {passed && (

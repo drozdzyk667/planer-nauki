@@ -123,16 +123,11 @@ export function CodingLab({ courseSlug }: { courseSlug: CodingCourse }) {
       </header>
 
       <section className="coding-lab-toolbar">
-        <div className="coding-challenge-position">
-          <span>{String(templateIndex + 1).padStart(2, "0")}</span>
-          <small>/ {String(total).padStart(2, "0")}</small>
-        </div>
-
         <div className="coding-challenge-meta">
           <span className={`coding-difficulty ${challenge.difficulty}`}>
             {difficultyLabel[challenge.difficulty]}
           </span>
-          <span>{l(challenge.concept)}</span>
+          <span className="coding-concept-label">{l(challenge.concept)}</span>
           {solved && (
             <span className="coding-solved">
               <CheckCircle2 size={14} />

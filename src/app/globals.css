@@ -10501,3 +10501,112 @@
     font-weight: 800;
   }
 }
+
+
+@layer requested-coding-polish {
+  .coding-lab-toolbar {
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 18px;
+  }
+
+  .coding-challenge-position {
+    display: none !important;
+  }
+
+  .coding-challenge-meta {
+    gap: 10px;
+    font-size: 12px;
+  }
+
+  .coding-difficulty,
+  .coding-solved,
+  .coding-concept-label {
+    min-height: 32px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 10px;
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    background: color-mix(in srgb, var(--surface), transparent 4%);
+    font-family: "DM Sans Variable", sans-serif;
+    font-size: 12px;
+    font-weight: 650;
+    line-height: 1.25;
+    letter-spacing: 0.01em;
+    text-transform: none;
+  }
+
+  .coding-concept-label {
+    color: var(--muted);
+  }
+
+  .coding-randomize {
+    border-color: color-mix(in srgb, var(--purple), var(--border) 35%) !important;
+    color: color-mix(in srgb, var(--purple), var(--fg) 16%) !important;
+    background:
+      radial-gradient(
+        circle at 8% 50%,
+        color-mix(in srgb, var(--purple), transparent 82%),
+        transparent 72%
+      ),
+      color-mix(in srgb, var(--surface), var(--purple) 5%) !important;
+    box-shadow:
+      inset 0 1px 0 color-mix(in srgb, #fff, transparent 92%),
+      0 0 22px color-mix(in srgb, var(--purple), transparent 88%);
+  }
+
+  .coding-randomize:hover,
+  .coding-randomize:focus-visible {
+    border-color: var(--purple) !important;
+    color: var(--fg) !important;
+    background: color-mix(in srgb, var(--purple), var(--surface) 89%) !important;
+  }
+
+  .exercise-help-actions {
+    gap: 8px;
+  }
+
+  .exercise-help-actions .hint-button,
+  .exercise-help-actions .answer-button {
+    width: fit-content;
+    min-height: 34px;
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 7px 10px;
+    border-radius: 9px;
+    border: 1px solid transparent;
+    font-weight: 700;
+    text-decoration: none;
+  }
+
+  .exercise-help-actions .hint-button {
+    color: var(--accent);
+    border-color: color-mix(in srgb, var(--accent), var(--border) 55%);
+    background: color-mix(in srgb, var(--accent), transparent 94%);
+  }
+
+  .exercise-help-actions .answer-button {
+    color: color-mix(in srgb, var(--danger), var(--fg) 10%);
+    border-color: color-mix(in srgb, var(--danger), var(--border) 52%);
+    background: color-mix(in srgb, var(--danger), transparent 94%);
+  }
+
+  .exercise-help-actions .answer-button:hover,
+  .exercise-help-actions .answer-button:focus-visible {
+    color: var(--fg);
+    border-color: var(--danger);
+    background: color-mix(in srgb, var(--danger), transparent 89%);
+  }
+
+  @media (max-width: 680px) {
+    .coding-lab-toolbar {
+      grid-template-columns: 1fr;
+    }
+
+    .coding-challenge-meta {
+      justify-content: flex-start;
+    }
+  }
+}

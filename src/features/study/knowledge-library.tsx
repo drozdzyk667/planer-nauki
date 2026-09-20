@@ -28,6 +28,7 @@ import { glossaryTermsForSection } from "@/content/glossary-context";
 import { knowledgeCuriosityFor } from "@/content/knowledge-curiosities";
 import { countLabel } from "@/lib/count-label";
 import { CourseModeDock } from "./course-mode-dock";
+import { CourseIntroTrailer } from "./course-intro-trailer";
 import {
   GlossaryDetailDialog,
   GlossaryPanel,
@@ -163,6 +164,7 @@ export function KnowledgeLibrary({ courseSlug }: { courseSlug: string }) {
                 ? "Learn the topic without unnecessary repetition. Important terms are highlighted — hover or tap them for a short definition, or open the glossary."
                 : "Ucz się bez niepotrzebnego powtarzania definicji. Ważne pojęcia są podświetlone — najedź lub kliknij, aby zobaczyć krótkie wyjaśnienie, albo otwórz słownik."}
           </p>
+          <CourseIntroTrailer courseSlug={courseSlug} />
         </div>
       </header>
 

@@ -20,6 +20,8 @@ import { useLocale } from "./providers";
 import { Reveal } from "./ui";
 import { asset } from "@/lib/config";
 import { VisualExplainer } from "./visual-explainer";
+import { HomeIntroAnimation } from "./home-intro-animation";
+import { CourseIntroTrailer } from "@/features/study/course-intro-trailer";
 import { CourseCard } from "@/features/courses/catalogue";
 import { courseRepository } from "@/services/courses";
 import { studyContentFor } from "@/content/study-content";
@@ -39,6 +41,7 @@ export function Landing() {
 
   return (
     <>
+      <HomeIntroAnimation />
       <section className="hero container">
         <Reveal className="hero-copy">
           <div className="hero-kicker">
@@ -163,6 +166,9 @@ export function Landing() {
               {en ? "Start free" : "Zacznij za darmo"}
               <ArrowUpRight size={16} />
             </Link>
+          </div>
+          <div className="hero-trailer-trigger">
+            <CourseIntroTrailer courseSlug="javascript" compact />
           </div>
           <div className="core-caption">
             <span>{en ? "01 — KNOWLEDGE CORE" : "01 — RDZEŃ WIEDZY"}</span>

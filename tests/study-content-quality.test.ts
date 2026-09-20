@@ -61,6 +61,12 @@ describe("study content quality", () => {
         expectLocalized(card.front, `${course}/${card.id}/front`);
         expectLocalized(card.back, `${course}/${card.id}/back`);
         expectLocalized(card.tag, `${course}/${card.id}/tag`);
+        expect(card.front.pl).not.toContain("Na co uważać przy temacie");
+        expect(card.front.en).not.toContain("What should you watch out for with:");
+        if (card.code) {
+          expect(card.code.trim(), `${course}/${card.id}/code`).not.toBe("");
+          expect(card.code, `${course}/${card.id}/markdown-code-fence`).not.toContain("\`\`\`");
+        }
         if (card.why) expectLocalized(card.why, `${course}/${card.id}/why`);
       }
     }

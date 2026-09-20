@@ -10714,3 +10714,22 @@
     }
   }
 }
+
+
+@layer flashcard-density {
+  .flashcard-stage .flashcard.is-dense .flashcard-face strong {
+    max-width: 740px;
+    font-size: clamp(21px, 2.55vw, 31px);
+    line-height: 1.18;
+  }
+
+  .flashcard-stage .flashcard.is-dense .flashcard-code {
+    max-height: 205px;
+  }
+
+  @media (max-width: 700px) {
+    .flashcard-stage .flashcard.is-dense .flashcard-face strong {
+      font-size: clamp(19px, 5.4vw, 24px);
+    }
+  }
+}

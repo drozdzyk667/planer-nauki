@@ -15,6 +15,7 @@ import { Reveal } from "@/components/ui";
 import { courseRepository } from "@/services/courses";
 import type { Course } from "@/domain/models";
 import { studyContentFor } from "@/content/study-content";
+import { countLabel } from "@/lib/count-label";
 export function CourseCard({
   course,
   featured = false,
@@ -22,13 +23,25 @@ export function CourseCard({
   course: Course;
   featured?: boolean;
 }) {
-  const { t, l, href } = useLocale();
+  const { t, l, href, locale } = useLocale();
   const freeLessonCount = course.modules
     .filter((module) => module.access === "free")
     .reduce((count, module) => count + module.lessonIds.length, 0);
   const study = studyContentFor(course.slug);
   const freeChapterCount =
     study?.knowledge.filter((section) => section.level === "beginner").length ?? 0;
+  const lessonLabel = countLabel(
+    locale,
+    freeLessonCount,
+    ["lesson", "lessons"],
+    ["lekcja", "lekcje", "lekcji"],
+  );
+  const chapterLabel = countLabel(
+    locale,
+    freeChapterCount,
+    ["chapter", "chapters"],
+    ["rozdział", "rozdziały", "rozdziałów"],
+  );
   const target = study
     ? `/courses/${course.slug}/knowledge`
     : freeLessonCount > 0
@@ -63,12 +76,12 @@ export function CourseCard({
               {freeLessonCount > 0 ? (
                 <>
                   <Code2 size={15} />
-                  {freeLessonCount} {t.lessons} · {t.free}
+                  {freeLessonCount} {lessonLabel} · {t.free}
                 </>
               ) : (
                 <>
                   <BookOpenText size={15} />
-                  {freeChapterCount} {t.chapters} · {t.free}
+                  {freeChapterCount} {chapterLabel} · {t.free}
                 </>
               )}
             </span>

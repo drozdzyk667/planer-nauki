@@ -405,6 +405,80 @@ test("IT Fundamentals searches concepts and opens a connected term", async ({
   await expect(dialog).not.toBeVisible();
 });
 
+test("knowledge chapter counter and content stay synchronized on rapid navigation", async ({
+  page,
+}) => {
+  await page.emulateMedia({ reducedMotion: "no-preference" });
+  await page.goto(`${root}/pl/courses/javascript/knowledge/`);
+
+  const counter = page.locator(".knowledge-page-counter strong");
+  const pageNumber = page.locator(".knowledge-page-number");
+  const next = page.locator(".knowledge-page-footer .button.primary");
+
+  await expect(counter).toHaveText("01");
+  await expect(pageNumber).toHaveText("01");
+
+  await next.click();
+  await page.waitForTimeout(40);
+  expect(await pageNumber.textContent()).toBe(await counter.textContent());
+
+  await next.click();
+  await page.waitForTimeout(40);
+  expect(await pageNumber.textContent()).toBe(await counter.textContent());
+});
+
+test("Code Lab shuffles visibly on the first click and keeps generated tests hidden", async ({
+  page,
+}) => {
+  await page.goto(`${root}/pl/courses/javascript/coding/`);
+
+  const task = page.locator(".exercise-task");
+  await expect(task).toBeVisible();
+  const before = await task.textContent();
+
+  await page
+    .getByRole("button", { name: "Losuj wariant zadania", exact: true })
+    .click();
+  await expect(task).not.toHaveText(before ?? "");
+
+  await page.getByRole("button", { name: "Uruchom kod", exact: true }).click();
+  await expect(page.locator(".hidden-test-summary")).toBeVisible();
+  await expect(page.locator(".test-list")).toHaveCount(0);
+  await expect(page.locator(".hidden-test-summary")).toContainText(
+    "ukrytych testów zaliczonych",
+  );
+});
+
+test("landing clearly separates free interactive lessons from free knowledge chapters", async ({
+  page,
+}) => {
+  await page.goto(`${root}/pl/`);
+  const card = page.locator(".hero-course-card");
+  await expect(card).toContainText("DARMOWYCH LEKCJI INTERAKTYWNYCH");
+  await expect(card).toContainText("rozdziałów wiedzy też jest za darmo");
+  await expect(card).toContainText("Premium");
+});
+
+test("main learning screens do not emit browser console errors", async ({ page }) => {
+  const errors: string[] = [];
+  page.on("console", (message) => {
+    if (message.type() === "error") errors.push(message.text());
+  });
+  page.on("pageerror", (error) => errors.push(error.message));
+
+  for (const route of [
+    "/pl/",
+    "/pl/courses/javascript/knowledge/",
+    "/pl/courses/javascript/coding/",
+    "/pl/courses/it-foundations/fundamentals/",
+  ]) {
+    await page.goto(`${root}${route}`);
+    await page.getByRole("heading", { level: 1 }).waitFor();
+  }
+
+  expect(errors).toEqual([]);
+});
+
 test("knowledge glossary popovers use exact terms and dismiss after details", async ({
   page,
 }) => {

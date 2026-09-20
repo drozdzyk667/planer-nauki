@@ -247,7 +247,7 @@ const pl: Dictionary = {
   reset: "Od początku",
   play: "Odtwórz wyjaśnienie",
   pause: "Pauza",
-  prediction: "Przewidź",
+  prediction: "Pomyśl",
   practice: "Koduj",
   recall: "Przypomnij",
   concept: "Zrozum",

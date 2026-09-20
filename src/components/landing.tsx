@@ -6,11 +6,11 @@ import {
   ArrowDown,
   ArrowRight,
   ArrowUpRight,
-  Braces,
+  BookOpenText,
   Check,
   CheckCircle2,
   Code2,
-  Eye,
+  FlaskConical,
   RotateCw,
   Sparkles,
   Terminal,
@@ -228,44 +228,44 @@ export function Landing() {
         <div className="method-grid">
           {[
             {
-              Icon: Eye,
+              Icon: BookOpenText,
               n: "01",
               tone: "amber",
               visual: "observe",
-              title: en ? "See it." : "Zobacz.",
+              title: en ? "Knowledge." : "Wiedza.",
               body: en
-                ? "Watch the idea move before you touch the code. Visuals turn abstractions into something concrete."
-                : "Najpierw zobacz, jak działa pomysł. Wizualizacja zamienia abstrakcję w coś konkretnego.",
-            },
-            {
-              Icon: Braces,
-              n: "02",
-              tone: "blue",
-              visual: "code",
-              title: en ? "Try it." : "Spróbuj.",
-              body: en
-                ? "Predict the result, change real code, run it, and compare your mental model with reality."
-                : "Przewiduj wynik, zmieniaj prawdziwy kod, uruchamiaj go i porównuj swoje założenia z wynikiem.",
-            },
-            {
-              Icon: Sparkles,
-              n: "03",
-              tone: "violet",
-              visual: "logic",
-              title: en ? "Get it." : "Zrozum.",
-              body: en
-                ? "Feedback explains why, not only whether you were wrong, so each mistake moves you forward."
-                : "Feedback pokazuje dlaczego, a nie tylko że było źle — dzięki temu każdy błąd uczy.",
+                ? "Clear chapters explain the mechanism, show code and connect the topic with rules, pitfalls and real production context."
+                : "Konkretne rozdziały wyjaśniają mechanizm, pokazują kod i łączą temat z regułami, pułapkami oraz prawdziwym kontekstem produkcyjnym.",
             },
             {
               Icon: RotateCw,
+              n: "02",
+              tone: "blue",
+              visual: "memory",
+              title: en ? "Flashcards." : "Fiszki.",
+              body: en
+                ? "Fast question–answer cards help you recall syntax, mental models and details that are easy to forget."
+                : "Szybkie karty pytanie–odpowiedź pomagają utrwalić składnię, modele mentalne i szczegóły, które łatwo wypadają z pamięci.",
+            },
+            {
+              Icon: FlaskConical,
+              n: "03",
+              tone: "violet",
+              visual: "logic",
+              title: en ? "Tests." : "Testy.",
+              body: en
+                ? "Randomized questions, predictions and checkpoints verify whether you understand the idea instead of only recognizing it."
+                : "Losowane pytania, przewidywanie wyniku i checkpointy sprawdzają, czy naprawdę rozumiesz temat, a nie tylko go rozpoznajesz.",
+            },
+            {
+              Icon: Code2,
               n: "04",
               tone: "mint",
-              visual: "memory",
-              title: en ? "Keep it." : "Zapamiętaj.",
+              visual: "code",
+              title: en ? "Coding." : "Kodowanie.",
               body: en
-                ? "Smart review brings weaker ideas back at the right time, before they disappear from memory."
-                : "Mądre powtórki wracają do słabszych tematów w odpowiednim momencie, zanim wypadną z pamięci.",
+                ? "Generated task variants make you write and run real code, while hidden checks verify that the solution works beyond one example."
+                : "Generowane warianty zadań każą pisać i uruchamiać prawdziwy kod, a ukryte testy sprawdzają, czy rozwiązanie działa nie tylko dla jednego przykładu.",
             },
           ].map(({ Icon, n, tone, visual, title, body }, i) => (
             <Reveal className={`method method-${tone}`} key={n} delay={i * 0.07}>
@@ -317,6 +317,12 @@ export function Landing() {
             </Reveal>
           ))}
         </div>
+        <p className="learning-modes-note">
+          <span aria-hidden="true">*</span>
+          {en
+            ? "IT Fundamentals & Production Applications is conceptual: it uses Knowledge, Flashcards and the dedicated IT Fundamentals reference instead of the coding lab."
+            : "Kurs „IT fundamenty i aplikacje produkcyjne” jest koncepcyjny: korzysta z Wiedzy, Fiszek i osobnego modułu Fundamenty IT zamiast laboratorium kodowania."}
+        </p>
       </section>
       <section className="container section visual-story">
         <Reveal className="visual-story-copy">

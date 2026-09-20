@@ -10,6 +10,7 @@ import {
   scoreQuiz,
   streak,
   updateConcept,
+  xpToNextLevel,
 } from "@/domain/learning";
 import { emptyProgress, progressSchema } from "@/domain/models";
 import { courseRepository } from "@/services/courses";
@@ -91,6 +92,13 @@ describe("learning rules", () => {
     expect(level(0)).toBe(1);
     expect(level(399)).toBe(1);
     expect(level(400)).toBe(2);
+  });
+  it("reports XP remaining to the next level at boundaries", () => {
+    expect(xpToNextLevel(0)).toBe(400);
+    expect(xpToNextLevel(1)).toBe(399);
+    expect(xpToNextLevel(399)).toBe(1);
+    expect(xpToNextLevel(400)).toBe(400);
+    expect(xpToNextLevel(650)).toBe(150);
   });
   it("rejects malformed or unsupported stored progress", () => {
     expect(

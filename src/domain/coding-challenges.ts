@@ -583,3 +583,10 @@ export function generateCodingChallenge(
   const rng = rngFor(`${course}:${normalized}:${seed}`);
   return list[normalized](rng, seed);
 }
+
+
+export function codingChallengeTemplateIds(course: CodingCourse) {
+  return Array.from({ length: codingChallengeCount(course) }, (_, index) =>
+    generateCodingChallenge(course, index, 1).templateId,
+  );
+}

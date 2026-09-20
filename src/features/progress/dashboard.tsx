@@ -22,6 +22,7 @@ import { courseRepository, conceptLabel } from "@/services/courses";
 import { progressStore } from "@/services/progress";
 import { isDue, level, localDay, streak } from "@/domain/learning";
 import { countLabel } from "@/lib/count-label";
+import { overallCourseProgress } from "@/services/course-progress";
 export function Dashboard() {
   const { t, l, locale, href } = useLocale();
   const progress = useProgress();
@@ -42,9 +43,7 @@ export function Dashboard() {
   const activeCourseDone = activeCourseLessons.filter(
     (lesson) => progress.completed[lesson.id],
   ).length;
-  const activeCourseProgress = activeCourseLessons.length
-    ? Math.round((activeCourseDone / activeCourseLessons.length) * 100)
-    : 0;
+  const activeCourseProgress = overallCourseProgress(activeCourseId, progress);
   const due = concepts.filter(([, c]) => c.mastery < 50 || isDue(c));
   const lessonCountLabel = (count: number) =>
     countLabel(locale, count, ["lesson", "lessons"], ["lekcja", "lekcje", "lekcji"]);

@@ -17,6 +17,7 @@ import { Breadcrumb } from "@/components/shell";
 import { UpgradeDialog } from "@/components/ui";
 import { useLocale } from "@/components/providers";
 import { courseRepository } from "@/services/courses";
+import { progressStore } from "@/services/progress";
 import { studyContentFor } from "@/content/study-content";
 import {
   glossaryHighlightPlan,
@@ -111,6 +112,10 @@ export function KnowledgeLibrary({ courseSlug }: { courseSlug: string }) {
     },
     [beginnerSections.length, index],
   );
+
+  useEffect(() => {
+    if (section) progressStore.visitKnowledge(courseSlug, section.id);
+  }, [courseSlug, section]);
 
   useEffect(() => {
     const onKeyDown = (event: KeyboardEvent) => {

@@ -21,6 +21,7 @@ import { ProgressBar, Reveal, UpgradeDialog } from "@/components/ui";
 import { courseRepository } from "@/services/courses";
 import { CourseModeDock } from "@/features/study/course-mode-dock";
 import { countLabel } from "@/lib/count-label";
+import { overallCourseProgress } from "@/services/course-progress";
 import {
   moduleMaxXp,
   moduleProgress,
@@ -42,6 +43,7 @@ export function CoursePath({ courseSlug = "javascript" }: { courseSlug?: string 
   const freeMinutes = freeModules.reduce((sum, module) => sum + module.minutes, 0);
   const done = freeLessons.filter((lesson) => progress.completed[lesson.id]).length;
   const next = freeLessons.find((lesson) => !progress.completed[lesson.id]);
+  const overallProgress = overallCourseProgress(courseSlug, progress);
   const lessonsLabel = (count: number) =>
     countLabel(locale, count, ["lesson", "lessons"], ["lekcja", "lekcje", "lekcji"]);
   const modulesLabel = (count: number) =>
@@ -250,14 +252,7 @@ export function CoursePath({ courseSlug = "javascript" }: { courseSlug?: string 
               </strong>
               <span>{lessonsLabel(freeLessons.length)}</span>
             </div>
-            <ProgressBar
-              value={
-                freeLessons.length
-                  ? Math.round((done / freeLessons.length) * 100)
-                  : 0
-              }
-              label={t.progress}
-            />
+            <ProgressBar value={overallProgress} label={t.courseProgress} />
             <p>{t.noPressure}</p>
             <Link
               className="button primary full"

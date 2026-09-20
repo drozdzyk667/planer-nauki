@@ -132,6 +132,15 @@ export const progressStore = {
     });
     return reward;
   },
+  visitKnowledge(courseSlug: string, sectionId: string) {
+    const key = `${courseSlug}:${sectionId}`;
+    if (state.knowledgeVisited.includes(key)) return false;
+    commit({
+      ...active(state),
+      knowledgeVisited: [...state.knowledgeVisited, key],
+    });
+    return true;
+  },
   toggleFavoriteFlashcard(id: string) {
     const favoriteFlashcards = state.favoriteFlashcards.includes(id)
       ? state.favoriteFlashcards.filter((item) => item !== id)

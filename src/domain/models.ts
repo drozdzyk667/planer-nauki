@@ -133,6 +133,7 @@ export const progressSchema = z.object({
   reviewRewards: z.array(z.string()),
   favoriteFlashcards: z.array(z.string()).default([]),
   codingSolved: z.array(z.string()).default([]),
+  knowledgeVisited: z.array(z.string()).default([]),
   answers: z.array(
     z.object({
       questionId: z.string(),
@@ -154,5 +155,6 @@ export const emptyProgress = (): Progress => ({
   reviewRewards: [],
   favoriteFlashcards: [],
   codingSolved: [],
+  knowledgeVisited: [],
   answers: [],
 });

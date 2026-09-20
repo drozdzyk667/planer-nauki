@@ -74,7 +74,7 @@ const en = {
   earned: "XP earned",
   accuracy: "Accuracy",
   mastery: "Retention strength",
-  courseProgress: "Interactive lesson progress",
+  courseProgress: "Course progress",
   masteryHelp:
     "A review heuristic, not a grade or a claim that you know this percentage of the topic. Correct answers increase it, mistakes reduce it, and it determines when the concept returns for review.",
   level: "Level",
@@ -279,7 +279,7 @@ const pl: Dictionary = {
   earned: "Zdobyte XP",
   accuracy: "Poprawność",
   mastery: "Utrwalenie",
-  courseProgress: "Postęp lekcji interaktywnych",
+  courseProgress: "Postęp kursu",
   masteryHelp:
     "To heurystyka powtórek, a nie ocena ani informacja, że znasz dany temat w takim procencie. Poprawne odpowiedzi zwiększają wskaźnik, błędy go obniżają, a wynik pomaga ustalić termin kolejnej powtórki.",
   level: "Poziom",

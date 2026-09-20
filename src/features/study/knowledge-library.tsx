@@ -12,7 +12,7 @@ import {
   ShieldAlert,
   Sparkles,
 } from "lucide-react";
-import { AnimatePresence, motion } from "motion/react";
+import { motion } from "motion/react";
 import { Breadcrumb } from "@/components/shell";
 import { UpgradeDialog } from "@/components/ui";
 import { useLocale } from "@/components/providers";
@@ -284,8 +284,7 @@ export function KnowledgeLibrary({ courseSlug }: { courseSlug: string }) {
                   <ArrowLeft size={22} />
                 </button>
 
-                <AnimatePresence mode="popLayout" initial={false}>
-                  <motion.article
+                <motion.article
                     key={section.id}
                     className="knowledge-reader-page"
                     initial={{ opacity: 0, x: direction * 44 }}
@@ -453,7 +452,6 @@ export function KnowledgeLibrary({ courseSlug }: { courseSlug: string }) {
                       </button>
                     </footer>
                   </motion.article>
-                </AnimatePresence>
 
                 <button
                   type="button"

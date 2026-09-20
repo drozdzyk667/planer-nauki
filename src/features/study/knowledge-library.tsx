@@ -25,6 +25,7 @@ import {
 } from "@/content/glossary";
 import { glossaryTermsForSection } from "@/content/glossary-context";
 import { knowledgeCuriosityFor } from "@/content/knowledge-curiosities";
+import { countLabel } from "@/lib/count-label";
 import { CourseModeDock } from "./course-mode-dock";
 import {
   GlossaryDetailDialog,
@@ -57,6 +58,12 @@ export function KnowledgeLibrary({ courseSlug }: { courseSlug: string }) {
 
   const section = beginnerSections[index];
   const curiosity = section ? knowledgeCuriosityFor(section.id) : undefined;
+  const advancedChapterLabel = countLabel(
+    locale,
+    advancedSections.length,
+    ["chapter", "chapters"],
+    ["rozdział", "rozdziały", "rozdziałów"],
+  );
 
   const glossaryEntries = useMemo(() => {
     if (!section) return [];
@@ -268,7 +275,7 @@ export function KnowledgeLibrary({ courseSlug }: { courseSlug: string }) {
                     <LockKeyhole size={14} />
                     <span>
                       <strong>{en ? "Advanced" : "Zaawansowane"}</strong>
-                      <small>{advancedSections.length} {en ? "chapters" : "rozdziałów"}</small>
+                      <small>{advancedSections.length} {advancedChapterLabel}</small>
                     </span>
                   </button>
                 </div>
@@ -478,8 +485,8 @@ export function KnowledgeLibrary({ courseSlug }: { courseSlug: string }) {
               </h3>
               <p>
                 {en
-                  ? `${advancedSections.length} advanced chapters continue the same page-by-page format.`
-                  : `${advancedSections.length} zaawansowanych rozdziałów kontynuuje ten sam prosty format strona po stronie.`}
+                  ? `Advanced track: ${advancedSections.length} ${advancedChapterLabel}. The same page-by-page format continues there.`
+                  : `Ścieżka zaawansowana: ${advancedSections.length} ${advancedChapterLabel}. Dalej obowiązuje ten sam prosty format strona po stronie.`}
               </p>
             </div>
             <button className="button primary" onClick={() => setUpgrade(true)}>

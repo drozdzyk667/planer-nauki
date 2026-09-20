@@ -264,8 +264,8 @@ export function Landing() {
               visual: "code",
               title: en ? "Coding." : "Kodowanie.",
               body: en
-                ? "Generated task variants make you write and run real code, while hidden checks verify that the solution works beyond one example."
-                : "Generowane warianty zadań każą pisać i uruchamiać prawdziwy kod, a ukryte testy sprawdzają, czy rozwiązanie działa nie tylko dla jednego przykładu.",
+                ? "Generated task variants make you write code, while hidden checks verify the general rule instead of one memorised example."
+                : "Generowane warianty zadań każą pisać kod, a ukryte checki sprawdzają ogólną regułę zamiast jednego zapamiętanego przykładu.",
             },
           ].map(({ Icon, n, tone, visual, title, body }, i) => (
             <Reveal className={`method method-${tone}`} key={n} delay={i * 0.07}>

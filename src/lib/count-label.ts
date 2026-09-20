@@ -1,4 +1,4 @@
-import type { Locale } from "@/domain/models";
+import type { Locale } from "@/lib/config";
 
 export function countLabel(
   locale: Locale,

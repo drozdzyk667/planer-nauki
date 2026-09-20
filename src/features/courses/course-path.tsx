@@ -20,6 +20,7 @@ import { Breadcrumb } from "@/components/shell";
 import { ProgressBar, Reveal, UpgradeDialog } from "@/components/ui";
 import { courseRepository } from "@/services/courses";
 import { CourseModeDock } from "@/features/study/course-mode-dock";
+import { countLabel } from "@/lib/count-label";
 import {
   moduleMaxXp,
   moduleProgress,
@@ -41,6 +42,14 @@ export function CoursePath({ courseSlug = "javascript" }: { courseSlug?: string 
   const freeMinutes = freeModules.reduce((sum, module) => sum + module.minutes, 0);
   const done = freeLessons.filter((lesson) => progress.completed[lesson.id]).length;
   const next = freeLessons.find((lesson) => !progress.completed[lesson.id]);
+  const lessonsLabel = (count: number) =>
+    countLabel(locale, count, ["lesson", "lessons"], ["lekcja", "lekcje", "lekcji"]);
+  const modulesLabel = (count: number) =>
+    countLabel(locale, count, ["module", "modules"], ["moduł", "moduły", "modułów"]);
+  const roadmapCopy =
+    locale === "en"
+      ? `Total: ${course.modules.length} ${modulesLabel(course.modules.length)} · Free: ${freeModules.length} ${modulesLabel(freeModules.length)} · Premium: ${premiumModules.length} ${modulesLabel(premiumModules.length)}.`
+      : `Łącznie: ${course.modules.length} ${modulesLabel(course.modules.length)} · Za darmo: ${freeModules.length} ${modulesLabel(freeModules.length)} · Premium: ${premiumModules.length} ${modulesLabel(premiumModules.length)}.`;
 
   return (
     <div className="container page-space">
@@ -68,13 +77,13 @@ export function CoursePath({ courseSlug = "javascript" }: { courseSlug?: string 
               </span>
               <span>
                 <CheckCircle2 size={16} />
-                {freeLessons.length} {t.lessons} · {t.free}
+                {freeLessons.length} {lessonsLabel(freeLessons.length)} · {t.free}
               </span>
             </div>
           </Reveal>
           <div className="path-heading">
             <h2>{t.freePath}</h2>
-            <span className="badge green">{freeModules.length} {t.modules}</span>
+            <span className="badge green">{freeModules.length} {modulesLabel(freeModules.length)}</span>
           </div>
           <div className="module-path">
             {freeModules.map((module, index) => {
@@ -104,7 +113,7 @@ export function CoursePath({ courseSlug = "javascript" }: { courseSlug?: string 
                       <div>
                         <h3>{l(module.title)}</h3>
                         <span>
-                          {module.lessonIds.length} {t.lessons} ·{" "}
+                          {module.lessonIds.length} {lessonsLabel(module.lessonIds.length)} ·{" "}
                           {module.minutes} {t.minutes}
                         </span>
                       </div>
@@ -191,7 +200,7 @@ export function CoursePath({ courseSlug = "javascript" }: { courseSlug?: string 
             <h2>{t.roadmap}</h2>
             <span className="badge purple">Premium</span>
           </div>
-          <p className="muted">{t.roadmapNote}</p>
+          <p className="muted">{roadmapCopy}</p>
           <div className="premium-roadmap">
             {premiumModules
               .slice(0, full ? premiumModules.length : 4)
@@ -239,7 +248,7 @@ export function CoursePath({ courseSlug = "javascript" }: { courseSlug?: string 
                 {done}
                 <span> / {freeLessons.length}</span>
               </strong>
-              <span>{t.lessons}</span>
+              <span>{lessonsLabel(freeLessons.length)}</span>
             </div>
             <ProgressBar
               value={

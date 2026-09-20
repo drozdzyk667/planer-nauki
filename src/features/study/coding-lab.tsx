@@ -6,7 +6,6 @@ import {
   CheckCircle2,
   Code2,
   Dices,
-  RefreshCw,
   Sparkles,
   Trophy,
   Zap,
@@ -88,18 +87,6 @@ export function CodingLab({ courseSlug }: { courseSlug: CodingCourse }) {
           </p>
         </div>
 
-        <div className="coding-engine-card">
-          <span>
-            <Dices size={18} />
-            {en ? "GENERATOR ENGINE" : "SILNIK GENERATORA"}
-          </span>
-          <strong>#{seed.toString().padStart(3, "0")}</strong>
-          <small>
-            {en
-              ? "Deterministic seed · repeatable tests"
-              : "Deterministyczny seed · powtarzalne testy"}
-          </small>
-        </div>
       </header>
 
       <section className="coding-lab-toolbar">
@@ -122,9 +109,9 @@ export function CodingLab({ courseSlug }: { courseSlug: CodingCourse }) {
         </div>
 
         <div className="coding-lab-actions">
-          <button className="button secondary" onClick={newVariant}>
-            <RefreshCw size={16} />
-            {en ? "New variant" : "Nowy wariant"}
+          <button className="button secondary coding-randomize" onClick={newVariant}>
+            <Dices size={16} />
+            {en ? "Shuffle task variant" : "Losuj wariant zadania"}
           </button>
           <button className="button secondary" onClick={nextChallenge}>
             {en ? "Next task" : "Następne zadanie"}

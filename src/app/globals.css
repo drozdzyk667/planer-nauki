@@ -10329,3 +10329,128 @@
     }
   }
 }
+
+
+@layer requested-learning-polish {
+  .knowledge-callout.curiosity {
+    border-color: color-mix(in srgb, var(--purple), var(--border) 55%);
+    background:
+      radial-gradient(
+        circle at 100% 0%,
+        color-mix(in srgb, var(--purple), transparent 88%),
+        transparent 44%
+      ),
+      color-mix(in srgb, var(--purple), transparent 96%);
+  }
+
+  .knowledge-callout.curiosity > svg {
+    color: var(--purple);
+  }
+
+  .exercise-help-actions {
+    display: grid;
+    gap: 2px;
+    margin-block: 10px 14px;
+  }
+
+  .exercise-help-actions .hint-button,
+  .exercise-help-actions .answer-button {
+    margin-block: 0;
+  }
+
+  .answer-button {
+    color: var(--danger);
+  }
+
+  .answer-button:hover,
+  .answer-button:focus-visible {
+    color: color-mix(in srgb, var(--danger), var(--fg) 20%);
+  }
+
+  .answer-box {
+    margin-top: 9px;
+    padding: 13px 14px;
+    overflow-x: auto;
+    border: 1px solid color-mix(in srgb, var(--danger), var(--border) 48%);
+    border-radius: 11px;
+    color: var(--code-fg);
+    background:
+      linear-gradient(
+        135deg,
+        color-mix(in srgb, var(--danger-bg), transparent 12%),
+        var(--code-bg)
+      );
+    font: 600 12px/1.65 "JetBrains Mono", monospace;
+    white-space: pre;
+  }
+
+  .coding-lab-hero {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .coding-randomize {
+    border-color: color-mix(in srgb, var(--purple), var(--border) 48%) !important;
+    color: var(--purple) !important;
+    background:
+      radial-gradient(
+        circle at 10% 50%,
+        color-mix(in srgb, var(--purple), transparent 88%),
+        transparent 75%
+      ),
+      var(--surface) !important;
+    box-shadow: 0 0 0 1px color-mix(in srgb, var(--purple), transparent 86%);
+  }
+
+  .coding-randomize:hover {
+    border-color: var(--purple) !important;
+    background: color-mix(in srgb, var(--purple), transparent 91%) !important;
+  }
+
+  .coding-difficulty,
+  .coding-solved,
+  .fundamentals-level,
+  .fundamentals-card-top > small,
+  .glossary-card-title span {
+    font-family: "DM Sans Variable", sans-serif;
+    font-size: 10.5px;
+    font-weight: 700;
+    line-height: 1.15;
+    letter-spacing: 0.015em;
+  }
+
+  .coding-difficulty,
+  .coding-solved,
+  .fundamentals-level,
+  .glossary-card-title span {
+    text-transform: none;
+  }
+
+  .fundamentals-card-top > small {
+    font-size: 10px;
+  }
+
+  @media (max-width: 680px) {
+    .coding-lab-toolbar {
+      grid-template-columns: 1fr;
+      align-items: stretch;
+    }
+
+    .coding-challenge-position {
+      display: none;
+    }
+
+    .coding-challenge-meta {
+      flex-wrap: wrap;
+    }
+
+    .coding-lab-actions {
+      display: grid;
+      grid-template-columns: 1fr;
+    }
+
+    .coding-lab-actions .button {
+      width: 100%;
+      justify-content: center;
+    }
+  }
+}

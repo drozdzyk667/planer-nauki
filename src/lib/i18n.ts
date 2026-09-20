@@ -51,6 +51,8 @@ const en = {
   running: "Running…",
   hint: "Show hint",
   hideHint: "Hide hint",
+  showAnswer: "Show answer",
+  hideAnswer: "Hide answer",
   console: "Console",
   tests: "Checks",
   editor: "JavaScript code editor",
@@ -72,6 +74,7 @@ const en = {
   earned: "XP earned",
   accuracy: "Accuracy",
   mastery: "Mastery",
+  courseProgress: "Course progress",
   masteryHelp:
     "A learning heuristic, not a grade: each correct answer adds 25 points and each wrong answer removes 30. The dashboard average includes concepts you have practiced.",
   level: "Level",
@@ -253,6 +256,8 @@ const pl: Dictionary = {
   running: "Uruchamiam…",
   hint: "Pokaż podpowiedź",
   hideHint: "Ukryj podpowiedź",
+  showAnswer: "Pokaż odpowiedź",
+  hideAnswer: "Ukryj odpowiedź",
   console: "Konsola",
   tests: "Sprawdzenie",
   editor: "Edytor kodu JavaScript",
@@ -274,6 +279,7 @@ const pl: Dictionary = {
   earned: "Zdobyte XP",
   accuracy: "Poprawność",
   mastery: "Opanowanie",
+  courseProgress: "Postęp kursu",
   masteryHelp:
     "To pomocniczy wskaźnik nauki, nie ocena: poprawna odpowiedź dodaje 25 punktów, a błędna odejmuje 30. Średnia na dashboardzie obejmuje tylko zagadnienia, które już ćwiczyłeś.",
   level: "Poziom",

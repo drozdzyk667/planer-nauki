@@ -1,7 +1,15 @@
 "use client";
 import dynamic from "next/dynamic";
 import { useEffect, useRef, useState } from "react";
-import { Check, CircleHelp, Play, RotateCcw, Terminal, X } from "lucide-react";
+import {
+  Check,
+  CircleAlert,
+  CircleHelp,
+  Play,
+  RotateCcw,
+  Terminal,
+  X,
+} from "lucide-react";
 import { useLocale } from "@/components/providers";
 import { asset } from "@/lib/config";
 import type { Exercise as ExerciseModel } from "@/domain/models";
@@ -38,6 +46,7 @@ export function Exercise({
   const { t, l } = useLocale();
   const [code, setCode] = useState(savedCode ?? exercise.starter);
   const [hint, setHint] = useState(false);
+  const [answer, setAnswer] = useState(false);
   const [running, setRunning] = useState(false);
   const [result, setResult] = useState<RunResult | null>(null);
   const frame = useRef<HTMLIFrameElement>(null);
@@ -158,15 +167,37 @@ export function Exercise({
           frame.current?.contentWindow?.postMessage({ type: "ping" }, "*")
         }
       />
-      <button
-        className="text-link hint-button"
-        onClick={() => setHint(!hint)}
-        aria-expanded={hint}
-      >
-        <CircleHelp size={16} />
-        {hint ? t.hideHint : t.hint}
-      </button>
-      {hint && <p className="hint-box">{l(exercise.hint)}</p>}
+      <div className="exercise-help-actions">
+        <div>
+          <button
+            className="text-link hint-button"
+            onClick={() => setHint(!hint)}
+            aria-expanded={hint}
+          >
+            <CircleHelp size={16} />
+            {hint ? t.hideHint : t.hint}
+          </button>
+          {hint && <p className="hint-box">{l(exercise.hint)}</p>}
+        </div>
+
+        {exercise.solution && (
+          <div>
+            <button
+              className="text-link answer-button"
+              onClick={() => setAnswer(!answer)}
+              aria-expanded={answer}
+            >
+              <CircleAlert size={16} />
+              {answer ? t.hideAnswer : t.showAnswer}
+            </button>
+            {answer && (
+              <pre className="answer-box">
+                <code>{exercise.solution}</code>
+              </pre>
+            )}
+          </div>
+        )}
+      </div>
       <div className="output-panel" aria-live="polite">
         <div className="output-title">
           <Terminal size={16} />

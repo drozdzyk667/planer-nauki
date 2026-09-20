@@ -79,6 +79,7 @@ const jsFactories: Factory[] = [
           `Uzupełnij ${fn}(${price}, ${quantity}). Nie wpisuj wyników testów na sztywno.`,
         ),
         starter: `function ${fn}(${price}, ${quantity}) {\n  // TODO\n}\n`,
+        solution: `function ${fn}(${price}, ${quantity}) {\n  return ${price} * ${quantity};\n}\n`,
         hint: T(
           `Return ${price} * ${quantity}.`,
           `Zwróć ${price} * ${quantity}.`,
@@ -125,6 +126,7 @@ const jsFactories: Factory[] = [
           `Zaimplementuj ${fn}(${list}, ${limit}) i zwróć liczbę.`,
         ),
         starter: `function ${fn}(${list}, ${limit}) {\n  // TODO\n}\n`,
+        solution: `function ${fn}(${list}, ${limit}) {\n  return ${list}.filter((value) => value > ${limit}).length;\n}\n`,
         hint: T(
           "filter(...).length is one option, but a loop works too.",
           "Jedną z opcji jest filter(...).length, ale zwykła pętla też jest poprawna.",
@@ -170,6 +172,7 @@ const jsFactories: Factory[] = [
           `Spraw, aby ${fn}(${first}, ${last}) zwracała "Imię Nazwisko".`,
         ),
         starter: `function ${fn}(${first}, ${last}) {\n  // TODO\n}\n`,
+        solution: `function ${fn}(${first}, ${last}) {\n  return ${first} + " " + ${last};\n}\n`,
         hint: T(
           "A template literal is the shortest readable solution.",
           "Template literal jest najkrótszym czytelnym rozwiązaniem.",
@@ -211,6 +214,7 @@ const jsFactories: Factory[] = [
           `Zaimplementuj ${fn}(${list}). Pusta lub całkowicie ujemna tablica powinna zwrócić 0.`,
         ),
         starter: `function ${fn}(${list}) {\n  // TODO\n}\n`,
+        solution: `function ${fn}(${list}) {\n  return ${list}.filter((value) => value > 0).reduce((sum, value) => sum + value, 0);\n}\n`,
         hint: T(
           "Filter positive values first or conditionally add them in reduce.",
           "Najpierw odfiltruj dodatnie wartości albo dodawaj je warunkowo w reduce.",
@@ -258,6 +262,7 @@ const tsFactories: Factory[] = [
           `Dodaj ${textField}: string, ${numberField}: number oraz ${boolField}: boolean.`,
         ),
         starter: `type ${typeName} = {\n  // TODO\n};\n`,
+        solution: `type ${typeName} = {\n  ${textField}: string;\n  ${numberField}: number;\n  ${boolField}: boolean;\n};\n`,
         hint: T(
           "Write one property per line using propertyName: type.",
           "Zapisz po jednej właściwości w linii w formacie nazwaPola: typ.",
@@ -297,6 +302,7 @@ const tsFactories: Factory[] = [
           `Nadaj obu parametrom i wynikowi ${fn} jawny typ number.`,
         ),
         starter: `function ${fn}(${left}, ${right}) {\n  return ${left} + ${right};\n}\n`,
+        solution: `function ${fn}(${left}: number, ${right}: number): number {\n  return ${left} + ${right};\n}\n`,
         hint: T(
           "Annotate each parameter after its name and add : number after the closing parenthesis.",
           "Dodaj typ po nazwie każdego parametru oraz : number po zamknięciu nawiasu.",
@@ -339,6 +345,7 @@ const tsFactories: Factory[] = [
           `Zdefiniuj ${typeName} jako unię: ${values.join(", ")}.`,
         ),
         starter: `type ${typeName} = string; // TODO: make this precise\n`,
+        solution: `type ${typeName} = ${values.map((value) => JSON.stringify(value)).join(" | ")};\n`,
         hint: T(
           'Use string literals joined with |, for example "one" | "two".',
           'Użyj literałów string połączonych |, np. "one" | "two".',
@@ -376,6 +383,7 @@ const tsFactories: Factory[] = [
           `Zmień ${fn} w funkcję generyczną zwracającą T | undefined.`,
         ),
         starter: `function ${fn}(${list}: unknown[]) {\n  return ${list}[0];\n}\n`,
+        solution: `function ${fn}<T>(${list}: T[]): T | undefined {\n  return ${list}[0];\n}\n`,
         hint: T(
           `Add <T>, change ${list} to T[] and annotate the return type.`,
           `Dodaj <T>, zmień ${list} na T[] i opisz typ wyniku.`,
@@ -418,6 +426,7 @@ const reactFactories: Factory[] = [
           `Uzupełnij ${propsType} o ${prop}: string i wyrenderuj {${prop}} w ${component}.`,
         ),
         starter: `type ${propsType} = {\n  // TODO\n};\n\nfunction ${component}({ ${prop} }: ${propsType}) {\n  return <h2>{/* TODO */}</h2>;\n}\n`,
+        solution: `type ${propsType} = {\n  ${prop}: string;\n};\n\nfunction ${component}({ ${prop} }: ${propsType}) {\n  return <h2>{${prop}}</h2>;\n}\n`,
         hint: T(
           `Add ${prop}: string to the props type and place {${prop}} inside h2.`,
           `Dodaj ${prop}: string do typu propsów i umieść {${prop}} wewnątrz h2.`,
@@ -458,6 +467,7 @@ const reactFactories: Factory[] = [
           `Utwórz [${value}, ${setter}] przez useState(${start}) i zwiększaj wartość z przycisku.`,
         ),
         starter: `function ${component}() {\n  // TODO\n  return <button>Increase</button>;\n}\n`,
+        solution: `function ${component}() {\n  const [${value}, ${setter}] = useState(${start});\n  return <button onClick={() => ${setter}((current) => current + 1)}>{${value}}</button>;\n}\n`,
         hint: T(
           `const [${value}, ${setter}] = useState(${start}); then use onClick.`,
           `const [${value}, ${setter}] = useState(${start}); następnie użyj onClick.`,
@@ -496,6 +506,7 @@ const reactFactories: Factory[] = [
           `Wyrenderuj ${list} przez .map(...) i key={item.id}.`,
         ),
         starter: `type Item = { id: string; label: string };\n\nfunction ${component}({ ${list} }: { ${list}: Item[] }) {\n  return <ul>{/* TODO */}</ul>;\n}\n`,
+        solution: `type Item = { id: string; label: string };\n\nfunction ${component}({ ${list} }: { ${list}: Item[] }) {\n  return <ul>{${list}.map((item) => <li key={item.id}>{item.label}</li>)}</ul>;\n}\n`,
         hint: T(
           `Use {${list}.map((item) => <li key={item.id}>{item.label}</li>)}.`,
           `Użyj {${list}.map((item) => <li key={item.id}>{item.label}</li>)}.`,
@@ -534,6 +545,7 @@ const reactFactories: Factory[] = [
           `Gdy ${loading} jest true zwróć <p>Loading...</p>; w przeciwnym razie <main>Ready</main>.`,
         ),
         starter: `function ${component}({ ${loading} }: { ${loading}: boolean }) {\n  // TODO\n}\n`,
+        solution: `function ${component}({ ${loading} }: { ${loading}: boolean }) {\n  if (${loading}) return <p>Loading...</p>;\n  return <main>Ready</main>;\n}\n`,
         hint: T(
           `Start with if (${loading}) return <p>Loading...</p>.`,
           `Zacznij od if (${loading}) return <p>Loading...</p>.`,

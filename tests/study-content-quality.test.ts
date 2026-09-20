@@ -15,6 +15,11 @@ import {
   fundamentalsLevel,
 } from "../src/content/fundamentals";
 import type { Localized } from "../src/domain/models";
+import {
+  codingChallengeCount,
+  generateCodingChallenge,
+  type CodingCourse,
+} from "../src/domain/coding-challenges";
 
 function expectLocalized(value: Localized, label: string) {
   expect(value.en.trim(), `${label} EN`).not.toBe("");
@@ -269,6 +274,41 @@ describe("study content quality", () => {
       );
       if (fundamentalsDomainFor(term.id)) {
         expect(fundamentalsDomainFor(term.id)?.termIds).toContain(term.id);
+      }
+    }
+  });
+
+  it("ships a revealable reference answer for every generated coding family", () => {
+    for (const course of ["javascript", "typescript", "react"] as CodingCourse[]) {
+      for (let index = 0; index < codingChallengeCount(course); index += 1) {
+        const challenge = generateCodingChallenge(course, index, 17);
+        expect(challenge.exercise.solution, challenge.templateId).toBeTruthy();
+
+        const extension =
+          challenge.exercise.language === "tsx"
+            ? "tsx"
+            : challenge.exercise.language === "typescript"
+              ? "ts"
+              : "js";
+        const result = ts.transpileModule(challenge.exercise.solution!, {
+          fileName: `solution.${extension}`,
+          reportDiagnostics: true,
+          compilerOptions: {
+            target: ts.ScriptTarget.ES2022,
+            module: ts.ModuleKind.ESNext,
+            jsx: ts.JsxEmit.ReactJSX,
+            allowJs: extension === "js",
+          },
+        });
+        const errors = (result.diagnostics ?? []).filter(
+          (diagnostic) => diagnostic.category === ts.DiagnosticCategory.Error,
+        );
+        expect(
+          errors.map((diagnostic) =>
+            ts.flattenDiagnosticMessageText(diagnostic.messageText, "\n"),
+          ),
+          `${challenge.templateId} solution`,
+        ).toEqual([]);
       }
     }
   });

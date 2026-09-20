@@ -10,6 +10,7 @@ import {
   Lightbulb,
   LockKeyhole,
   ShieldAlert,
+  Sparkles,
 } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import { Breadcrumb } from "@/components/shell";
@@ -23,6 +24,7 @@ import {
   type GlossaryTerm,
 } from "@/content/glossary";
 import { glossaryTermsForSection } from "@/content/glossary-context";
+import { knowledgeCuriosityFor } from "@/content/knowledge-curiosities";
 import { CourseModeDock } from "./course-mode-dock";
 import {
   GlossaryDetailDialog,
@@ -54,6 +56,7 @@ export function KnowledgeLibrary({ courseSlug }: { courseSlug: string }) {
   );
 
   const section = beginnerSections[index];
+  const curiosity = section ? knowledgeCuriosityFor(section.id) : undefined;
 
   const glossaryEntries = useMemo(() => {
     if (!section) return [];
@@ -398,6 +401,16 @@ export function KnowledgeLibrary({ courseSlug }: { courseSlug: string }) {
                             </p>
                           </div>
                         </div>
+
+                        {curiosity && (
+                          <div className="knowledge-callout curiosity">
+                            <Sparkles size={19} />
+                            <div>
+                              <strong>{en ? "Did you know?" : "Ciekawostka"}</strong>
+                              <p>{curiosity[locale]}</p>
+                            </div>
+                          </div>
+                        )}
                       </aside>
                     </div>
 

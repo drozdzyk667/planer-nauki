@@ -139,7 +139,7 @@ export const platformCourses: Course[] = [
     slug: "it-foundations",
     title: T(
       "IT Fundamentals & Production Applications",
-      "IT Fundamentals i aplikacje produkcyjne",
+      "IT fundamenty i aplikacje produkcyjne",
     ),
     short: "IT",
     description: T(

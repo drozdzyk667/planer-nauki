@@ -29,15 +29,25 @@ export function Dashboard() {
   const done = lessons.filter((l) => progress.completed[l.id]).length;
   const next = lessons.find((l) => !progress.completed[l.id]);
   const concepts = Object.entries(progress.concepts);
+  const latestCompletedLesson = Object.entries(progress.completed)
+    .sort(([, a], [, b]) => new Date(b).getTime() - new Date(a).getTime())
+    .map(([lessonId]) => lessons.find((lesson) => lesson.id === lessonId))
+    .find(Boolean);
+  const activeCourseId = next?.courseId ?? latestCompletedLesson?.courseId ?? "javascript";
+  const activeCourse = courseRepository.get(activeCourseId);
+  const activeCourseLessons = lessons.filter(
+    (lesson) => lesson.courseId === activeCourseId,
+  );
+  const activeCourseDone = activeCourseLessons.filter(
+    (lesson) => progress.completed[lesson.id],
+  ).length;
+  const activeCourseProgress = activeCourseLessons.length
+    ? Math.round((activeCourseDone / activeCourseLessons.length) * 100)
+    : 0;
   const due = concepts.filter(([, c]) => c.mastery < 50 || isDue(c));
   const todayDone = Object.values(progress.completed).some(
     (date) => localDay(new Date(date)) === localDay(),
   );
-  const mastery = concepts.length
-    ? Math.round(
-        concepts.reduce((a, [, c]) => a + c.mastery, 0) / concepts.length,
-      )
-    : 0;
   return (
     <div className="container page-space dashboard">
       <Reveal>
@@ -58,8 +68,12 @@ export function Dashboard() {
       <div className="dashboard-top">
         <Reveal className="continue-card">
           <div className="continue-card-top">
-            <span className="language-icon yellow">JS</span>
-            <span className="badge subtle">JavaScript</span>
+            <span className={`language-icon ${activeCourse?.color ?? "yellow"}`}>
+              {activeCourse?.short ?? "JS"}
+            </span>
+            <span className="badge subtle">
+              {activeCourse ? l(activeCourse.title) : "JavaScript"}
+            </span>
             <span className="continue-orbit" aria-hidden="true">
               ✦
             </span>
@@ -67,13 +81,10 @@ export function Dashboard() {
           <div className="eyebrow">{next ? t.continue : t.completed}</div>
           <h2>{next ? l(next.title) : t.allFreeDone}</h2>
           <p>{next ? l(next.subtitle) : t.allFreeDoneCopy}</p>
-          <ProgressBar
-            value={Math.round((done / lessons.length) * 100)}
-            label={t.progress}
-          />
+          <ProgressBar value={activeCourseProgress} label={t.courseProgress} />
           <div className="continue-card-bottom">
             <span>
-              {done} / {lessons.length} {t.lessons}
+              {activeCourseDone} / {activeCourseLessons.length} {t.lessons}
             </span>
             <Link
               className="button primary"
@@ -105,7 +116,11 @@ export function Dashboard() {
           { Icon: Zap, value: progress.xp, label: "XP" },
           { Icon: Layers, value: level(progress.xp), label: t.level },
           { Icon: Flame, value: streak(progress.learningDays), label: t.days },
-          { Icon: Target, value: `${mastery}%`, label: t.mastery },
+          {
+            Icon: Target,
+            value: `${activeCourseProgress}%`,
+            label: t.courseProgress,
+          },
         ].map(({ Icon, value, label }) => (
           <div className="stat" key={label}>
             <Icon size={19} />

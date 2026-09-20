@@ -31,6 +31,7 @@ export const exerciseSchema = z.object({
   task: textSchema,
   starter: z.string(),
   hint: textSchema,
+  solution: z.string().optional(),
   mode: z.enum(["runtime", "source"]).optional(),
   language: z.enum(["javascript", "typescript", "tsx"]).optional(),
   fileName: z.string().optional(),

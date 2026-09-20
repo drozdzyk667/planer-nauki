@@ -10454,3 +10454,32 @@
     }
   }
 }
+
+
+@layer audit-fixes {
+  .hidden-test-summary {
+    margin-top: 10px;
+    padding: 12px 14px;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    background: var(--subtle);
+  }
+
+  .hidden-test-summary strong {
+    display: block;
+    color: var(--fg);
+    font-size: 12px;
+  }
+
+  .hidden-test-summary p {
+    margin-top: 5px;
+    color: var(--muted);
+    font-size: 11px;
+    line-height: 1.55;
+  }
+
+  .hero-course-card small {
+    max-width: 92px;
+    font-size: 9px;
+  }
+}

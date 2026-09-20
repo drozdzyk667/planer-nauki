@@ -28,6 +28,11 @@ export function CodingLab({ courseSlug }: { courseSlug: CodingCourse }) {
   const course = courseRepository.get(courseSlug)!;
   const en = locale === "en";
   const total = codingChallengeCount(courseSlug);
+  const difficultyLabel = {
+    easy: en ? "Easy" : "Łatwe",
+    medium: en ? "Medium" : "Średnie",
+    hard: en ? "Hard" : "Trudne",
+  } as const;
 
   const [templateIndex, setTemplateIndex] = useState(0);
   const [seed, setSeed] = useState(1);
@@ -125,7 +130,7 @@ export function CodingLab({ courseSlug }: { courseSlug: CodingCourse }) {
 
         <div className="coding-challenge-meta">
           <span className={`coding-difficulty ${challenge.difficulty}`}>
-            {challenge.difficulty}
+            {difficultyLabel[challenge.difficulty]}
           </span>
           <span>{l(challenge.concept)}</span>
           {solved && (

@@ -14,7 +14,10 @@ import {
   fundamentalsDomainFor,
   fundamentalsLevel,
 } from "../src/content/fundamentals";
-import type { Localized } from "../src/domain/models";
+import { emptyProgress, type Localized } from "../src/domain/models";
+import { overallCourseProgress } from "../src/services/course-progress";
+import { codingChallengeTemplateIds } from "../src/domain/coding-challenges";
+import { studyContentFor } from "../src/content/study-content";
 import {
   codingChallengeCount,
   generateCodingChallenge,
@@ -311,6 +314,55 @@ describe("study content quality", () => {
         ).toEqual([]);
       }
     }
+  });
+
+  it("calculates overall course progress from structured learning modes", () => {
+    const empty = emptyProgress();
+    expect(overallCourseProgress("javascript", empty)).toBe(0);
+
+    const jsStudy = studyContentFor("javascript")!;
+    const beginnerChapters = jsStudy.knowledge.filter(
+      (section) => section.level === "beginner",
+    );
+    const course = courseRepository.get("javascript")!;
+    const freeModules = course.modules.filter((module) => module.access === "free");
+    const freeModuleIds = new Set(freeModules.map((module) => module.id));
+    const freeLessons = courseRepository
+      .lessons()
+      .filter(
+        (lesson) =>
+          lesson.courseId === course.id && freeModuleIds.has(lesson.moduleId),
+      );
+
+    const complete = {
+      ...empty,
+      knowledgeVisited: beginnerChapters.map(
+        (section) => `javascript:${section.id}`,
+      ),
+      completed: Object.fromEntries(
+        freeLessons.map((lesson) => [lesson.id, "2026-09-20T10:00:00.000Z"]),
+      ),
+      quizBest: Object.fromEntries(
+        freeModules
+          .filter((module) => module.lessonIds.length > 0)
+          .map((module) => [`checkpoint-${module.id}`, 100]),
+      ),
+      codingSolved: codingChallengeTemplateIds("javascript"),
+    };
+
+    expect(overallCourseProgress("javascript", complete)).toBe(100);
+
+    const itStudy = studyContentFor("it-foundations")!;
+    const itBeginner = itStudy.knowledge.filter(
+      (section) => section.level === "beginner",
+    );
+    const itComplete = {
+      ...empty,
+      knowledgeVisited: itBeginner.map(
+        (section) => `it-foundations:${section.id}`,
+      ),
+    };
+    expect(overallCourseProgress("it-foundations", itComplete)).toBe(100);
   });
 
   it("publishes AI and production IT as available reference courses", () => {

@@ -621,8 +621,8 @@ const knowledgeFlashcards = (
       level: section.level,
       tag: section.title,
       front: T(
-        `What is the main rule for: ${section.title.en}?`,
-        `Jaka jest najważniejsza zasada dla: ${section.title.pl}?`,
+        `What is the key rule in “${section.title.en}”?`,
+        `Jaka zasada jest najważniejsza w temacie „${section.title.pl}”?`,
       ),
       back: section.rule,
       code: section.code?.value,
@@ -633,8 +633,8 @@ const knowledgeFlashcards = (
       level: section.level,
       tag: section.title,
       front: T(
-        `What should you watch out for with: ${section.title.en}?`,
-        `Na co uważać przy temacie: ${section.title.pl}?`,
+        `What is a common trap in “${section.title.en}”?`,
+        `Jaka jest częsta pułapka w temacie „${section.title.pl}”?`,
       ),
       back: section.pitfall,
       code: section.code?.value,
@@ -645,8 +645,8 @@ const knowledgeFlashcards = (
       level: section.level,
       tag: section.title,
       front: T(
-        `Explain simply: ${section.title.en}`,
-        `Wyjaśnij prosto: ${section.title.pl}`,
+        `Explain “${section.title.en}” in your own words.`,
+        `Wyjaśnij własnymi słowami: „${section.title.pl}”.`,
       ),
       back: section.lead,
       code: section.code?.value,

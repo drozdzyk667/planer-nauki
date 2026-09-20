@@ -284,7 +284,7 @@ export function KnowledgeLibrary({ courseSlug }: { courseSlug: string }) {
                   <ArrowLeft size={22} />
                 </button>
 
-                <AnimatePresence mode="wait" initial={false}>
+                <AnimatePresence mode="popLayout" initial={false}>
                   <motion.article
                     key={section.id}
                     className="knowledge-reader-page"

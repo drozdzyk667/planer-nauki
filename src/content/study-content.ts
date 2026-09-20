@@ -654,26 +654,95 @@ const knowledgeFlashcards = (
     },
   ]);
 
+const orderKnowledge = (
+  sections: KnowledgeSection[],
+  order: string[],
+): KnowledgeSection[] => {
+  const byId = new Map(sections.map((section) => [section.id, section]));
+  const ordered = order
+    .map((id) => byId.get(id))
+    .filter((section): section is KnowledgeSection => Boolean(section));
+  const known = new Set(order);
+  return [...ordered, ...sections.filter((section) => !known.has(section.id))];
+};
+
+const javascriptKnowledge = orderKnowledge(javascript.knowledge, [
+  "js-execution",
+  "js-bindings",
+  "js-types",
+  "js-operators-basics",
+  "js-conditions-basics",
+  "js-functions",
+  "js-arrays-basics",
+  "js-loops-basics",
+  "js-objects-basics",
+  "js-destructuring-spread",
+  "js-references",
+  "js-closures",
+  "js-prototypes-this",
+  "js-event-loop",
+  "js-iterators-generators",
+  "js-modules-errors",
+]);
+
+const typescriptKnowledge = orderKnowledge(typescript.knowledge, [
+  "ts-mental-model",
+  "ts-primitives-literals",
+  "ts-functions",
+  "ts-null-undefined",
+  "ts-arrays-tuples",
+  "ts-alias-interface",
+  "ts-objects-unions",
+  "ts-readonly",
+  "ts-generics",
+  "ts-utility-basics",
+  "ts-narrowing",
+  "ts-type-transformations",
+  "ts-conditional-infer",
+  "ts-template-literals",
+  "ts-boundaries",
+  "ts-compiler",
+]);
+
+const reactKnowledge = orderKnowledge(react.knowledge, [
+  "react-mental-model",
+  "react-jsx-basics",
+  "react-components",
+  "react-props-state",
+  "react-conditional-ui",
+  "react-events-lists",
+  "react-lifting-state",
+  "react-forms-basics",
+  "react-refs-basics",
+  "react-effects",
+  "react-render-model",
+  "react-state-architecture",
+  "react-reconciliation",
+  "react-transitions",
+  "react-performance",
+  "react-async-testing-a11y",
+]);
+
 export const courseStudyContent: Record<string, CourseStudyContent> = {
   javascript: {
-    knowledge: javascript.knowledge,
+    knowledge: javascriptKnowledge,
     flashcards: [
       ...javascript.flashcards,
-      ...knowledgeFlashcards("js", javascript.knowledge),
+      ...knowledgeFlashcards("js", javascriptKnowledge),
     ],
   },
   typescript: {
-    knowledge: typescript.knowledge,
+    knowledge: typescriptKnowledge,
     flashcards: [
       ...typescript.flashcards,
-      ...knowledgeFlashcards("ts", typescript.knowledge),
+      ...knowledgeFlashcards("ts", typescriptKnowledge),
     ],
   },
   react: {
-    knowledge: react.knowledge,
+    knowledge: reactKnowledge,
     flashcards: [
       ...react.flashcards,
-      ...knowledgeFlashcards("react", react.knowledge),
+      ...knowledgeFlashcards("react", reactKnowledge),
     ],
   },
   ai: {

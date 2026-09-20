@@ -84,8 +84,10 @@ export const level = (xp: number) => Math.floor(xp / XP_PER_LEVEL) + 1;
 export const levelProgress = (xp: number) =>
   Math.round(((xp % XP_PER_LEVEL) / XP_PER_LEVEL) * 100);
 export const xpIntoLevel = (xp: number) => xp % XP_PER_LEVEL;
-export const xpToNextLevel = (xp: number) =>
-  XP_PER_LEVEL - (xp % XP_PER_LEVEL || XP_PER_LEVEL);
+export const xpToNextLevel = (xp: number) => {
+  const intoLevel = xp % XP_PER_LEVEL;
+  return intoLevel === 0 ? XP_PER_LEVEL : XP_PER_LEVEL - intoLevel;
+};
 
 export function moduleXp(module: CourseModule, progress: Progress) {
   const lessonXp =

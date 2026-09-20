@@ -10739,6 +10739,7 @@
   .home-intro-overlay {
     position: fixed;
     z-index: 250;
+    pointer-events: none;
     inset: 0;
     display: grid;
     place-items: center;
@@ -10883,6 +10884,7 @@
 
   .home-intro-skip {
     position: absolute;
+    pointer-events: auto;
     right: 24px;
     bottom: 22px;
     display: inline-flex;

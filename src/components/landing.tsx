@@ -22,10 +22,21 @@ import { asset } from "@/lib/config";
 import { VisualExplainer } from "./visual-explainer";
 import { CourseCard } from "@/features/courses/catalogue";
 import { courseRepository } from "@/services/courses";
+import { studyContentFor } from "@/content/study-content";
 export function Landing() {
   const { t, locale, href } = useLocale();
   const [demo, setDemo] = useState<string | null>(null);
   const en = locale === "en";
+  const javascriptCourse = courseRepository.get("javascript");
+  const freeInteractiveLessons =
+    javascriptCourse?.modules
+      .filter((module) => module.access === "free")
+      .reduce((count, module) => count + module.lessonIds.length, 0) ?? 0;
+  const freeKnowledgeChapters =
+    studyContentFor("javascript")?.knowledge.filter(
+      (section) => section.level === "beginner",
+    ).length ?? 0;
+
   return (
     <>
       <section className="hero container">
@@ -138,13 +149,15 @@ export function Landing() {
           <div className="hero-course-card">
             <span>{en ? "JAVASCRIPT PATH" : "ŚCIEŻKA JAVASCRIPT"}</span>
             <div>
-              <strong>6</strong>
-              <small>{en ? "FREE LESSONS" : "DARMOWYCH LEKCJI"}</small>
+              <strong>{freeInteractiveLessons}</strong>
+              <small>
+                {en ? "FREE INTERACTIVE LESSONS" : "DARMOWYCH LEKCJI INTERAKTYWNYCH"}
+              </small>
             </div>
             <p>
               {en
-                ? "Start with the foundations. No account required."
-                : "Zacznij od podstaw. Bez zakładania konta."}
+                ? `${freeKnowledgeChapters} knowledge chapters are free too. Advanced knowledge is Premium.`
+                : `${freeKnowledgeChapters} rozdziałów wiedzy też jest za darmo. Wiedza zaawansowana jest Premium.`}
             </p>
             <Link href={href("/courses/javascript/knowledge")}>
               {en ? "Start free" : "Zacznij za darmo"}

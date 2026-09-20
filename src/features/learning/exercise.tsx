@@ -37,13 +37,15 @@ export function Exercise({
   onPassed,
   savedCode,
   onCodeChange,
+  hideTestDetails = false,
 }: {
   exercise: ExerciseModel;
   onPassed: (passed: boolean) => void;
   savedCode?: string;
   onCodeChange?: (code: string) => void;
+  hideTestDetails?: boolean;
 }) {
-  const { t, l } = useLocale();
+  const { t, l, locale } = useLocale();
   const [code, setCode] = useState(savedCode ?? exercise.starter);
   const [hint, setHint] = useState(false);
   const [answer, setAnswer] = useState(false);
@@ -228,14 +230,32 @@ export function Exercise({
               {passed ? <Check size={19} /> : <X size={19} />}
               <span>{passed ? t.passed : t.failed}</span>
             </div>
-            <ul className="test-list">
-              {exercise.tests.map((test, i) => (
-                <li key={test.expression}>
-                  {result.results?.[i] ? <Check size={17} /> : <X size={17} />}
-                  <span>{l(test.label)}</span>
-                </li>
-              ))}
-            </ul>
+            {hideTestDetails ? (
+              <div className="hidden-test-summary">
+                <strong>
+                  {result.results?.filter(Boolean).length ?? 0}/{exercise.tests.length}{" "}
+                  {locale === "en"
+                    ? "hidden checks passed"
+                    : "ukrytych testów zaliczonych"}
+                </strong>
+                {!passed && (
+                  <p>
+                    {locale === "en"
+                      ? "The exact inputs stay hidden. Use the task, hint and edge cases to fix the general rule instead of matching one example."
+                      : "Dokładne dane testowe pozostają ukryte. Skorzystaj z treści zadania, podpowiedzi i przypadków brzegowych, zamiast dopasowywać kod do jednego przykładu."}
+                  </p>
+                )}
+              </div>
+            ) : (
+              <ul className="test-list">
+                {exercise.tests.map((test, i) => (
+                  <li key={test.expression}>
+                    {result.results?.[i] ? <Check size={17} /> : <X size={17} />}
+                    <span>{l(test.label)}</span>
+                  </li>
+                ))}
+              </ul>
+            )}
           </>
         )}
       </div>

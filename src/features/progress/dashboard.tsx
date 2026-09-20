@@ -21,6 +21,7 @@ import { Dialog, ProgressBar, Reveal } from "@/components/ui";
 import { courseRepository, conceptLabel } from "@/services/courses";
 import { progressStore } from "@/services/progress";
 import { isDue, level, localDay, streak } from "@/domain/learning";
+import { countLabel } from "@/lib/count-label";
 export function Dashboard() {
   const { t, l, locale, href } = useLocale();
   const progress = useProgress();
@@ -45,6 +46,15 @@ export function Dashboard() {
     ? Math.round((activeCourseDone / activeCourseLessons.length) * 100)
     : 0;
   const due = concepts.filter(([, c]) => c.mastery < 50 || isDue(c));
+  const lessonCountLabel = (count: number) =>
+    countLabel(locale, count, ["lesson", "lessons"], ["lekcja", "lekcje", "lekcji"]);
+  const conceptCountLabel = (count: number) =>
+    countLabel(
+      locale,
+      count,
+      ["concept to revisit", "concepts to revisit"],
+      ["zagadnienie do powtórki", "zagadnienia do powtórki", "zagadnień do powtórki"],
+    );
   const todayDone = Object.values(progress.completed).some(
     (date) => localDay(new Date(date)) === localDay(),
   );
@@ -84,7 +94,7 @@ export function Dashboard() {
           <ProgressBar value={activeCourseProgress} label={t.courseProgress} />
           <div className="continue-card-bottom">
             <span>
-              {activeCourseDone} / {activeCourseLessons.length} {t.lessons}
+              {activeCourseDone} / {activeCourseLessons.length} {lessonCountLabel(activeCourseLessons.length)}
             </span>
             <Link
               className="button primary"
@@ -137,7 +147,7 @@ export function Dashboard() {
           </div>
           <h2>{t.reviewTitle}</h2>
           <p>
-            {due.length ? `${due.length} ${t.reviewCount}` : t.noReviewCopy}
+            {due.length ? `${due.length} ${conceptCountLabel(due.length)}` : t.noReviewCopy}
           </p>
           {due.slice(0, 3).map(([id, c]) => (
             <div className="review-row" key={id}>

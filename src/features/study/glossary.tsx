@@ -191,6 +191,16 @@ export function GlossaryPanel({
   }, [locale, query, terms]);
 
   const en = locale === "en";
+  const categoryLabel = (category: GlossaryTerm["category"]) => {
+    const labels = {
+      web: en ? "Web" : "Web",
+      language: en ? "Language" : "Język",
+      framework: en ? "Framework" : "Framework",
+      ai: "AI",
+      infra: en ? "Infrastructure" : "Infrastruktura",
+    } as const;
+    return labels[category];
+  };
 
   return (
     <section className="glossary-panel">
@@ -230,7 +240,7 @@ export function GlossaryPanel({
           <article className="glossary-card" key={term.id}>
             <div className="glossary-card-title">
               <strong>{term.term}</strong>
-              <span>{term.category}</span>
+              <span>{categoryLabel(term.category)}</span>
             </div>
             {term.expanded && <h3>{term.expanded[locale]}</h3>}
             <p>{term.definition[locale]}</p>

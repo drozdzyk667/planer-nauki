@@ -10610,3 +10610,45 @@
     }
   }
 }
+
+
+@layer readable-meta-labels {
+  .fundamentals-level,
+  .fundamentals-card-top > small,
+  .glossary-card-title span,
+  .coding-difficulty,
+  .coding-solved,
+  .coding-concept-label {
+    font-family: "DM Sans Variable", sans-serif;
+    font-size: 12px;
+    font-weight: 650;
+    line-height: 1.3;
+    letter-spacing: 0;
+    text-transform: none;
+  }
+
+  .fundamentals-level {
+    min-height: 28px;
+    padding: 4px 9px;
+  }
+
+  .fundamentals-card-top > small,
+  .glossary-card-title span {
+    padding: 4px 7px;
+    border: 1px solid color-mix(in srgb, var(--border), transparent 18%);
+    border-radius: 999px;
+    color: var(--muted);
+    background: var(--subtle);
+  }
+
+  @media (max-width: 520px) {
+    .fundamentals-level,
+    .fundamentals-card-top > small,
+    .glossary-card-title span,
+    .coding-difficulty,
+    .coding-solved,
+    .coding-concept-label {
+      font-size: 11px;
+    }
+  }
+}
